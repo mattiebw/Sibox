@@ -1,0 +1,27 @@
+ifnewer Sibox/steam_appid.txt {BuildPath}
+ifnewer Audio/FMOD/Sibox/Build/Desktop/ Sibox/Content/Audio/
+ifnewer Sibox/Content/ {BuildPath}/Content/ includeDirName
+
+ifnewer Sibox/Vendor/SDL/Lib/Win64/SDL3.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/Steamworks/Lib/Win64/steam_api64.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/FMOD/Lib/Win64/fmod.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/FMOD/Lib/Win64/fmodstudio.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/FMOD/Lib/Win64/fsbank.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/FMOD/Lib/Win64/libfsbvorbis64.dll {BuildPath} plat=Win64
+ifnewer Sibox/Vendor/FMOD/Lib/Win64/opus.dll {BuildPath} plat=Win64
+
+ifnewer Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so.0 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so.0.1.5 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/Steamworks/Lib/Linux64/libsteam_api.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so.13 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so.13.25 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so.13 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so.13.25 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so.13 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so.13.25 {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libfsbvorbis.so {BuildPath} plat=Linux64
+ifnewer Sibox/Vendor/FMOD/Lib/Linux64/libopus.so {BuildPath} plat=Linux64
