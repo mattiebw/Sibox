@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Audio/AudioManager.h"
 
 #include <fmod_studio.hpp>
@@ -34,14 +34,14 @@ bool AudioManager::Init()
 	if (!Application::Get()->HasFrontend())
 		return false;
 
-	PAPI_TRACE("Initialising AudioManager and FMOD.");
+	SIBOX_TRACE("Initialising AudioManager and FMOD.");
 	Stopwatch sw;
 
 	FMOD_RESULT result = FMOD::Studio::System::create(&m_FMODSystem);
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to create FMOD system! Error: {}", FMOD_ErrorString(result));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return false;
 	}
@@ -50,7 +50,7 @@ bool AudioManager::Init()
 	if (initResult != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to initialise FMOD system! Error: {}", FMOD_ErrorString(initResult));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error!");
 		return false;
 	}
@@ -70,20 +70,20 @@ bool AudioManager::Init()
 	PlayTrack(newIndex, true);
 
 	sw.End();
-	PAPI_TRACE("Initialised AudioManager/FMOD in {0}ms", sw.GetElapsedMilliseconds());
+	SIBOX_TRACE("Initialised AudioManager/FMOD in {0}ms", sw.GetElapsedMilliseconds());
 	return true;
 }
 
 bool AudioManager::LoadBank(const std::string& bankName)
 {
-	PAPI_ASSERT(m_FMODSystem && "Attempting to load bank from uninitialised FMOD system");
+	SIBOX_ASSERT(m_FMODSystem && "Attempting to load bank from uninitialised FMOD system");
 
 	FMOD::Studio::Bank* bank;
 	FMOD_RESULT result = m_FMODSystem->loadBankFile(fmt::format("Content/Audio/{}", bankName).c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank);
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to load bank file {}! Error: {}", bankName, FMOD_ErrorString(result));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return false;
 	}
@@ -117,7 +117,7 @@ void AudioManager::PlayPreviousMusic()
 {
 	if (m_TrackHistory.size() < 2)
 	{
-		PAPI_WARN("No previous background music instance to play!");
+		SIBOX_WARN("No previous background music instance to play!");
 		return;
 	}
 
@@ -143,7 +143,7 @@ void AudioManager::PlayTrack(int trackIndex, bool fadeIn)
 	if (result != FMOD_OK)
 		{
 			std::string error = fmt::format("Failed to get background music event! Error: {}", FMOD_ErrorString(result));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return;
 		}
@@ -152,7 +152,7 @@ void AudioManager::PlayTrack(int trackIndex, bool fadeIn)
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to create background music instance! Error: {}", FMOD_ErrorString(result));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return;
 	}
@@ -172,21 +172,21 @@ void AudioManager::PlayTrack(int trackIndex, bool fadeIn)
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to start background music instance! Error: {}", FMOD_ErrorString(result));
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return;
 	}
 
-	PAPI_INFO("Playing track index: {} ({})", trackIndex, m_BackgroundMusicPaths[trackIndex]);
-    PAPI_INFO("Current History: ");
+	SIBOX_INFO("Playing track index: {} ({})", trackIndex, m_BackgroundMusicPaths[trackIndex]);
+    SIBOX_INFO("Current History: ");
     for (auto idx : m_TrackHistory) {
-        PAPI_INFO("   {}", m_BackgroundMusicPaths[idx]);
+        SIBOX_INFO("   {}", m_BackgroundMusicPaths[idx]);
     }
 
-	PAPI_INFO("Playing track index: {} ({})", trackIndex, m_BackgroundMusicPaths[trackIndex]);
-	PAPI_INFO("Current History: ");
+	SIBOX_INFO("Playing track index: {} ({})", trackIndex, m_BackgroundMusicPaths[trackIndex]);
+	SIBOX_INFO("Current History: ");
 	for (auto idx : m_TrackHistory) {
-		PAPI_INFO("   {}", m_BackgroundMusicPaths[idx]);
+		SIBOX_INFO("   {}", m_BackgroundMusicPaths[idx]);
 	}
 }
 
@@ -255,7 +255,7 @@ SoundHandle AudioManager::PlaySound(const char* soundName)
 {
 	if (!m_FMODSystem)
 	{
-		PAPI_WARN("FMOD system not initialized, cannot play sound!");
+		SIBOX_WARN("FMOD system not initialized, cannot play sound!");
 		return SoundHandle(nullptr);
 	}
 
@@ -264,7 +264,7 @@ SoundHandle AudioManager::PlaySound(const char* soundName)
 	if (result != FMOD_OK || !eventDescription)
 	{
 		std::string error = fmt::format("Failed to get event for sound: {}", soundName);
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return SoundHandle(nullptr);
 	}
@@ -274,7 +274,7 @@ SoundHandle AudioManager::PlaySound(const char* soundName)
 	if (result != FMOD_OK || !instance)
 	{
 		std::string error = fmt::format("Failed to create instance for sound: {}", soundName);
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		return SoundHandle(nullptr);
 	}
@@ -283,7 +283,7 @@ SoundHandle AudioManager::PlaySound(const char* soundName)
 	if (result != FMOD_OK)
 	{
 		std::string error = fmt::format("Failed to start sound: {}", soundName);
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		instance->release();
 		return SoundHandle(nullptr);
@@ -330,7 +330,7 @@ bool SoundHandle::IsPlaying() const
 
 	if (result != FMOD_OK)
 	{
-		PAPI_ERROR("Failed to retrieve playback state: {}", FMOD_ErrorString(result));
+		SIBOX_ERROR("Failed to retrieve playback state: {}", FMOD_ErrorString(result));
 		return false;
 	}
 
@@ -397,7 +397,7 @@ void AudioManager::Update()
 		if (result != FMOD_OK)
 		{
 			std::string error = fmt::format("Failed to update FMOD system! Error: {}", FMOD_ErrorString(result));
-			PAPI_ERROR("{}", error);
+			SIBOX_ERROR("{}", error);
 			Application::Get()->ShowError(error.c_str(), "FMOD Error");
 		}
 	}
@@ -410,7 +410,7 @@ void AudioManager::Shutdown()
 	if (!Application::Get()->HasFrontend())
 		return;
 
-	PAPI_TRACE("Shutting down AudioManager and FMOD.");
+	SIBOX_TRACE("Shutting down AudioManager and FMOD.");
 
 	if (m_BackgroundMusicInstance)
 	{

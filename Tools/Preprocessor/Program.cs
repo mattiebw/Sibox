@@ -46,7 +46,7 @@ static class Program
 
     static void DoPreprocessorCopies(string dir, string projName, string buildType)
     {
-        if (!File.Exists($"{dir}/PreprocessorCopies.txt"))
+        if (!File.Exists($"{dir}/{projName}/PreprocessorCopies.txt"))
             return;
 
         string platform = "Unknown";

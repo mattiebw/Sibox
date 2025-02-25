@@ -1,10 +1,10 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/Renderer.h"
 
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_sdl3.h>
 
-#include "PAPI.h"
+#include "Sibox.h"
 #include "Core/Application.h"
 #include "Core/Window.h"
 #include "Core/Input/Input.h"
@@ -23,7 +23,7 @@ Viewport *Renderer::s_CurrentViewport = nullptr;
 
 // This is to enable the high-performance GPU on systems with both integrated and dedicated GPUs.
 // MW @todo: This only works on Windows, and only with NVIDIA and AMD GPUs!
-#ifdef PAPI_PLATFORM_WINDOWS
+#ifdef SIBOX_PLATFORM_WINDOWS
 extern "C" {
 _declspec(dllexport) DWORD NvOptimusEnablement                  = 1;
 _declspec(dllexport) int   AmdPowerXpressRequestHighPerformance = 1;
@@ -323,7 +323,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 			glyph = fontGeo.getGlyph('?');
 		if (!glyph)
 		{
-			PAPI_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
+			SIBOX_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
 			return;
 		}
 
@@ -473,7 +473,7 @@ Renderer::~Renderer()
 
 bool Renderer::Init(Ref<Window> window)
 {
-	PAPI_TRACE("Initialising renderer");
+	SIBOX_TRACE("Initialising renderer");
 
 	m_Window      = window;
 	m_Initialised = true;
@@ -518,11 +518,11 @@ bool Renderer::InitOpenGL()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // MW @todo: Should this be part of the RendererSpec?
 
-	#ifdef PAPI_GL_DEBUG
+	#ifdef SIBOX_GL_DEBUG
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 	#endif
 
-	PAPI_ASSERT(m_Window && "Window should be set");
+	SIBOX_ASSERT(m_Window && "Window should be set");
 	m_Context = m_Window->GetGLContext();
 
 	static bool glInitialised = false;
@@ -532,22 +532,22 @@ bool Renderer::InitOpenGL()
 		if (version == 0)
 		{
 			const char *error = "Failed to initialise OpenGL with GLAD";
-			PAPI_ERROR("{}", error);
+			SIBOX_ERROR("{}", error);
 			Application::Get()->ShowError(error, "OpenGL Error");
 			return false;
 		}
 		glInitialised = true;
 
-		PAPI_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-		PAPI_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-		PAPI_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+		SIBOX_INFO("Initialised OpenGL v{}.{}", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+		SIBOX_INFO("   OpenGL Vendor: {}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+		SIBOX_INFO("   OpenGL Renderer: {}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 	}
 
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_Data->MaxTextureSlots);
 	m_Data->MaxTextureSlots = std::min(m_Data->MaxTextureSlots, 32); // Our shader system only supports 32 textures.
 
 	// Setup error callback
-	#ifdef PAPI_GL_DEBUG
+	#ifdef SIBOX_GL_DEBUG
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GLErrorCallback, nullptr);
@@ -563,15 +563,15 @@ bool Renderer::InitOpenGL()
 	m_Data->WhiteTexture->SetData(Buffer(reinterpret_cast<uint8_t*>(&whiteTextureData), sizeof(uint32_t)));
 
 	SDL_GL_SetSwapInterval(m_Specification.VSync ? 1 : 0);
-	PAPI_INFO("Initialised renderer");
-	PAPI_INFO("   VSync: {}", m_Specification.VSync ? "On" : "Off");
+	SIBOX_INFO("Initialised renderer");
+	SIBOX_INFO("   VSync: {}", m_Specification.VSync ? "On" : "Off");
 
 	return true;
 }
 
 bool Renderer::InitImGUI()
 {
-	#ifndef PAPI_NO_IMGUI
+	#ifndef SIBOX_NO_IMGUI
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -582,13 +582,13 @@ bool Renderer::InitImGUI()
 	ImGui::StyleColorsDark();
 	if (!ImGui_ImplSDL3_InitForOpenGL(m_Window->GetHandle(), m_Window->GetGLContext()))
 	{
-		PAPI_ERROR("Failed to initialize ImGUI for SDL3/OpenGL.");
+		SIBOX_ERROR("Failed to initialize ImGUI for SDL3/OpenGL.");
 		return false;
 	}
 
 	if (!ImGui_ImplOpenGL3_Init("#version 130"))
 	{
-		PAPI_ERROR("Failed to initialize ImGUI for OpenGL.");
+		SIBOX_ERROR("Failed to initialize ImGUI for OpenGL.");
 		return false;
 	}
 
@@ -612,7 +612,7 @@ bool Renderer::OnWindowResize(Window *window, const glm::ivec2 &size)
 
 void Renderer::ShutdownImGUI()
 {
-	#ifndef PAPI_NO_IMGUI
+	#ifndef SIBOX_NO_IMGUI
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
@@ -626,7 +626,7 @@ void Renderer::Shutdown()
 	if (!m_Initialised)
 		return;
 
-	PAPI_TRACE("Shutting down renderer");
+	SIBOX_TRACE("Shutting down renderer");
 
 	ShutdownImGUI();
 
@@ -653,7 +653,7 @@ void Renderer::Shutdown()
 
 void Renderer::ProcessSDLEvent(const SDL_Event *e)
 {
-	#ifndef PAPI_NO_IMGUI
+	#ifndef SIBOX_NO_IMGUI
 	ImGui_ImplSDL3_ProcessEvent(e);
 	#endif
 }
@@ -686,7 +686,7 @@ void Renderer::Render()
 
 void Renderer::RenderImGUI()
 {
-	#ifndef PAPI_NO_IMGUI
+	#ifndef SIBOX_NO_IMGUI
 	ImGuiIO &io = ImGui::GetIO();
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -695,7 +695,7 @@ void Renderer::RenderImGUI()
 
 	DebugUIRenderCallback.Execute();
 
-	if (Input::IsKeyDownThisFrame(PAPI_KEY_F3))
+	if (Input::IsKeyDownThisFrame(SIBOX_KEY_F3))
 		m_DebugUIVisible = !m_DebugUIVisible;
 	if (m_DebugUIVisible)
 	{
@@ -735,7 +735,7 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 	if (it != m_Viewports.end())
 		m_Viewports.erase(it);
 	else
-		PAPI_WARN("Attempted to remove a viewport that has not been added!");
+		SIBOX_WARN("Attempted to remove a viewport that has not been added!");
 }
 
 void Renderer::SetVSync(bool enabled)
@@ -747,12 +747,12 @@ void Renderer::SetVSync(bool enabled)
 void Renderer::GLErrorCallback(GLenum        source, GLenum       type, GLuint id, GLenum severity, GLsizei length,
                                const GLchar *message, const void *userParam)
 {
-#ifndef PAPI_SHOW_GL_NOTIFICATIONS
+#ifndef SIBOX_SHOW_GL_NOTIFICATIONS
 	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
 		return;
 #endif
 
-#ifndef PAPI_NO_IGNORED_GL_ERROR_IDS
+#ifndef SIBOX_NO_IGNORED_GL_ERROR_IDS
 	static std::vector<GLuint> ignoredIDs = {131185};
 
 	if (std::find(ignoredIDs.begin(), ignoredIDs.end(), id) != ignoredIDs.end())
@@ -852,7 +852,7 @@ void Renderer::GLErrorCallback(GLenum        source, GLenum       type, GLuint i
 		break;
 	}
 
-	PAPI_ERROR("OpenGL Error ({0} severity, id: {4}): from {1}, {2}: {3}", severityText, sourceText, typeText, message,
+	SIBOX_ERROR("OpenGL Error ({0} severity, id: {4}): from {1}, {2}: {3}", severityText, sourceText, typeText, message,
 	           id);
-	PAPI_ASSERT(severity == GL_DEBUG_SEVERITY_NOTIFICATION);
+	SIBOX_ASSERT(severity == GL_DEBUG_SEVERITY_NOTIFICATION);
 }

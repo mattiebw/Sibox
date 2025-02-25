@@ -105,7 +105,7 @@ NODISCARD static uint32_t GetShaderDataTypeSize(ShaderDataType e)
 	case ShaderDataType::Bool: return 1;
 	case ShaderDataType::None:
 	default:
-		PAPI_ASSERT(false && "Unknown shader data type.");
+		SIBOX_ASSERT(false && "Unknown shader data type.");
 		return 0;
 	}
 }
@@ -127,7 +127,7 @@ NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType type)
 	case ShaderDataType::Bool: return 1;
 	case ShaderDataType::None:
 	default:
-		PAPI_ASSERT(false && "Unknown shader data type.");
+		SIBOX_ASSERT(false && "Unknown shader data type.");
 		return 0;
 	}
 }
@@ -149,7 +149,7 @@ NODISCARD static uint32_t ShaderDataTypeToGLBaseType(ShaderDataType type)
 	case ShaderDataType::Bool: return GL_BOOL;
 	case ShaderDataType::None:
 	default:
-		PAPI_ASSERT(false && "Unknown shader data type.");
+		SIBOX_ASSERT(false && "Unknown shader data type.");
 		return 0;
 	}
 }

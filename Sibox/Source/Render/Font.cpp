@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/Font.h"
 
 #include <msdf-atlas-gen.h>
@@ -81,7 +81,7 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
 
 Font::Font(const std::filesystem::path &fontPath)
 {
-	PAPI_ASSERT(s_FTHandle && "Font system not initialized!");
+	SIBOX_ASSERT(s_FTHandle && "Font system not initialized!");
 	Stopwatch sw;
 
 	// For now, we're just loading ttf files from disk.
@@ -96,7 +96,7 @@ Font::Font(const std::filesystem::path &fontPath)
 
 	if (!font)
 	{
-		PAPI_ERROR("Failed to load font from path: {0}", pathString);
+		SIBOX_ERROR("Failed to load font from path: {0}", pathString);
 		return;
 	}
 
@@ -129,7 +129,7 @@ Font::Font(const std::filesystem::path &fontPath)
 
 	// And do the packing
 	int remaining = packer.pack(m_Data->Glyphs.data(), static_cast<int>(m_Data->Glyphs.size()));
-	PAPI_ASSERT(remaining == 0 && "Failed to pack atlas!");
+	SIBOX_ASSERT(remaining == 0 && "Failed to pack atlas!");
 	int width, height;
 	packer.getDimensions(width, height);
 	emSize = packer.getScale();
@@ -169,7 +169,7 @@ Font::Font(const std::filesystem::path &fontPath)
 	destroyFont(font);
 
 	sw.End();
-	PAPI_TRACE("Loaded font ({0}/{1} glyphs) from file \"{2}\" in {3}ms", m_GlyphCount, charset.size(), pathString,
+	SIBOX_TRACE("Loaded font ({0}/{1} glyphs) from file \"{2}\" in {3}ms", m_GlyphCount, charset.size(), pathString,
 	           sw.GetElapsedMilliseconds());
 }
 
@@ -182,7 +182,7 @@ void Font::InitFontSystem()
 	s_FTHandle = msdfgen::initializeFreetype();
 	if (!s_FTHandle)
 	{
-		PAPI_ERROR("Failed to initialize FreeType!");
+		SIBOX_ERROR("Failed to initialize FreeType!");
 		return;
 	}
 
@@ -213,7 +213,7 @@ FontMeasurement Font::MeasureString(const std::string &string, const glm::vec3 &
 			glyph = m_Data->FontGeo.getGlyph('?');
 		if (!glyph)
 		{
-			PAPI_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
+			SIBOX_ASSERT(false && "Failed to draw string with font - missing char, and '?' char!");
 			return {};
 		}
 

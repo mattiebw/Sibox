@@ -48,10 +48,10 @@ public:
 	FORCEINLINE static void PreUpdate()
 	{
 		// Can't use memcpy_s here because it's not available on all compilers :(
-		memcpy(s_PreviousKeys, s_Keys, PAPI_KEY_COUNT * sizeof(bool));
-		memcpy(s_PreviousMouseButtons, s_MouseButtons, PAPI_MOUSE_BUTTON_COUNT * sizeof(bool));
+		memcpy(s_PreviousKeys, s_Keys, SIBOX_KEY_COUNT * sizeof(bool));
+		memcpy(s_PreviousMouseButtons, s_MouseButtons, SIBOX_MOUSE_BUTTON_COUNT * sizeof(bool));
 		s_MouseDelta = glm::vec2(0.0f);
-		#ifndef PAPI_NO_IMGUI
+		#ifndef SIBOX_NO_IMGUI
 		ImGuiIO &io             = ImGui::GetIO();
 		s_ImGuiHasKeyboardFocus = io.WantCaptureKeyboard;
 		s_ImGuiHasMouseFocus    = io.WantCaptureMouse;
@@ -63,12 +63,12 @@ public:
 	static void ProcessMouseMotionEvent(const SDL_MouseMotionEvent &event);
 
 protected:
-	// Remember to update UpdateKeyArrays() and Init() if changing the size of these arrays from PAPI_KEY_COUNT
+	// Remember to update UpdateKeyArrays() and Init() if changing the size of these arrays from SIBOX_KEY_COUNT
 	// These arrays have to be the same size!
-	static bool      s_Keys[PAPI_KEY_COUNT];
-	static bool      s_PreviousKeys[PAPI_KEY_COUNT];
-	static bool      s_MouseButtons[PAPI_MOUSE_BUTTON_COUNT];
-	static bool      s_PreviousMouseButtons[PAPI_MOUSE_BUTTON_COUNT];
+	static bool      s_Keys[SIBOX_KEY_COUNT];
+	static bool      s_PreviousKeys[SIBOX_KEY_COUNT];
+	static bool      s_MouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
+	static bool      s_PreviousMouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
 	static glm::vec2 s_MousePosition, s_MouseDelta;
 
 	static bool s_ImGuiHasKeyboardFocus;

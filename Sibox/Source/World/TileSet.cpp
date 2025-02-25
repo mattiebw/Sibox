@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "World/TileSet.h"
 
 #include "Render/SpriteSheet.h"
@@ -20,6 +20,6 @@ uint16_t TileSet::AddTile(const TileData &data)
 
 SpriteSheetSprite TileSet::GetSpriteForTile(uint16_t tile) const
 {
-	PAPI_ASSERT(tile > 0 && tile <= m_Tiles.size() && "Invalid tile index");
+	SIBOX_ASSERT(tile > 0 && tile <= m_Tiles.size() && "Invalid tile index");
 	return m_Spritesheet->GetSprite(m_Tiles[tile - 1].SpriteIndex);
 }

@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/RenderBuffer.h"
 
 #include "Render/Renderer.h"
@@ -18,7 +18,7 @@ uint32_t BufferUsageTypeToGL(BufferUsageType e)
 	case BufferUsageType::DynamicCopy: return GL_DYNAMIC_COPY;
 	case BufferUsageType::None:
 	default:
-		PAPI_ASSERT(false && "Unkown BufferUsageType");
+		SIBOX_ASSERT(false && "Unkown BufferUsageType");
 		return 0;
 	}
 }

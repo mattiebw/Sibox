@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/VertexArray.h"
 
 VertexArray::VertexArray()
@@ -23,7 +23,7 @@ void VertexArray::Unbind()
 
 void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 {
-	PAPI_ASSERT(vertexBuffer->GetLayout().HasElements() && "Vertex Buffer must have a layout.");
+	SIBOX_ASSERT(vertexBuffer->GetLayout().HasElements() && "Vertex Buffer must have a layout.");
 	Bind();
 	vertexBuffer->Bind();
 

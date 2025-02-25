@@ -1,6 +1,6 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 
-#ifndef PAPI_NO_IMGUI
+#ifndef SIBOX_NO_IMGUI
     #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM // We're using GLAD.
     #include "backends/imgui_impl_sdl3.cpp"
     #include "backends/imgui_impl_opengl3.cpp"

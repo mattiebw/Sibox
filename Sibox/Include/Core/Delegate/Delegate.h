@@ -121,7 +121,7 @@ public:
 
 	FORCEINLINE ReturnType Execute(ArgTypes &&... args)
 	{
-		PAPI_ASSERT(m_Delegate != nullptr);
+		SIBOX_ASSERT(m_Delegate != nullptr);
 		return m_Delegate->Execute(std::forward<ArgTypes>(args)...);
 	}
 

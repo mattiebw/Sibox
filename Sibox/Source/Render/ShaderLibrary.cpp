@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/ShaderLibrary.h"
 
 #include "Render/Shader.h"
@@ -18,7 +18,7 @@ Ref<Shader> ShaderLibrary::GetShader(std::string_view name)
 	auto it = s_Shaders.find(name.data());
 	if (it == s_Shaders.end())
 	{
-		PAPI_WARN("Shader \"{0}\" not found in library", name);
+		SIBOX_WARN("Shader \"{0}\" not found in library", name);
 		return nullptr;
 	}
 	return it->second;
@@ -31,7 +31,7 @@ void ShaderLibrary::AddShader(const Ref<Shader> &shader)
 
 void ShaderLibrary::AddShader(const Ref<Shader> &shader, const std::string &name)
 {
-	PAPI_ASSERT(!ShaderExists(name) && "Shader with name already exists in library");
+	SIBOX_ASSERT(!ShaderExists(name) && "Shader with name already exists in library");
 	s_Shaders[name] = shader;
 }
 
@@ -40,7 +40,7 @@ bool ShaderLibrary::RemoveShader(std::string_view name)
 	auto it = s_Shaders.find(name.data());
 	if (it == s_Shaders.end())
 	{
-		PAPI_WARN("Shader \"{0}\" not found in library", name);
+		SIBOX_WARN("Shader \"{0}\" not found in library", name);
 		return false;
 	}
 	s_Shaders.erase(it);

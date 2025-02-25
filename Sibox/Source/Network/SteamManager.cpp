@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Network/SteamManager.h"
 
 #include "Core/Application.h"
@@ -6,13 +6,13 @@
 extern "C" void SteamWarningMessage(int level, const char * message)
 {
 	if (level == 0)
-		PAPI_INFO("Steamworks message: {0}", message);
+		SIBOX_INFO("Steamworks message: {0}", message);
 	else if (level == 1)
-		PAPI_WARN("Steamworks warning: {0}", message);
+		SIBOX_WARN("Steamworks warning: {0}", message);
 	else
-		PAPI_ERROR("Steamworks error: {0}", message);
+		SIBOX_ERROR("Steamworks error: {0}", message);
 
-	PAPI_ASSERT(level == 0); // Break on warnings/errors
+	SIBOX_ASSERT(level == 0); // Break on warnings/errors
 }
 
 bool SteamManager::Init()
@@ -21,7 +21,7 @@ bool SteamManager::Init()
 	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
 	{
 		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}", static_cast<const char*>(error));
-		PAPI_ERROR("{0}", err);
+		SIBOX_ERROR("{0}", err);
 		Application::Get()->ShowError(err.c_str(), "Steamworks Initialisation Error");
 		return false;
 	}
@@ -41,14 +41,14 @@ bool SteamManager::Init()
 	SteamNetworkingUtils()->InitRelayNetworkAccess();
 	
 	m_SteamworksInitialised = true;
-	PAPI_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
+	SIBOX_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
 	return true;
 }
 
 void SteamManager::Update()
 {
 	SteamAPI_RunCallbacks();
-	// if (HasRelayAccess()) PAPI_INFO("yea"); // This works, but the callback doesn't?
+	// if (HasRelayAccess()) SIBOX_INFO("yea"); // This works, but the callback doesn't?
 }
 
 void SteamManager::Shutdown()
@@ -56,7 +56,7 @@ void SteamManager::Shutdown()
 	if (!m_SteamworksInitialised)
 		return;
 	
-	PAPI_TRACE("Shutting down Steamworks");
+	SIBOX_TRACE("Shutting down Steamworks");
 	SteamAPI_Shutdown();
 
 	m_SteamworksInitialised = false;
@@ -74,7 +74,7 @@ void SteamManager::SetNotRequestingLobbies()
 
 void SteamManager::OnScreenshot(ScreenshotReady_t *pParam)
 {
-	PAPI_INFO("Screenshot taken: {0}", pParam->m_eResult == k_EResultOK ? "OK" : "Failed");
+	SIBOX_INFO("Screenshot taken: {0}", pParam->m_eResult == k_EResultOK ? "OK" : "Failed");
 }
 
 void SteamManager::OnRelayNetworkStatusChanged(SteamRelayNetworkStatus_t *pParam)
@@ -84,11 +84,11 @@ void SteamManager::OnRelayNetworkStatusChanged(SteamRelayNetworkStatus_t *pParam
 	if (pParam->m_eAvail == k_ESteamNetworkingAvailability_Current)
 	{
 		m_HasRelayAccess = true;
-		PAPI_INFO("Relay network is now available.");
+		SIBOX_INFO("Relay network is now available.");
 	}
 	else
 	{
 		m_HasRelayAccess = false;
-		PAPI_ERROR("Relay network is not available.");
+		SIBOX_ERROR("Relay network is not available.");
 	}
 }

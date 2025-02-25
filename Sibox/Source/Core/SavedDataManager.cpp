@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Core/SavedDataManager.h"
 
 void SavedDataManager::Init(const std::filesystem::path &rootPath)
@@ -21,7 +21,7 @@ Buffer SavedDataManager::GetBinaryData(const std::filesystem::path &path)
 	std::ifstream         infile(absPath, std::ios::binary | std::ios::ate);
 	if (!infile.good())
 	{
-		PAPI_ERROR("Failed to open and read file {0}", absPath.string());
+		SIBOX_ERROR("Failed to open and read file {0}", absPath.string());
 		return {nullptr, 0};
 	}
 
@@ -43,7 +43,7 @@ bool SavedDataManager::SaveBinaryData(const std::filesystem::path &path, const B
 	std::ofstream outfile(absPath, std::ios::binary);
 	if (!outfile.good())
 	{
-		PAPI_ERROR("Failed to open and write data to file {0}", absPath.string());
+		SIBOX_ERROR("Failed to open and write data to file {0}", absPath.string());
 		return false;
 	}
 

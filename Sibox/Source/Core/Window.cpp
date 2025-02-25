@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Core/Window.h"
 
 #include <SDL3/SDL_messagebox.h>
@@ -8,14 +8,14 @@ Window::Window(const WindowSpecification &spec)
 {
 	m_Specification = spec;
 
-	PAPI_TRACE("Creating window \"{}\"", m_Specification.Title);
+	SIBOX_TRACE("Creating window \"{}\"", m_Specification.Title);
 
 	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.x, m_Specification.Size.y,
 	                            SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
 		std::string error = fmt::format("Failed to create window: {}", SDL_GetError());
-		PAPI_ERROR("{}", error);
+		SIBOX_ERROR("{}", error);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Window Creation Error", error.c_str(), nullptr);
 		return;
 	}
@@ -37,7 +37,7 @@ Window::Window(const WindowSpecification &spec)
 	// MW @gotcha: Don't set up delegates here that capture because the window will likely move around in memory and the this pointer will be invalid
 	OnResize.BindLambda([](Window *window, const glm::ivec2 &size)
 	{
-		PAPI_INFO("Window \"{}\" resized to {}", window->GetTitle(), size);
+		SIBOX_INFO("Window \"{}\" resized to {}", window->GetTitle(), size);
 		window->m_Specification.Size = size;
 		return false;
 	});
@@ -69,26 +69,26 @@ void Window::DestroyGLContext()
 
 void Window::Show()
 {
-	PAPI_ASSERT(m_Window && "Window is not initialised");
+	SIBOX_ASSERT(m_Window && "Window is not initialised");
 	SDL_ShowWindow(m_Window);
 	m_IsVisible = true;
 }
 
 void Window::Hide()
 {
-	PAPI_ASSERT(m_Window && "Window is not initialised");
+	SIBOX_ASSERT(m_Window && "Window is not initialised");
 	SDL_HideWindow(m_Window);
 	m_IsVisible = false;
 }
 
 void Window::Close()
 {
-	PAPI_TRACE("Closing window \"{}\"", m_Specification.Title);
+	SIBOX_TRACE("Closing window \"{}\"", m_Specification.Title);
 
 	bool shouldDestroy = OnCloseRequested.Execute(this);
 	if (!shouldDestroy)
 	{
-		PAPI_TRACE("Window \"{}\"'s closure was cancelled by delegates!", m_Specification.Title);
+		SIBOX_TRACE("Window \"{}\"'s closure was cancelled by delegates!", m_Specification.Title);
 		return;
 	}
 

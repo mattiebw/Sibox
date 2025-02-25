@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "World/Entity.h"
 
 #include "Game/Player.h"
@@ -41,7 +41,7 @@ Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, const Transfor
 	default: break;
 	}
 
-	PAPI_ERROR("Tried to create entity with missing type ID {}", type);
+	SIBOX_ERROR("Tried to create entity with missing type ID {}", type);
 	return nullptr;
 }
 

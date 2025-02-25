@@ -26,6 +26,7 @@ project "Sibox"
 	kind "ConsoleApp"
 	staticruntime "On"
 	language "C++"
+	characterset "Unicode"
 	location "Sibox"
 	targetdir ("Build/%{prj.name}/" .. outputdir)
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
@@ -159,7 +160,7 @@ filter "system:windows"
 		"winmm",
 		"Imm32",
 		"Cfgmgr32",
-		"SetuSIBOX"
+		"Setupapi"
 	}
 
 filter "system:linux"

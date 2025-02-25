@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/Texture.h"
 
 #include <stb_image.h>
@@ -24,14 +24,14 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	: m_Spec(spec)
 {
 	// Load texture from file using stb_image
-	PAPI_TRACE("Loading texture from file \"{0}\"", filename);
+	SIBOX_TRACE("Loading texture from file \"{0}\"", filename);
 	stbi_set_flip_vertically_on_load(m_Spec.FlipVertically);
 	uint8_t *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, nullptr, GetChannels());
 
 	// Error check texture loading
 	if (data == nullptr)
 	{
-		PAPI_ERROR("Failed to load texture \"{0}\": {1}", filename, stbi_failure_reason());
+		SIBOX_ERROR("Failed to load texture \"{0}\": {1}", filename, stbi_failure_reason());
 		return; // TODO: Not properly indicating failure - best we do is 0 texture ID and 0 width/height
 	}
 
@@ -61,7 +61,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 
 void Texture::CleanUp()
 {
-	PAPI_TRACE("Cleaning up texture {0}", m_TextureID);
+	SIBOX_TRACE("Cleaning up texture {0}", m_TextureID);
 	glDeleteTextures(1, &m_TextureID);
 	m_TextureID = 0;
 }
@@ -81,13 +81,13 @@ void Texture::SetData(const uint8_t *data)
 
 void Texture::SetData(const Buffer &data)
 {
-	PAPI_ASSERT(data.Size == GetDataSize() && "Buffer size doesn't match texture size.");
+	SIBOX_ASSERT(data.Size == GetDataSize() && "Buffer size doesn't match texture size.");
 	SetData(data.Data);
 }
 
 void Texture::Activate(int slot) const
 {
-	PAPI_ASSERT(m_TextureID != 0 && "Texture activated when not initialized");
+	SIBOX_ASSERT(m_TextureID != 0 && "Texture activated when not initialized");
 
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);

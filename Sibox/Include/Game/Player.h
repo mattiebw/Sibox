@@ -17,8 +17,8 @@ class Player : public Entity
 
 	NODISCARD FORCEINLINE Ref<Camera>& GetCamera() { return m_Camera; }
 
-	PAPI_RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
-	PAPI_RPC(Multicast, OnDeath);
+	RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
+	RPC(Multicast, OnDeath);
 
 	std::string Name = "Qerma";
 	

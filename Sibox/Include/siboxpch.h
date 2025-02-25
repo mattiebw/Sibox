@@ -1,6 +1,7 @@
 #pragma once
 
 #define SPDLOG_EOL ""
+#define FMT_UNICODE 0
 
 // Utility functions and types
 #include <iostream>
@@ -28,14 +29,14 @@
 #include <steam/steam_api.h>
 
 // imgui
-#ifndef PAPI_NO_IMGUI
+#ifndef SIBOX_NO_IMGUI
 #include <imgui.h>
 #endif
 
 // Core project includes
 #include <SDL3/SDL_assert.h>
-#include "Core/PAPICore.h"
-#include "Core/PAPILog.h"
+#include "Core/SiboxCore.h"
+#include "Core/SiboxLog.h"
 #include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
 #include "Core/Utility/MathUtil.h"
@@ -45,6 +46,6 @@
 #include "Network/Network.h"
 
 // Platform specific
-#ifdef PAPI_PLATFORM_WINDOWS
+#ifdef SIBOX_PLATFORM_WINDOWS
 #include "Windows.h"
 #endif

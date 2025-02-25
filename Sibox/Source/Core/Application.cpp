@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Core/Application.h"
 
 #include <SDL3/SDL_init.h>
@@ -62,7 +62,7 @@ Application::~Application()
 
 void Application::Construct()
 {
-	PAPI_ASSERT(s_Instance == nullptr && "There can only be one application instance");
+	SIBOX_ASSERT(s_Instance == nullptr && "There can only be one application instance");
 	s_Instance = this;
 }
 
@@ -76,7 +76,7 @@ bool Application::Init()
 
 	m_Initialised = true; // Set initialised to true so we can shut down properly.
 
-	m_SavedData.Init(std::filesystem::path(SDL_GetPrefPath("PAPI", "papi")) / "Saved");
+	m_SavedData.Init(std::filesystem::path(SDL_GetPrefPath("Mattie", "Sibox")) / "Saved");
 
 	// We initialise Steamworks pretty early. This is because it needs to be up and 
 	// running before we initialise OpenGL, so that it can hook into device creation
@@ -122,7 +122,7 @@ bool Application::Init()
 	}
 
 	sw.End();
-	PAPI_TRACE("Application initialisation took {0}ms", sw.GetElapsedMilliseconds());
+	SIBOX_TRACE("Application initialisation took {0}ms", sw.GetElapsedMilliseconds());
 	
 	return true;
 }
@@ -137,7 +137,7 @@ void Application::BindDelegates()
 		});
 		m_MainWindow->OnKeyPressed.BindLambda([](Window *window, Scancode scancode, bool repeat)
 		{
-			if (scancode == PAPI_KEY_F11)
+			if (scancode == SIBOX_KEY_F11)
 				window->ToggleFullscreen();
 
 			return false;
@@ -165,7 +165,7 @@ void Application::Run()
 		static double timeSinceFPSPrinted = 0;
 		if (timeSinceFPSPrinted >= 1)
 		{
-			PAPI_INFO("FPS: {} (frame time: {:.2f}ms)", m_FPSCounter.GetFPS(), m_FPSCounter.GetAverageFrameTimeMS());
+			SIBOX_INFO("FPS: {} (frame time: {:.2f}ms)", m_FPSCounter.GetFPS(), m_FPSCounter.GetAverageFrameTimeMS());
 			timeSinceFPSPrinted = 0;
 		}
 		else
@@ -182,7 +182,7 @@ void Application::Run()
 	}
 
 	sw.End();
-	PAPI_TRACE("Application ran for {0}s", sw.GetElapsedSeconds());
+	SIBOX_TRACE("Application ran for {0}s", sw.GetElapsedSeconds());
 }
 
 void Application::Shutdown()
@@ -222,7 +222,7 @@ void Application::Shutdown()
 	m_Running     = false;
 	m_Initialised = false;
 	sw.End();
-	PAPI_TRACE("Application shutdown took {0}ms", sw.GetElapsedMilliseconds());
+	SIBOX_TRACE("Application shutdown took {0}ms", sw.GetElapsedMilliseconds());
 }
 
 void Application::AddLayer(const Ref<Layer> &layer)
@@ -252,7 +252,7 @@ void Application::RemoveWorld(const Ref<World> &world)
 	if (it != m_Worlds.end())
 		m_Worlds.erase(it);
 	else
-		PAPI_ERROR("Attempted to remove a world that has not been added!");
+		SIBOX_ERROR("Attempted to remove a world that has not been added!");
 }
 
 Ref<World> Application::GetWorldFromPointer(const World *worldPtr)
@@ -272,7 +272,7 @@ bool Application::InitSDL()
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
 		m_Error = fmt::format("Failed to initialise SDL: {}", SDL_GetError());
-		PAPI_ERROR("{}", m_Error);
+		SIBOX_ERROR("{}", m_Error);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SDL Initialisation Error", m_Error.c_str(), nullptr);
 		return false;
 	}
@@ -289,7 +289,7 @@ bool Application::InitRenderer()
 	if (!m_Renderer->Init(m_MainWindow))
 	{
 		m_Error = "Failed to initialise renderer; check the log!";
-		PAPI_ERROR("{}", m_Error);
+		SIBOX_ERROR("{}", m_Error);
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Renderer Initialisation Error", m_Error.c_str(), nullptr);
 		return false;
 	}
@@ -363,7 +363,7 @@ void Application::PollEvents()
 					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
-				PAPI_ASSERT(window && "No window, but key event?");
+				SIBOX_ASSERT(window && "No window, but key event?");
 				window->OnKeyPressed.Execute(std::move(window), static_cast<Scancode>(e.key.scancode),
 				                             std::move(e.key.repeat));
 			}
@@ -379,7 +379,7 @@ void Application::PollEvents()
 					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
-				PAPI_ASSERT(window && "No window, but key event?");
+				SIBOX_ASSERT(window && "No window, but key event?");
 				window->OnKeyReleased.Execute(std::move(window), static_cast<Scancode>(e.key.scancode));
 			}
 			break;
@@ -395,7 +395,7 @@ void Application::PollEvents()
 					SDL_PropertiesID props = SDL_GetWindowProperties(sdlWindow);
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
-				PAPI_ASSERT(window && "No window, but mouse event?");
+				SIBOX_ASSERT(window && "No window, but mouse event?");
 
 				if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
 					window->OnMouseButtonDown.Execute(std::move(window), static_cast<MouseButton>(e.button.button));
@@ -451,7 +451,7 @@ void Application::Render()
 
 void Application::ShutdownSDL()
 {
-	PAPI_TRACE("Shutting down SDL");
+	SIBOX_TRACE("Shutting down SDL");
 	SDL_Quit();
 }
 

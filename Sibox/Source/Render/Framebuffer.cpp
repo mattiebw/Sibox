@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/Framebuffer.h"
 
 uint32_t FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format)
@@ -13,7 +13,7 @@ uint32_t FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format)
 		return GL_DEPTH24_STENCIL8;
 	}
 
-	PAPI_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
+	SIBOX_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
 	return 0;
 }
 
@@ -27,7 +27,7 @@ uint32_t FramebufferTextureFormatToGLInternalFormat(FramebufferTextureFormat for
 		return GL_R32I;
 	}
 
-	PAPI_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
+	SIBOX_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
 	return 0;
 }
 
@@ -43,7 +43,7 @@ uint32_t FramebufferTextureFormatToGLType(FramebufferTextureFormat format)
 		return GL_UNSIGNED_INT;
 	}
 
-	PAPI_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
+	SIBOX_ERROR("FramebufferTextureFormatToGL: Unknown FramebufferTextureFormat");
 	return 0;
 }
 
@@ -149,7 +149,7 @@ void Framebuffer::Invalidate()
 
 	if (m_Attachments.size() > 1)
 	{
-		PAPI_ASSERT(m_Attachments.size() < 4 && "Maximum of 4 attachments");
+		SIBOX_ASSERT(m_Attachments.size() < 4 && "Maximum of 4 attachments");
 		GLenum buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
 		glDrawBuffers(static_cast<GLsizei>(m_Attachments.size()), buffers);
 	}
@@ -160,7 +160,7 @@ void Framebuffer::Invalidate()
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		PAPI_ERROR("Framebuffer is not complete");
+		SIBOX_ERROR("Framebuffer is not complete");
 	}
 
 	Unbind();
@@ -170,7 +170,7 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
 {
 	if (width == 0 || height == 0)
 	{
-		PAPI_ERROR("Framebuffer::Resize: Invalid width/height");
+		SIBOX_ERROR("Framebuffer::Resize: Invalid width/height");
 		return;
 	}
 
@@ -185,7 +185,7 @@ void Framebuffer::Resize(glm::ivec2 size)
 
 int32_t Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 {
-	PAPI_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
+	SIBOX_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
 
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 	int  pixelData;
@@ -197,7 +197,7 @@ int32_t Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 
 void Framebuffer::ClearColorAttachment(uint32_t attachmentIndex, int value)
 {
-	PAPI_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
+	SIBOX_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
 
 	auto &attachment = m_Attachments[attachmentIndex];
 	glClearTexImage(attachment.RendererID, attachmentIndex, 1, FramebufferTextureFormatToGLFormat(attachment.Format),

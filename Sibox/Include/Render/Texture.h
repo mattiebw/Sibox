@@ -29,7 +29,7 @@ NODISCARD FORCEINLINE int ChannelsFromFormat(TextureFormat format)
 	case TextureFormat::RGB8:
 		return 3;
 	default:
-		PAPI_ASSERT(false && "Invalid texture format");
+		SIBOX_ASSERT(false && "Invalid texture format");
 		return 0;
 	}
 }
@@ -43,7 +43,7 @@ NODISCARD FORCEINLINE int FormatToGLFormat(TextureFormat format)
 	case TextureFormat::RGB8:
 		return 0x1907; // GL_RGB
 	default:
-		PAPI_ASSERT(false && "Invalid texture format");
+		SIBOX_ASSERT(false && "Invalid texture format");
 		return 0;
 	}
 }

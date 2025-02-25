@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "World/World.h"
 
 #include <ranges>
@@ -36,8 +36,8 @@ World::World()
 
 void World::UpdateEntityUUID(UUID oldID, UUID newID)
 {
-	PAPI_ASSERT(m_Entities.contains(oldID) && "Entity does not exist");
-	PAPI_ASSERT(!m_Entities.contains(newID) && "Entity with new ID already exists");
+	SIBOX_ASSERT(m_Entities.contains(oldID) && "Entity does not exist");
+	SIBOX_ASSERT(!m_Entities.contains(newID) && "Entity with new ID already exists");
 
 	Ref<Entity> entity = m_Entities[oldID];
 	m_Entities.erase(oldID);
@@ -50,7 +50,7 @@ void World::DestroyEntity(UUID id)
 
 	if (it == m_Entities.end())
 	{
-		PAPI_ERROR("Entity with ID {} does not exist", id);
+		SIBOX_ERROR("Entity with ID {} does not exist", id);
 		return;
 	}
 

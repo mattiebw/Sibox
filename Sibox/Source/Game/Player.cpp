@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Game/Player.h"
 
 #include "Core/Application.h"
@@ -58,10 +58,10 @@ void Player::Tick(double delta)
 		case EntityNetworkType::RemoteOwned:
 			{
 				glm::vec2 input(0.0f);
-				input.x -= Input::IsKeyDown(PAPI_KEY_A) ? 1.0f : 0.0f;
-				input.x += Input::IsKeyDown(PAPI_KEY_D) ? 1.0f : 0.0f;
-				input.y -= Input::IsKeyDown(PAPI_KEY_S) ? 1.0f : 0.0f;
-				input.y += Input::IsKeyDown(PAPI_KEY_W) ? 1.0f : 0.0f;
+				input.x -= Input::IsKeyDown(SIBOX_KEY_A) ? 1.0f : 0.0f;
+				input.x += Input::IsKeyDown(SIBOX_KEY_D) ? 1.0f : 0.0f;
+				input.y -= Input::IsKeyDown(SIBOX_KEY_S) ? 1.0f : 0.0f;
+				input.y += Input::IsKeyDown(SIBOX_KEY_W) ? 1.0f : 0.0f;
 
 				bool isMoving = (input.x != 0.0f || input.y != 0.0f);
 
@@ -97,8 +97,8 @@ void Player::Tick(double delta)
 			break;
 	}
 	
-	bool pDown = Input::IsKeyDown(PAPI_KEY_P);
-	bool bDown = Input::IsKeyDown(PAPI_KEY_B);
+	bool pDown = Input::IsKeyDown(SIBOX_KEY_P);
+	bool bDown = Input::IsKeyDown(SIBOX_KEY_B);
 	if (pDown && !m_WasPDown)
 	{
 		AudioManager::PlayBackgroundMusic();
@@ -139,7 +139,7 @@ void Player::Render()
 	tf.Position.z -= 0.05f;
 	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, .25));
 	// sw.End();
-	// PAPI_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
+	// SIBOX_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
 
 	// auto rect = m_Camera->GetCameraRect();
 	// rect.Position += glm::vec2(0.1f, 0.1f);

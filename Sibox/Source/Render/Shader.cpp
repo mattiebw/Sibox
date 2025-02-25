@@ -1,4 +1,4 @@
-﻿#include "papipch.h"
+﻿#include "siboxpch.h"
 #include "Render/Shader.h"
 
 Shader::Shader(std::string name)
@@ -16,13 +16,13 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 {
 	if (m_IsComplete)
 	{
-		PAPI_ERROR("In shader \"{0}\", attempting to add a stage to a linked shader!", m_Name);
+		SIBOX_ERROR("In shader \"{0}\", attempting to add a stage to a linked shader!", m_Name);
 		return -1;
 	}
 
 	if (!IsValidShaderStage(stage))
 	{
-		PAPI_ERROR("Shader::AddStage of shader \"{0}\" called with invalid stage enum: {1}.\nShould be one of: "
+		SIBOX_ERROR("Shader::AddStage of shader \"{0}\" called with invalid stage enum: {1}.\nShould be one of: "
 		           "GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_TESS_EVALUATION_SHADER, GL_TESS_CONTROL_SHADER, GL_COMPUTE_SHADER",
 		           m_Name, stage);
 		return -1;
@@ -44,7 +44,7 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 
 	if (length == 0)
 	{
-		PAPI_ERROR(
+		SIBOX_ERROR(
 			"Shader::AddStage of shader \"{0}\" called with invalid source: {1}. The source file did not begin with a #version.",
 			m_Name, source);
 		return -1;
@@ -60,7 +60,7 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 		GLsizei       logLength = 0;
 		static GLchar message[1024];
 		glGetShaderInfoLog(shaderID, 1024, &logLength, message);
-		PAPI_ERROR_NO_NEWLINE("In shader {0}, failed to compile {1}: {2}", m_Name, GetShaderTypeString(stage),
+		SIBOX_ERROR_NO_NEWLINE("In shader {0}, failed to compile {1}: {2}", m_Name, GetShaderTypeString(stage),
 		                      std::string_view(&message[0], logLength));
 		glDeleteShader(shaderID);
 		return -1;
@@ -75,7 +75,7 @@ int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
 {
 	if (m_IsComplete)
 	{
-		PAPI_ERROR("In shader \"{0}\", attempting to add a stage to a linked shader!", m_Name);
+		SIBOX_ERROR("In shader \"{0}\", attempting to add a stage to a linked shader!", m_Name);
 		return -1;
 	}
 
@@ -83,7 +83,7 @@ int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
 	std::ifstream sourceFile(source.data());
 	if (!sourceFile.good())
 	{
-		PAPI_ERROR("Failed to open shader source \"{0}\"", source);
+		SIBOX_ERROR("Failed to open shader source \"{0}\"", source);
 		return -1;
 	}
 	std::stringstream buffer;
@@ -124,7 +124,7 @@ int32_t Shader::LinkProgram()
 		glGetProgramiv(m_ProgramID, GL_INFO_LOG_LENGTH, &logLength);
 		std::vector<char> infoLog(logLength);
 		glGetProgramInfoLog(m_ProgramID, logLength, &logLength, infoLog.data());
-		PAPI_ERROR("Failed to link shader {0}: {1}", m_Name, infoLog.data());
+		SIBOX_ERROR("Failed to link shader {0}: {1}", m_Name, infoLog.data());
 
 		// Clean up
 		for (const int32_t shaderID : m_ShaderStages)
@@ -136,7 +136,7 @@ int32_t Shader::LinkProgram()
 		return -1;
 	}
 
-	PAPI_INFO("Created shader program {0}!", m_Name);
+	SIBOX_INFO("Created shader program {0}!", m_Name);
 
 	// Clean up by detaching
 	for (const int32_t shaderID : m_ShaderStages)
@@ -155,7 +155,7 @@ int32_t Shader::LinkProgram()
 
 void Shader::Bind() const
 {
-	PAPI_ASSERT(m_ProgramID != 0 && "Attempting to bind to invalid shader (invalid program ID)");
+	SIBOX_ASSERT(m_ProgramID != 0 && "Attempting to bind to invalid shader (invalid program ID)");
 	glUseProgram(m_ProgramID);
 	if (m_TwoSided)
 		glDisable(GL_CULL_FACE);
@@ -216,7 +216,7 @@ int Shader::GetUniformLocation(std::string_view uniformName)
 	{
 		int location = glGetUniformLocation(m_ProgramID, uniformName.data());
 		if (location == -1)
-			PAPI_WARN("Uniform \"{0}\" not found in shader \"{1}\"", uniformName, m_Name);
+			SIBOX_WARN("Uniform \"{0}\" not found in shader \"{1}\"", uniformName, m_Name);
 		m_UniformLocations[std::string(uniformName)] = location;
 		return location;
 	}
@@ -230,7 +230,7 @@ int Shader::GetUniformLocation(std::string_view uniformName) const
 	{
 		int location = glGetUniformLocation(m_ProgramID, uniformName.data());
 		if (location == -1)
-			PAPI_WARN("Uniform \"{0}\" not found in shader \"{1}\"", uniformName, m_Name);
+			SIBOX_WARN("Uniform \"{0}\" not found in shader \"{1}\"", uniformName, m_Name);
 		return location;
 	}
 	return pos->second;

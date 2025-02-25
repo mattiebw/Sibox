@@ -28,7 +28,7 @@ inline const char* NetworkTypeToString(NetworkType networkType)
         case NetworkType::ListenServer: return "Listen Server";
     }
 
-    PAPI_ASSERT(false && "Unknown network type");
+    SIBOX_ASSERT(false && "Unknown network type");
     return "Unknown";
 }
 
@@ -41,6 +41,6 @@ inline const char* EntityNetworkTypeToString(EntityNetworkType entityNetworkType
         case EntityNetworkType::RemoteProxy: return "Remote Proxy";
     }
 
-    PAPI_ASSERT(false && "Unknown entity network type");
+    SIBOX_ASSERT(false && "Unknown entity network type");
     return "Unknown";
 }
