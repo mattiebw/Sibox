@@ -40,68 +40,133 @@ void AddSinkToLog(const spdlog::sink_ptr &sink);
 	#define SIBOX_CRITICAL_NO_NEWLINE(format, ...)  
 #endif
 
+// template <>
+// class fmt::formatter<glm::ivec2>
+// {
+// public:
+// 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+//
+// 	template <typename Context>
+// 	constexpr auto format(const glm::ivec2 &vec, Context &ctx) const
+// 	{
+// 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+// 	}
+// };
+//
+// template <>
+// class fmt::formatter<glm::ivec3>
+// {
+// public:
+// 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+//
+// 	template <typename Context>
+// 	constexpr auto format(const glm::ivec3 &vec, Context &ctx) const
+// 	{
+// 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
+// 	}
+// };
+//
+// template <>
+// class fmt::formatter<glm::vec2>
+// {
+// public:
+// 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+//
+// 	template <typename Context>
+// 	constexpr auto format(const glm::vec2 &vec, Context &ctx) const
+// 	{
+// 		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+// 	}
+// };
+//
+// template <>
+// class fmt::formatter<glm::vec3>
+// {
+// public:
+// 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+//
+// 	template <typename Context>
+// 	constexpr auto format(const glm::vec3 &vec, Context &ctx) const
+// 	{
+// 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
+// 	}
+// };
+//
+// template <>
+// class fmt::formatter<glm::vec4>
+// {
+// public:
+// 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
+//
+// 	template <typename Context>
+// 	constexpr auto format(const glm::vec4 &vec, Context &ctx) const
+// 	{
+// 		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", vec.x, vec.y, vec.z, vec.w);
+// 	}
+// };
+
 template <>
-class fmt::formatter<glm::ivec2>
+class fmt::formatter<Vector2i>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const glm::ivec2 &vec, Context &ctx) const
+	constexpr auto format(const Vector2i &vec, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+		return fmt::format_to(ctx.out(), "({}, {})", vec.X, vec.Y);
 	}
 };
 
 template <>
-class fmt::formatter<glm::ivec3>
+class fmt::formatter<Vector3i>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const glm::ivec3 &vec, Context &ctx) const
+	constexpr auto format(const Vector3i &vec, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
+		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.X, vec.Y, vec.Z);
 	}
 };
 
 template <>
-class fmt::formatter<glm::vec2>
+class fmt::formatter<Vector2f>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const glm::vec2 &vec, Context &ctx) const
+	constexpr auto format(const Vector2f &vec, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {})", vec.x, vec.y);
+		return fmt::format_to(ctx.out(), "({}, {})", vec.X, vec.Y);
 	}
 };
 
 template <>
-class fmt::formatter<glm::vec3>
+class fmt::formatter<Vector3f>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const glm::vec3 &vec, Context &ctx) const
+	constexpr auto format(const Vector3f &vec, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.x, vec.y, vec.z);
+		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.X, vec.Y, vec.Z);
 	}
 };
 
 template <>
-class fmt::formatter<glm::vec4>
+class fmt::formatter<Vector4f>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const glm::vec4 &vec, Context &ctx) const
+	constexpr auto format(const Vector4f &vec, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", vec.x, vec.y, vec.z, vec.w);
+		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", vec.X, vec.Y, vec.Z, vec.W);
 	}
 };
 

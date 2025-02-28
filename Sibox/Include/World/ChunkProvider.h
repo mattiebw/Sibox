@@ -23,17 +23,3 @@ class NullChunkProvider : public ChunkProvider
 		return 0;
 	}
 };
-
-class DefaultChunkProvider : public ChunkProvider
-{
-public:
-	DefaultChunkProvider();
-	
-	uint16_t GetTileAt(int x, int y) const override;
-
-private:
-	FastNoiseLite PNoise_1;
-	FastNoiseLite PNoise_2;
-	FastNoiseLite CNoise_1;
-	FastNoiseLite CNoise_2;
-};

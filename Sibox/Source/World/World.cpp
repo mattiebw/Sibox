@@ -10,28 +10,6 @@
 
 World::World()
 {
-	// TextureSpecification spec;
-	// spec.MagFilter                  = FilterMode::Nearest;
-	// spec.MinFilter                  = FilterMode::Nearest;
-	// spec.Wrap                       = WrapMode::ClampToEdge;
-	// spec.FlipVertically             = false;
-	// Ref<Texture> spritesheetTexture = CreateRef<Texture>("Content/Textures/TerrainSpritesheet.png", spec);
-	//
-	// Ref<SpriteSheet> spritesheet = CreateRef<SpriteSheet>(spritesheetTexture);
-	// spritesheet->CreateTilesFromTileSize(16, 16);
-	// Ref<TileSet> tileset = CreateRef<TileSet>(spritesheet);
-	// tileset->AddTile({0, false});  // Grass
-	// tileset->AddTile({10, false}); // Flower Grass
-	// tileset->AddTile({9, true});   // Stone
-	// tileset->AddTile({8, false});  // Stone Floor
-	// m_TileMap    = CreateRef<TileMap>(tileset);
-	// m_TileMap->Z = -10;
-	//
-	// for (int y = 0; y < 32; y++)
-	// {
-	// 	for (int x = 0; x < 32; x++)
-	// 		m_TileMap->SetTile(x, y, Random::Int(0, 4));
-	// }
 }
 
 void World::UpdateEntityUUID(UUID oldID, UUID newID)

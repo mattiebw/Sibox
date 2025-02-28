@@ -171,18 +171,18 @@ constexpr uint16_t crc16(std::string_view str)
 	return crc ^ 0xffff;
 }
 
-namespace std
-{
-	template <>
-	struct hash<glm::ivec2>
-	{
-		std::size_t operator()(const glm::ivec2 &v) const
-		{
-			// Combine the two integers (x, y) into a single hash value.
-			// Use a prime number multiplier for better distribution.
-			size_t h1 = std::hash<int>{}(v.x);
-			size_t h2 = std::hash<int>{}(v.y);
-			return h1 ^ (h2 << 1); // Combine the two hash values
-		}
-	};
-}
+// namespace std
+// {
+// 	template <>
+// 	struct hash<glm::ivec2>
+// 	{
+// 		std::size_t operator()(const glm::ivec2 &v) const
+// 		{
+// 			// Combine the two integers (x, y) into a single hash value.
+// 			// Use a prime number multiplier for better distribution.
+// 			size_t h1 = std::hash<int>{}(v.x);
+// 			size_t h2 = std::hash<int>{}(v.y);
+// 			return h1 ^ (h2 << 1); // Combine the two hash values
+// 		}
+// 	};
+// }

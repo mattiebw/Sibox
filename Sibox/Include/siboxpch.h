@@ -35,6 +35,8 @@
 // Core project includes
 #include <SDL3/SDL_assert.h>
 #include "Core/SiboxCore.h"
+#include "Math/Vector.h"
+#include "Math/Matrix.h"
 #include "Core/SiboxLog.h"
 #include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
