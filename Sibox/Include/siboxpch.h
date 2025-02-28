@@ -18,10 +18,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-// GLM
-#include <glm/glm.hpp>
-#include "glm/gtc/type_ptr.hpp"
-
 // GLAD
 #include <Vendor/glad/gl.h>
 

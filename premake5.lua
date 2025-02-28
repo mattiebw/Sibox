@@ -53,7 +53,7 @@ project "Sibox"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.SDL}",
 		"%{IncludeDir.imgui}",
-		"%{IncludeDir.glm}",
+		-- "%{IncludeDir.glm}",
 		"%{IncludeDir.stb}",
 		"%{IncludeDir.msdfgen}",
 		"Sibox/Vendor/msdfgen-custom/",
