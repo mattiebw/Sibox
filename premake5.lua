@@ -15,6 +15,7 @@ IncludeDir["glm"] = "Sibox/Vendor/glm/Include"
 IncludeDir["stb"] = "Sibox/Vendor/stb"
 IncludeDir["steamworks"] = "Sibox/Vendor/Steamworks/Include"
 IncludeDir["fmod"] = "Sibox/Vendor/FMOD/Include"
+IncludeDir["entt"] = "Sibox/Vendor/entt"
 
 group "Vendor"
 include "Sibox/Vendor/imgui.lua"
@@ -59,6 +60,7 @@ project "Sibox"
 		"%{IncludeDir.msdfatlasgen}",
 		"%{IncludeDir.steamworks}",
 		"%{IncludeDir.fmod}",
+		"%{IncludeDir.entt}",
 
 		"Sibox/Include"
 	}

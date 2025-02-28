@@ -33,6 +33,9 @@
 #include <imgui.h>
 #endif
 
+// entt
+#include <entt.hpp>
+
 // Core project includes
 #include <SDL3/SDL_assert.h>
 #include "Core/SiboxCore.h"
