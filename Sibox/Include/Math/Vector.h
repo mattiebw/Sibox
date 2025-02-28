@@ -67,6 +67,23 @@ public:
     {
         return sqrtf(LengthSquared());
     }
+
+    FORCEINLINE void Normalize()
+    {
+        this /= Length();
+    }
+
+    NODISCARD FORCEINLINE Vector2 Normalized() const
+    {
+        return *this / Length();
+    }
+    
+    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
+    NODISCARD FORCEINLINE float Dot(const Vector2 &other) const
+    {
+        return (X * other.X)
+            + (Y * other.Y);
+    }
 };
 
 template<typename T>
@@ -81,6 +98,10 @@ public:
 
     Vector3(T x, T y, T z)
         : X(x), Y(y), Z(z)
+    { }
+
+    Vector3(Vector2<T> xy, T z)
+        : X(xy.X), Y(xy.Y), Z(z)
     { }
 
     Vector3 operator+(const Vector3 &other) const
@@ -140,6 +161,24 @@ public:
     {
         return sqrtf(LengthSquared());
     }
+
+    FORCEINLINE void Normalize()
+    {
+        this /= Length();
+    }
+
+    NODISCARD FORCEINLINE Vector3 Normalized() const
+    {
+        return *this / Length();
+    }
+    
+    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
+    NODISCARD FORCEINLINE float Dot(const Vector3 &other) const
+    {
+        return (X * other.X)
+            + (Y * other.Y)
+            + (Z * other.Z);
+    }
 };
 
 template<typename T>
@@ -154,6 +193,18 @@ public:
 
     Vector4(T x, T y, T z, T w)
         : X(x), Y(y), Z(z), W(w)
+    { }
+    
+    Vector4(Vector2<T> xy, T z, T w)
+        : X(xy.X), Y(xy.Y), Z(z), W(w)
+    { }
+
+    Vector4(Vector2<T> xy, Vector2<T> zw)
+        : X(xy.X), Y(xy.Y), Z(zw.X), W(zw.Y)
+    { }
+    
+    Vector4(Vector3<T> xyz, T w)
+        : X(xyz.X), Y(xyz.Y), Z(xyz.Z), W(w)
     { }
 
     Vector4 operator+(const Vector4 &other) const
@@ -216,6 +267,25 @@ public:
     NODISCARD FORCEINLINE float Length() const
     {
         return sqrtf(LengthSquared());
+    }
+
+    FORCEINLINE void Normalize()
+    {
+        this /= Length();
+    }
+
+    NODISCARD FORCEINLINE Vector4 Normalized() const
+    {
+        return *this / Length();
+    }
+
+    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
+    NODISCARD FORCEINLINE float Dot(const Vector4 &other) const
+    {
+        return (X * other.X)
+            + (Y * other.Y)
+            + (Z * other.Z)
+            + (W * other.W);
     }
 };
 
