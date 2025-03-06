@@ -29,9 +29,19 @@ public:
         return { X * other.X, Y * other.Y };
     }
 
+    Vector2 operator*(T scalar) const
+    {
+        return { X * scalar, Y * scalar };
+    }
+
     Vector2 operator/(const Vector2 &other) const
     {
         return { X / other.X, Y / other.Y };
+    }
+
+    Vector2 operator/(T scalar) const
+    {
+        return { X / scalar, Y / scalar };
     }
 
     void operator+=(const Vector2 &other)
@@ -52,10 +62,22 @@ public:
         Y *= other.Y;
     }
 
+    void operator*=(T scalar)
+    {
+        X *= scalar;
+        Y *= scalar;
+    }
+
     void operator/=(const Vector2 &other)
     {
         X /= other.X;
         Y /= other.Y;
+    }
+
+    void operator/=(T scalar)
+    {
+        X /= scalar;
+        Y /= scalar;
     }
 
     NODISCARD FORCEINLINE float LengthSquared() const
@@ -83,6 +105,16 @@ public:
     {
         return (X * other.X)
             + (Y * other.Y);
+    }
+
+    FORCEINLINE float DistanceSquared(const Vector2 &other) const
+    {
+        return (*this - other).LengthSquared();
+    }
+    
+    FORCEINLINE float Distance(const Vector2 &other) const
+    {
+        return (*this - other).Length();
     }
 };
 
@@ -119,9 +151,19 @@ public:
         return { X * other.X, Y * other.Y, Z * other.Z };
     }
 
+    Vector3 operator*(T scalar) const
+    {
+        return { X * scalar, Y * scalar, Z * scalar };
+    }
+
     Vector3 operator/(const Vector3 &other) const
     {
         return { X / other.X, Y / other.Y, Z / other.Z };
+    }
+
+    Vector3 operator/(T scalar) const
+    {
+        return { X / scalar, Y / scalar, Z / scalar };
     }
     
     void operator+=(const Vector3 &other)
@@ -145,11 +187,25 @@ public:
         Z *= other.Z;
     }
 
+    void operator*=(T scalar)
+    {
+        X *= scalar;
+        Y *= scalar;
+        Z *= scalar;
+    }
+
     void operator/=(const Vector3 &other)
     {
         X /= other.X;
         Y /= other.Y;
         Z /= other.Z;
+    }
+
+    void operator/=(T scalar)
+    {
+        X /= scalar;
+        Y /= scalar;
+        Z /= scalar;
     }
     
     NODISCARD FORCEINLINE float LengthSquared() const
@@ -178,6 +234,16 @@ public:
         return (X * other.X)
             + (Y * other.Y)
             + (Z * other.Z);
+    }
+    
+    FORCEINLINE float DistanceSquared(const Vector3 &other) const
+    {
+        return (*this - other).LengthSquared();
+    }
+    
+    FORCEINLINE float Distance(const Vector3 &other) const
+    {
+        return (*this - other).Length();
     }
 };
 
@@ -222,9 +288,19 @@ public:
         return { X * other.X, Y * other.Y, Z * other.Z, W * other.W };
     }
 
+    Vector4 operator*(T scalar) const
+    {
+        return { X * scalar, Y * scalar, Z * scalar, W * scalar };
+    }
+
     Vector4 operator/(const Vector4 &other) const
     {
         return { X / other.X, Y / other.Y, Z / other.Z, W / other.W };
+    }
+
+    Vector4 operator/(T scalar) const
+    {
+        return { X / scalar, Y / scalar, Z / scalar, W / scalar };
     }
     
     void operator+=(const Vector4 &other)
@@ -251,12 +327,28 @@ public:
         W *= other.W;
     }
 
+    void operator*=(T scalar)
+    {
+        X *= scalar;
+        Y *= scalar;
+        Z *= scalar;
+        W *= scalar;
+    }
+
     void operator/=(const Vector4 &other)
     {
         X /= other.X;
         Y /= other.Y;
         Z /= other.Z;
         W /= other.W;
+    }
+
+    void operator/=(T scalar)
+    {
+        X /= scalar;
+        Y /= scalar;
+        Z /= scalar;
+        W /= scalar;
     }
     
     NODISCARD FORCEINLINE float LengthSquared() const
@@ -286,6 +378,16 @@ public:
             + (Y * other.Y)
             + (Z * other.Z)
             + (W * other.W);
+    }
+    
+    FORCEINLINE float DistanceSquared(const Vector4 &other) const
+    {
+        return (*this - other).LengthSquared();
+    }
+    
+    FORCEINLINE float Distance(const Vector4 &other) const
+    {
+        return (*this - other).Length();
     }
 };
 
