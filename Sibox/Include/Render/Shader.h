@@ -37,16 +37,16 @@ public:
 	void SetUniform1f(std::string_view uniformName, float value) const;
 	void SetUniform2f(std::string_view uniformName, float x, float y) const;
 	void SetUniform2i(std::string_view uniformName, int x, int y) const;
-	void SetUniformVec2(std::string_view uniformName, const glm::vec2 &vec) const;
-	void SetUniformIVec2(std::string_view uniformName, const glm::ivec2 &vec) const;
+	void SetUniformVec2(std::string_view uniformName, const Vector2F &vec) const;
+	void SetUniformIVec2(std::string_view uniformName, const Vector2I &vec) const;
 	void SetUniform3f(std::string_view uniformName, float x, float y, float z) const;
 	void SetUniform3i(std::string_view uniformName, int x, int y, int z) const;
-	void SetUniformVec3(std::string_view uniformName, const glm::vec3 &vec) const;
-	void SetUniformIVec3(std::string_view uniformName, const glm::ivec3 &vec) const;
+	void SetUniformVec3(std::string_view uniformName, const Vector3F &vec) const;
+	void SetUniformIVec3(std::string_view uniformName, const Vector3I &vec) const;
 	void SetUniform4f(std::string_view uniformName, float x, float y, float z, float w) const;
-	void SetUniformVec4(std::string_view uniformName, const glm::vec4 &vec) const;
-	void SetUniformMatrix3f(std::string_view uniformName, const glm::mat3 &vec) const;
-	void SetUniformMatrix4f(std::string_view uniformName, const glm::mat4 &matrix) const;
+	void SetUniformVec4(std::string_view uniformName, const Vector4F &vec) const;
+	void SetUniformMatrix3f(std::string_view uniformName, const Matrix3x3F &matrix) const;
+	void SetUniformMatrix4f(std::string_view uniformName, const Matrix4x4F &matrix) const;
 
 	[[nodiscard]] FORCEINLINE bool IsTwoSided() const { return m_TwoSided; }
 	void                           SetTwoSided(bool twoSided);

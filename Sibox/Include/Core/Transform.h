@@ -4,24 +4,24 @@
 
 struct Transform
 {
-	FORCEINLINE void Translate(Vector3f translation) { Position += translation; }
-	FORCEINLINE void Rotate(Vector3f rotation) { Rotation += rotation; }
-	FORCEINLINE void AddScale(Vector3f scale) { Scale += scale; }
-	FORCEINLINE void ScaleBy(Vector3f scale) { Scale *= scale; }
+	FORCEINLINE void Translate(Vector3F translation) { Position += translation; }
+	FORCEINLINE void Rotate(Vector3F rotation) { Rotation += rotation; }
+	FORCEINLINE void AddScale(Vector3F scale) { Scale += scale; }
+	FORCEINLINE void ScaleBy(Vector3F scale) { Scale *= scale; }
 
-	FORCEINLINE glm::mat4 GetTransformationMatrix() const
+	FORCEINLINE Matrix4x4F GetTransformationMatrix() const
 	{
 		return MathUtil::CreateTransformationMatrix(Position, Rotation, Scale);
 	}
 
 	Transform() = default;
 
-	Transform(const Vector3f &position)
+	Transform(const Vector3F &position)
 		: Position(position)
 	{
 	}
 
-	Transform(const Vector3f &position, const Vector3f &rotation, const Vector3f &scale)
+	Transform(const Vector3F &position, const Vector3F &rotation, const Vector3F &scale)
 		: Position(position), Rotation(rotation), Scale(scale)
 	{
 	}
@@ -33,7 +33,7 @@ struct Transform
 	FORCEINLINE Transform& operator=(const Transform &other)     = default;
 	FORCEINLINE Transform& operator=(Transform &&other) noexcept = default;
 
-	Vector3f Position = Vector3f(0.0f);
-	Vector3f Rotation = Vector3f(0.0f);
-	Vector3f Scale    = Vector3f(1.0f);
+	Vector3F Position = Vector3F(0.0f);
+	Vector3F Rotation = Vector3F(0.0f);
+	Vector3F Scale    = Vector3F(1.0f);
 };

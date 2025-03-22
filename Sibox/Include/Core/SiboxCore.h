@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+// I usually go for PascalCase for types, but I want lowercase for the number typedefs, so we'll just disable this inspection in this file.
+// ReSharper disable CppInconsistentNaming
+
 // Preprocessor Definitions
 #define PROP(x) x // Usage PROP()
 #define FUNC(x) x // Usage: FUNC(glm::vec2 GetPositionOfEntity(UUID entityID));
@@ -65,6 +68,23 @@ char (* RtlpNumberOf(UNALIGNED T (&)[N]))[N];
 
 // Basic swap macro
 #define SIBOX_SWAP(IntermediateType, a, b) do { IntermediateType t = a; (a) = b; (b) = t; } while (0)
+
+using u8  = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+
+using s8  = int8_t;
+using s16 = int16_t;
+using s32 = int32_t;
+using s64 = int64_t;
+using i8  = int8_t; // Should we have both?
+using i16 = int16_t;
+using i32 = int32_t;
+using i64 = int64_t;
+
+using f32 = float;
+using f64 = double;
 
 template <typename T>
 using Scope = std::unique_ptr<T>;
@@ -155,34 +175,18 @@ struct crcf<c, 0>
 
 constexpr unsigned crc_table[] = {CRCA(0)}; // Rider doesn't like this, but it compiles fine!
 
-constexpr uint32_t crc32(std::string_view str)
+constexpr u32 crc32(std::string_view str)
 {
-	uint32_t crc = 0xffffffff;
+	u32 crc = 0xffffffff;
 	for (auto c : str)
 		crc = (crc >> 8) ^ crc_table[(crc ^ c) & 0xff];
 	return crc ^ 0xffffffff;
 }
 
-constexpr uint16_t crc16(std::string_view str)
+constexpr u16 crc16(std::string_view str)
 {
-	uint16_t crc = 0xffff;
+	u16 crc = 0xffff;
 	for (auto c : str)
 		crc = (crc >> 8) ^ crc_table[(crc ^ c) & 0xff];
 	return crc ^ 0xffff;
 }
-
-// namespace std
-// {
-// 	template <>
-// 	struct hash<glm::ivec2>
-// 	{
-// 		std::size_t operator()(const glm::ivec2 &v) const
-// 		{
-// 			// Combine the two integers (x, y) into a single hash value.
-// 			// Use a prime number multiplier for better distribution.
-// 			size_t h1 = std::hash<int>{}(v.x);
-// 			size_t h2 = std::hash<int>{}(v.y);
-// 			return h1 ^ (h2 << 1); // Combine the two hash values
-// 		}
-// 	};
-// }

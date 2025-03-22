@@ -7,38 +7,42 @@ class TileMap;
 
 struct TileShaderData
 {
-	glm::vec2 TopLeftTexCoord;
-	float     Rot = 0;
+	Vector2F TopLeftTexCoord;
+	f32      Rot = 0;
 };
 
 class TileMapChunk
 {
 public:
 	TileMapChunk();
-	TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 size = {32, 32});
+	TileMapChunk(TileMap *tileMap, Vector2I position, Vector2I size = {32, 32});
 	~TileMapChunk();
 	TileMapChunk(const TileMapChunk &other)                = delete;
 	TileMapChunk(TileMapChunk &&other) noexcept            = delete;
 	TileMapChunk& operator=(const TileMapChunk &other)     = delete;
 	TileMapChunk& operator=(TileMapChunk &&other) noexcept = delete;
 
-	NODISCARD FORCEINLINE glm::ivec2              GetSize() const { return m_Size; }
-	NODISCARD FORCEINLINE glm::ivec2              GetPosition() const { return m_Position; }
+	NODISCARD FORCEINLINE Vector2I                GetSize() const { return m_Size; }
+	NODISCARD FORCEINLINE Vector2I                GetPosition() const { return m_Position; }
 	NODISCARD FORCEINLINE TileMap*                GetTileMap() const { return m_TileMap; }
 	NODISCARD FORCEINLINE const Ref<VertexArray>& GetVertexArray() const { return m_VertexArray; }
-	NODISCARD FORCEINLINE FRect                   GetBounds() const { return FRect(m_Position, m_Size); }
+	NODISCARD FORCEINLINE RectF                   GetBounds() const
+	{
+		return RectF(static_cast<f32>(m_Position.X), static_cast<f32>(m_Position.Y), static_cast<f32>(m_Size.X),
+		             static_cast<f32>(m_Size.Y));
+	}
 
-	NODISCARD FORCEINLINE uint32_t GetTile(int x, int y) const { return m_Tiles[y * m_Size.x + x]; }
-	NODISCARD TileData&            GetTileDataForTile(int x, int y) const;
-	void                           SetTile(int x, int y, uint32_t tile);
+	NODISCARD FORCEINLINE u32 GetTile(s32 x, s32 y) const { return m_Tiles[y * m_Size.X + x]; }
+	NODISCARD TileData&       GetTileDataForTile(s32 x, s32 y) const;
+	void                      SetTile(s32 x, s32 y, u32 tile);
 
 	void UpdateTileData();
 
 protected:
 	// Position is the top-left corner of the chunk in world space. Size is the size of the chunk in tiles.
-	glm::ivec2 m_Position, m_Size;
-	uint32_t * m_Tiles;
-	bool       m_DataDirty = true;
+	Vector2I m_Position, m_Size;
+	u32 *    m_Tiles;
+	bool     m_DataDirty = true;
 
 	Ref<VertexArray>  m_VertexArray;
 	Ref<VertexBuffer> m_TileDataBuffer;

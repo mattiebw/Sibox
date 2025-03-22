@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-enum class WrapMode
+#include "Core/SiboxCore.h"
+
+enum class WrapMode : u16
 {
 	Repeat         = 0x2901, // GL_REPEAT
 	MirroredRepeat = 0x8370, // GL_MIRRORED_REPEAT
@@ -8,13 +10,13 @@ enum class WrapMode
 	ClampToBorder  = 0x812D, // GL_CLAMP_TO_BORDER
 };
 
-enum class FilterMode
+enum class FilterMode : u16
 {
 	Nearest = 0x2600, // GL_NEAREST
 	Linear  = 0x2601, // GL_LINEAR
 };
 
-enum class TextureFormat
+enum class TextureFormat : u16
 {
 	RGBA8 = 0x8058, // GL_RGBA8
 	RGB8  = 0x8051, // GL_RGB8
@@ -66,6 +68,12 @@ public:
 	explicit Texture(const TextureSpecification &spec);
 	Texture(std::string_view filename, const TextureSpecification &spec = {});
 	~Texture();
+
+	// MW @todo: These should be implemented.
+	Texture(const Texture &)            = delete;
+	Texture &operator=(const Texture &) = delete;
+	Texture(Texture &&)                 = delete;
+	Texture &operator=(Texture &&)      = delete;
 
 	void SetData(const uint8_t *data);
 	void SetData(const Buffer &data);

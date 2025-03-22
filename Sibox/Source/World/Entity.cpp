@@ -21,7 +21,7 @@ Entity::Entity(std::string name, const Transform &tf, UUID uuid)
 {
 }
 
-Entity::Entity(std::string name, glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, UUID uuid)
+Entity::Entity(std::string name, Vector3F pos, Vector3F rot, Vector3F scale, UUID uuid)
 	: EntityTransform(pos, rot, scale), m_UUID(uuid), m_Name(std::move(name))
 {
 }

@@ -9,12 +9,6 @@
 #include "Render/Font.h"
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
-#include "Audio/AudioManager.h"
-
-namespace {
-	static SoundHandle footstepHandle;
-	static bool wasMoving = false;
-}
 
 void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
@@ -24,7 +18,7 @@ void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
 void Player::Created()
 {
 	m_Camera                            = CreateRef<Camera>();
-	m_Camera->Transformation.Position.z = 3;
+	m_Camera->Transformation.Position.Z = 3;
 
 	if (Application::Get()->HasFrontend())
 	{
@@ -54,95 +48,67 @@ void Player::Tick(double delta)
 
 	switch (m_EntityNetworkType)
 	{
-		case EntityNetworkType::LocalOnly:
-		case EntityNetworkType::RemoteOwned:
+	case EntityNetworkType::LocalOnly:
+	case EntityNetworkType::RemoteOwned:
+		{
+			Vector2F input(0.0f);
+			input.X -= Input::IsKeyDown(SIBOX_KEY_A) ? 1.0f : 0.0f;
+			input.X += Input::IsKeyDown(SIBOX_KEY_D) ? 1.0f : 0.0f;
+			input.Y -= Input::IsKeyDown(SIBOX_KEY_S) ? 1.0f : 0.0f;
+			input.Y += Input::IsKeyDown(SIBOX_KEY_W) ? 1.0f : 0.0f;
+
+			if (input.X != 0 || input.Y != 0)
 			{
-				glm::vec2 input(0.0f);
-				input.x -= Input::IsKeyDown(SIBOX_KEY_A) ? 1.0f : 0.0f;
-				input.x += Input::IsKeyDown(SIBOX_KEY_D) ? 1.0f : 0.0f;
-				input.y -= Input::IsKeyDown(SIBOX_KEY_S) ? 1.0f : 0.0f;
-				input.y += Input::IsKeyDown(SIBOX_KEY_W) ? 1.0f : 0.0f;
-
-				bool isMoving = (input.x != 0.0f || input.y != 0.0f);
-
-				if (!wasMoving && isMoving)
-				{
-					footstepHandle = AudioManager::PlaySound("event:/SFX/Footsteps");
-					footstepHandle.SetVolume(2.0f);
-				}
-
-				if (wasMoving && !isMoving)
-				{
-					footstepHandle.Pause(true);
-				}
-
-				wasMoving = isMoving;
-
-				if (input.x != 0 || input.y != 0)
-				{
-					input = normalize(input);
-					FRect collision(EntityTransform.Position.x - 0.45f, EntityTransform.Position.y - 0.45f, 0.9f, 0.9f);
-					collision.Position.x += input.x * static_cast<float>(delta) * 5.0f;
-					if (m_World->RectOverlapsAnySolidTile(collision))
-						collision.Position.x = EntityTransform.Position.x - 0.45f;
-					collision.Position.y += input.y * static_cast<float>(delta) * 5.0f;
-					if (m_World->RectOverlapsAnySolidTile(collision))
-						collision.Position.y = EntityTransform.Position.y - 0.45f;
-					EntityTransform.Position = glm::vec3(collision.Position.x + 0.45f, collision.Position.y + 0.45f,
-														 EntityTransform.Position.z);
-				}
+				input.Normalize();
+				RectF collision(EntityTransform.Position.X - 0.45f, EntityTransform.Position.Y - 0.45f, 0.9f, 0.9f);
+				collision.Position.X += input.X * static_cast<float>(delta) * 5.0f;
+				if (m_World->RectOverlapsAnySolidTile(collision))
+					collision.Position.X = EntityTransform.Position.X - 0.45f;
+				collision.Position.Y += input.Y * static_cast<float>(delta) * 5.0f;
+				if (m_World->RectOverlapsAnySolidTile(collision))
+					collision.Position.Y = EntityTransform.Position.Y - 0.45f;
+				EntityTransform.Position = Vector3F(collision.Position.X + 0.45f, collision.Position.Y + 0.45f,
+				                                    EntityTransform.Position.Z);
 			}
-			break;
-		default:
-			break;
+		}
+		break;
+	default:
+		break;
 	}
-	
-	bool pDown = Input::IsKeyDown(SIBOX_KEY_P);
-	bool bDown = Input::IsKeyDown(SIBOX_KEY_B);
-	if (pDown && !m_WasPDown)
-	{
-		AudioManager::PlayBackgroundMusic();
-	}
-	if (bDown && !m_WasBDown)
-	{
-		AudioManager::PlayPreviousMusic();
-	}
-	m_WasPDown = pDown;
-	m_WasBDown = bDown;
 
-	m_Camera->Transformation.Position.x = MathUtil::LerpSmooth(m_Camera->Transformation.Position.x,
-	                                                           EntityTransform.Position.x, 0.001f,
+	m_Camera->Transformation.Position.X = MathUtil::LerpSmooth(m_Camera->Transformation.Position.X,
+	                                                           EntityTransform.Position.X, 0.001f,
 	                                                           static_cast<float>(delta));
-	m_Camera->Transformation.Position.y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.y,
-	                                                           EntityTransform.Position.y, 0.001f,
+	m_Camera->Transformation.Position.Y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.Y,
+	                                                           EntityTransform.Position.Y, 0.001f,
 	                                                           static_cast<float>(delta));
 }
 
 void Player::Render()
 {
-	float sine = (glm::sin(m_Time) + 1) / 2;
-	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, glm::vec2(1.0f),
-	                                         glm::vec4(sine, sine, sine, 1.0f), m_Texture);
+	float sine = (sin(m_Time) + 1) / 2;
+	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, Vector2F(1.0f),
+	                                         Vector4F(sine, sine, sine, 1.0f), m_Texture);
 
 	// MW @todo: optimise, create a struct to wrap drawing a string allowing us to cache the measurement
 	// Stopwatch sw;
-	Transform tf   = EntityTransform;
-	tf.Position.y += .8f;
-	tf.Scale = glm::vec3(0.5, 0.5, 1.0);
+	Transform tf = EntityTransform;
+	tf.Position.Y += .8f;
+	tf.Scale                    = Vector3F(0.5, 0.5, 1.0);
 	FontMeasurement measurement = Font::GetDefaultFont()->MeasureString(Name, tf.Scale);
-	tf.Position.x -= measurement.Size.x / 2;
-	Application::GetTextRenderer().DrawString(Name, Font::GetDefaultFont(), tf.GetTransformationMatrix(), glm::vec4(1));
-	tf.Position.x += measurement.Size.x / 2;
-	tf.Position.y += measurement.Size.y / 2;
-	tf.Position += glm::vec3(measurement.Offset, 0);
-	tf.Scale = glm::vec3(measurement.Size + glm::vec2(0.1f, 0.1f), 1);
-	tf.Position.z -= 0.05f;
-	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), glm::vec4(1, 1, 1, .25));
+	tf.Position.X -= measurement.Size.X / 2;
+	Application::GetTextRenderer().DrawString(Name, Font::GetDefaultFont(), tf.GetTransformationMatrix(), Vector4F(1));
+	tf.Position.X += measurement.Size.X / 2;
+	tf.Position.Y += measurement.Size.Y / 2;
+	tf.Position += Vector3F(measurement.Offset, 0);
+	tf.Scale = Vector3F(measurement.Size + Vector2F(0.1f, 0.1f), 1);
+	tf.Position.Z -= 0.05f;
+	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), Vector4F(1, 1, 1, .25));
 	// sw.End();
 	// SIBOX_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
 
 	// auto rect = m_Camera->GetCameraRect();
-	// rect.Position += glm::vec2(0.1f, 0.1f);
-	// rect.Size -= glm::vec2(0.2f, 0.2f);
-	// Application::GetQuadRenderer()->DrawQuad(glm::vec3(rect.GetCenter(), 1), rect.Size, glm::vec4(1, 0, 0, 0.5f));
+	// rect.Position += Vector2F(0.1f, 0.1f);
+	// rect.Size -= Vector2F(0.2f, 0.2f);
+	// Application::GetQuadRenderer()->DrawQuad(Vector3F(rect.GetCenter(), 1), rect.Size, Vector4F(1, 0, 0, 0.5f));
 }

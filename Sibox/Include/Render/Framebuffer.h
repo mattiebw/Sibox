@@ -27,9 +27,9 @@ struct FramebufferTexture
 
 struct FramebufferSpecification
 {
-	glm::ivec2 Size;
-	uint32_t   Samples         = 1;
-	bool       SwapChainTarget = false;
+	Vector2I Size;
+	uint32_t Samples         = 1;
+	bool     SwapChainTarget = false;
 
 	std::vector<FramebufferTexture> Attachments;
 };
@@ -42,8 +42,8 @@ public:
 
 	void Invalidate();
 
-	void Resize(uint32_t width, uint32_t height);
-	void Resize(glm::ivec2 size);
+	void Resize(s32 width, s32 height);
+	void Resize(Vector2I size);
 
 	NODISCARD int32_t ReadPixel(uint32_t attachmentIndex, int x, int y);
 	void              ClearColorAttachment(uint32_t attachmentIndex, int value);

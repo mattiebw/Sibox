@@ -13,20 +13,20 @@ TileMapChunk::TileMapChunk()
 {
 }
 
-TileMapChunk::TileMapChunk(TileMap *tileMap, glm::ivec2 position, glm::ivec2 size)
+TileMapChunk::TileMapChunk(TileMap *tileMap, Vector2I position, Vector2I size)
 	: m_Position(position), m_Size(size), m_TileMap(tileMap)
 {
-	m_Tiles          = new uint32_t[m_Size.x * m_Size.y];
-	memset(m_Tiles, 0, sizeof(uint32_t) * m_Size.x * m_Size.y);
+	m_Tiles          = new uint32_t[m_Size.X * m_Size.Y];
+	memset(m_Tiles, 0, sizeof(uint32_t) * m_Size.X * m_Size.Y);
 
 	if (!Application::Get()->HasFrontend())
 		return;
 	
-	m_TileShaderData = new TileShaderData[m_Size.x * m_Size.y];
-	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.x * m_Size.y);
+	m_TileShaderData = new TileShaderData[m_Size.X * m_Size.Y];
+	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.X * m_Size.Y);
 
 	// Our tile data buffer is just a contiguous buffer of vec2s, representing the top left texture coordinates of the tiles.
-	m_TileDataBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(sizeof(TileShaderData) * m_Size.x * m_Size.y),
+	m_TileDataBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(sizeof(TileShaderData) * m_Size.X * m_Size.Y),
 	                                           BufferUsageType::DynamicDraw);
 	m_TileDataBuffer->SetLayout(BufferLayout({
 		{"a_TexCoordTopLeft", ShaderDataType::Float2, 0, 1},
@@ -52,7 +52,7 @@ TileData& TileMapChunk::GetTileDataForTile(int x, int y) const
 
 void TileMapChunk::SetTile(int x, int y, uint32_t tile)
 {
-	int index                   = y * m_Size.x + x;
+	int index                   = y * m_Size.X + x;
 	m_Tiles[index]              = tile;
 	if (Application::Get()->HasFrontend())
 		m_TileShaderData[index].Rot = static_cast<float>(Random::Int(0, 4));
@@ -67,11 +67,11 @@ void TileMapChunk::UpdateTileData()
 	if (!m_DataDirty)
 		return;
 
-	for (int i = 0; i < m_Size.x * m_Size.y; i++)
+	for (int i = 0; i < m_Size.X * m_Size.Y; i++)
 	{
 		if (m_Tiles[i] == 0)
 		{
-			m_TileShaderData[i].TopLeftTexCoord = glm::vec2(-1.0f);
+			m_TileShaderData[i].TopLeftTexCoord = Vector2F(-1.0f);
 			continue;
 		}
 		
@@ -79,6 +79,6 @@ void TileMapChunk::UpdateTileData()
 		m_TileShaderData[i].TopLeftTexCoord = tile.TexCoordsMin;
 	}
 
-	m_TileDataBuffer->SetData(m_TileShaderData, static_cast<uint32_t>(m_Size.x * m_Size.y * sizeof(TileShaderData)));
+	m_TileDataBuffer->SetData(m_TileShaderData, static_cast<uint32_t>(m_Size.X * m_Size.Y * sizeof(TileShaderData)));
 	m_DataDirty = false;
 }

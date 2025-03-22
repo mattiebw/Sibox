@@ -4,8 +4,8 @@ class Texture;
 
 struct SpriteSheetSprite
 {
-	glm::vec2 TexCoordsMin;
-	glm::vec2 TexCoordsMax;
+	Vector2F TexCoordsMin;
+	Vector2F TexCoordsMax;
 };
 
 // MW @todo: redesign for animation?

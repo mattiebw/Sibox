@@ -260,14 +260,14 @@ void Shader::SetUniform2i(std::string_view uniformName, int x, int y) const
 	glUniform2i(GetUniformLocation(uniformName), x, y);
 }
 
-void Shader::SetUniformVec2(std::string_view uniformName, const glm::vec2 &vec) const
+void Shader::SetUniformVec2(std::string_view uniformName, const Vector2F &vec) const
 {
-	glUniform2f(GetUniformLocation(uniformName), vec.x, vec.y);
+	glUniform2f(GetUniformLocation(uniformName), vec.X, vec.Y);
 }
 
-void Shader::SetUniformIVec2(std::string_view uniformName, const glm::ivec2 &vec) const
+void Shader::SetUniformIVec2(std::string_view uniformName, const Vector2I &vec) const
 {
-	glUniform2i(GetUniformLocation(uniformName), vec.x, vec.y);
+	glUniform2i(GetUniformLocation(uniformName), vec.X, vec.Y);
 }
 
 void Shader::SetUniform3f(std::string_view uniformName, float x, float y, float z) const
@@ -280,14 +280,14 @@ void Shader::SetUniform3i(std::string_view uniformName, int x, int y, int z) con
 	glUniform3i(GetUniformLocation(uniformName), x, y, z);
 }
 
-void Shader::SetUniformVec3(std::string_view uniformName, const glm::vec3 &vec) const
+void Shader::SetUniformVec3(std::string_view uniformName, const Vector3F &vec) const
 {
-	glUniform3f(GetUniformLocation(uniformName), vec.x, vec.y, vec.z);
+	glUniform3f(GetUniformLocation(uniformName), vec.X, vec.Y, vec.Z);
 }
 
-void Shader::SetUniformIVec3(std::string_view uniformName, const glm::ivec3 &vec) const
+void Shader::SetUniformIVec3(std::string_view uniformName, const Vector3I &vec) const
 {
-	glUniform3i(GetUniformLocation(uniformName), vec.x, vec.y, vec.z);
+	glUniform3i(GetUniformLocation(uniformName), vec.X, vec.Y, vec.Z);
 }
 
 void Shader::SetUniform4f(std::string_view uniformName, float x, float y, float z, float w) const
@@ -295,19 +295,19 @@ void Shader::SetUniform4f(std::string_view uniformName, float x, float y, float 
 	glUniform4f(GetUniformLocation(uniformName), x, y, z, w);
 }
 
-void Shader::SetUniformVec4(std::string_view uniformName, const glm::vec4 &vec) const
+void Shader::SetUniformVec4(std::string_view uniformName, const Vector4F &vec) const
 {
-	glUniform4f(GetUniformLocation(uniformName), vec.x, vec.y, vec.z, vec.w);
+	glUniform4f(GetUniformLocation(uniformName), vec.X, vec.Y, vec.Z, vec.W);
 }
 
-void Shader::SetUniformMatrix3f(std::string_view uniformName, const glm::mat3 &vec) const
+void Shader::SetUniformMatrix3f(std::string_view uniformName, const Matrix3x3F &matrix) const
 {
-	glUniformMatrix3fv(GetUniformLocation(uniformName), 1, GL_FALSE, value_ptr(vec));
+	glUniformMatrix3fv(GetUniformLocation(uniformName), 1, GL_FALSE, matrix.Data());
 }
 
-void Shader::SetUniformMatrix4f(std::string_view uniformName, const glm::mat4 &matrix) const
+void Shader::SetUniformMatrix4f(std::string_view uniformName, const Matrix4x4F &matrix) const
 {
-	glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, value_ptr(matrix));
+	glUniformMatrix4fv(GetUniformLocation(uniformName), 1, GL_FALSE, matrix.Data());
 }
 
 void Shader::SetTwoSided(bool twoSided)

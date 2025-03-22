@@ -27,7 +27,7 @@ void SiboxLayer::OnAttach()
 	tilemap->Z = -10;
 	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
 
-	m_TextTransform.Position.z = -0.05f;
+	m_TextTransform.Position.Z = -0.05f;
 }
 
 void SiboxLayer::OnDetach()
@@ -49,7 +49,7 @@ void SiboxLayer::RenderImGUI(double delta)
 {
 	ImGui::Begin("Player Info");
 	ImGui::InputText("Player Name", &m_Player->Name);
-	ImGui::InputFloat2("Player Position", glm::value_ptr(m_Player->EntityTransform.Position));
+	ImGui::InputFloat2("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat("Camera Zoom", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.0f, 100.0f);
 	ImGui::End();
 }

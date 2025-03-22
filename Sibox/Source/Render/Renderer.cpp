@@ -21,16 +21,18 @@
 
 Viewport *Renderer::s_CurrentViewport = nullptr;
 
+// ReSharper disable CppClangTidyClangDiagnosticLanguageExtensionToken
+
 // This is to enable the high-performance GPU on systems with both integrated and dedicated GPUs.
 // MW @todo: This only works on Windows, and only with NVIDIA and AMD GPUs!
 #ifdef SIBOX_PLATFORM_WINDOWS
 extern "C" {
 _declspec(dllexport) DWORD NvOptimusEnablement                  = 1;
-_declspec(dllexport) int   AmdPowerXpressRequestHighPerformance = 1;
+_declspec(dllexport) s32   AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 
-void TextureSet::SetMaxSlots(int max)
+void TextureSet::SetMaxSlots(s32 max)
 {
 	m_MaxSlots = max;
 	m_TextureSlots.resize(max, nullptr);
@@ -38,23 +40,23 @@ void TextureSet::SetMaxSlots(int max)
 
 void TextureSet::BindTextures() const
 {
-	for (int i = 0; i < m_TextureSlotIndex; i++)
+	for (s32 i = 0; i < m_TextureSlotIndex; i++)
 		m_TextureSlots[i]->Activate(i);
 }
 
 void TextureSet::Reset()
 {
-	for (int i = 0; i < m_TextureSlotIndex; i++)
+	for (s32 i = 0; i < m_TextureSlotIndex; i++)
 		// Can't memset, as they're shared ptrs (so we need to run ref counting)
 		m_TextureSlots[i] = nullptr;
 	m_TextureSlotIndex = 0;
 }
 
-bool TextureSet::HasTexture(const Ref<Texture> &texture, int &index)
+bool TextureSet::HasTexture(const Ref<Texture> &texture, s32 &index) const
 {
 	if (!texture) return false;
 
-	for (int i = 0; i < m_TextureSlotIndex; i++)
+	for (s32 i = 0; i < m_TextureSlotIndex; i++)
 	{
 		if (m_TextureSlots[i] == texture)
 		{
@@ -66,11 +68,11 @@ bool TextureSet::HasTexture(const Ref<Texture> &texture, int &index)
 	return false;
 }
 
-int TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
+s32 TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
 {
 	if (!texture) return -1;
 
-	int index;
+	s32 index;
 	if (!HasTexture(texture, index))
 	{
 		if (m_TextureSlotIndex >= m_TextureSlots.size())
@@ -139,8 +141,8 @@ QuadBatch::~QuadBatch()
 	delete[] m_VertexBufferBase;
 }
 
-void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintColor, const glm::vec2 &texCoordMin,
-                         const glm::vec2 &texCoordMax, const Ref<Texture> &texture)
+void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &     tintColor, const Vector2F &texCoordMin,
+                         const Vector2F &texCoordMax, const Ref<Texture> &texture)
 {
 	if (m_IndicesCount >= m_MaxIndices)
 		Flush();
@@ -150,10 +152,10 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintC
 
 	for (size_t i = 0; i < 4; i++)
 	{
-		m_VertexBufferPtr->Position = transform * m_QuadPositions[i];
+		m_VertexBufferPtr->Position = static_cast<Vector3F>(transform * m_QuadPositions[i]);
 		m_VertexBufferPtr->Color    = tintColor;
 		m_VertexBufferPtr->TexCoord = {
-			i == 0 || i == 3 ? texCoordMin.x : texCoordMax.x, i == 0 || i == 1 ? texCoordMin.y : texCoordMax.y
+			i == 0 || i == 3 ? texCoordMin.X : texCoordMax.X, i == 0 || i == 1 ? texCoordMin.Y : texCoordMax.Y
 		};
 		m_VertexBufferPtr->TexIndex = static_cast<float>(textureIndex);
 		m_VertexBufferPtr++;
@@ -163,26 +165,26 @@ void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintC
 	m_Data->Stats.QuadCount++;
 }
 
-void QuadBatch::DrawQuad(const glm::mat4 &transform, const glm::vec4 &tintColor)
+void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &tintColor)
 {
 	DrawQuad(transform, tintColor, {0.0f, 0.0f}, {1.0f, 1.0f}, m_Data->WhiteTexture);
 }
 
-void QuadBatch::DrawQuad(const glm::vec3 &centerPosition, const glm::vec2 &size, const glm::vec2 &        texCoordMin,
-                         const glm::vec2 &texCoordMax, const glm::vec4 &   tintColor, const Ref<Texture> &texture)
+void QuadBatch::DrawQuad(const Vector3F &centerPosition, const Vector2F &size, const Vector2F &        texCoordMin,
+                         const Vector2F &texCoordMax, const Vector4F &   tintColor, const Ref<Texture> &texture)
 {
 	if (m_IndicesCount >= m_MaxIndices)
 		Flush();
 
 	int32_t textureIndex = m_Textures.FindOrAddTexture(texture);
 
-	glm::vec3 size3 = glm::vec3(size, 1.0f);
+	Vector3F size3 = Vector3F(size, 1.0f);
 	for (size_t i = 0; i < 4; i++)
 	{
 		m_VertexBufferPtr->Position = centerPosition + m_QuadPositions3[i] * size3;
 		m_VertexBufferPtr->Color    = tintColor;
 		m_VertexBufferPtr->TexCoord = {
-			i == 0 || i == 3 ? texCoordMin.x : texCoordMax.x, i == 0 || i == 1 ? texCoordMin.y : texCoordMax.y
+			i == 0 || i == 3 ? texCoordMin.X : texCoordMax.X, i == 0 || i == 1 ? texCoordMin.Y : texCoordMax.Y
 		};
 		m_VertexBufferPtr->TexIndex = static_cast<float>(textureIndex);
 		m_VertexBufferPtr++;
@@ -192,31 +194,31 @@ void QuadBatch::DrawQuad(const glm::vec3 &centerPosition, const glm::vec2 &size,
 	m_Data->Stats.QuadCount++;
 }
 
-void QuadBatch::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &tintColor)
+void QuadBatch::DrawQuad(const Vector3F &position, Vector2F size, const Vector4F &tintColor)
 {
 	DrawQuad(position, size, {0.0f, 0.0f}, {1.0f, 1.0f}, tintColor, m_Data->WhiteTexture);
 }
 
-void QuadBatch::DrawRectangle(const FRect &rect, const glm::vec4 &colour)
+void QuadBatch::DrawRectangle(const RectF &rect, const Vector4F &colour)
 {
-	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
-	         {rect.Size.x, rect.Size.y}, colour);
+	DrawQuad({rect.Position.X + rect.Size.X / 2.0f, rect.Position.Y + rect.Size.Y / 2.0f, 0.0f},
+	         {rect.Size.X, rect.Size.Y}, colour);
 }
 
-void QuadBatch::DrawRectangleLines(const FRect &rect, const glm::vec4 &colour, float thickness)
+void QuadBatch::DrawRectangleLines(const RectF &rect, const Vector4F &colour, float thickness)
 {
 	// Top
-	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y, 0.0f},
-	         {rect.Size.x, thickness}, colour);
+	DrawQuad({rect.Position.X + rect.Size.X / 2.0f, rect.Position.Y, 0.0f},
+	         {rect.Size.X, thickness}, colour);
 	// Bottom
-	DrawQuad({rect.Position.x + rect.Size.x / 2.0f, rect.Position.y + rect.Size.y, 0.0f},
-	         {rect.Size.x, thickness}, colour);
+	DrawQuad({rect.Position.X + rect.Size.X / 2.0f, rect.Position.Y + rect.Size.Y, 0.0f},
+	         {rect.Size.X, thickness}, colour);
 	// Left
-	DrawQuad({rect.Position.x, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
-	         {thickness, rect.Size.y}, colour);
+	DrawQuad({rect.Position.X, rect.Position.Y + rect.Size.Y / 2.0f, 0.0f},
+	         {thickness, rect.Size.Y}, colour);
 	// Right
-	DrawQuad({rect.Position.x + rect.Size.x, rect.Position.y + rect.Size.y / 2.0f, 0.0f},
-	         {thickness, rect.Size.y}, colour);
+	DrawQuad({rect.Position.X + rect.Size.X, rect.Position.Y + rect.Size.Y / 2.0f, 0.0f},
+	         {thickness, rect.Size.Y}, colour);
 }
 
 void QuadBatch::Flush()
@@ -233,7 +235,7 @@ void QuadBatch::Flush()
 	m_Shader->Bind();
 	Viewport *viewport = Renderer::GetCurrentViewport();
 	m_Shader->SetUniformMatrix4f("u_ViewProjection",
-	                             viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : glm::mat4(1.0f));
+	                             viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : Matrix4x4F(1.0f));
 
 	// Now let's bind our array and textures.
 	m_Textures.BindTextures();
@@ -263,14 +265,14 @@ void TilemapRenderer::Init(RendererData *data)
 	m_TilemapShader->LinkProgram();
 }
 
-void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileMapChunk *chunk) const
+void TilemapRenderer::DrawTileMapChunk(const Vector3F bottomLeftPosition, TileMapChunk *chunk) const
 {
 	// Set up our shader uniforms
 	m_TilemapShader->Bind();
 	if (Viewport *viewport = Renderer::GetCurrentViewport())
 		m_TilemapShader->SetUniformMatrix4f("uViewProjection", viewport->GetCamera()->GetOrthographicViewProjMatrix());
 	else
-		m_TilemapShader->SetUniformMatrix4f("uViewProjection", glm::mat4(1.0f));
+		m_TilemapShader->SetUniformMatrix4f("uViewProjection", Matrix4x4F(1.0f));
 	m_TilemapShader->SetUniformVec3("uPos", bottomLeftPosition);
 	m_TilemapShader->SetUniformIVec2("uChunkSize", chunk->GetSize());
 	// MW @todo: This is way too long!
@@ -283,23 +285,23 @@ void TilemapRenderer::DrawTileMapChunk(const glm::vec3 bottomLeftPosition, TileM
 	chunk->UpdateTileData();
 	chunk->GetVertexArray()->Bind();
 	glDrawElementsInstanced(GL_TRIANGLES, chunk->GetVertexArray()->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT,
-	                        nullptr, chunk->GetSize().x * chunk->GetSize().y);
+	                        nullptr, chunk->GetSize().X * chunk->GetSize().Y);
 	m_Data->Stats.DrawCalls++;
-	m_Data->Stats.TileCount += chunk->GetSize().x * chunk->GetSize().y;
+	m_Data->Stats.TileCount += chunk->GetSize().X * chunk->GetSize().Y;
 }
 
-void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation,
-                              const glm::vec4 &  colour)
+void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const Matrix4x4F &transformation,
+                              const Vector4F &  colour)
 {
 	const msdf_atlas::FontGeometry &fontGeo      = font->GetData()->FontGeo;
 	const msdfgen::FontMetrics &    metrics      = fontGeo.getMetrics();
 	const Ref<Texture> &            atlasTexture = font->GetAtlasTexture();
-	const int                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
+	const s32                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
 
 	float     fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
-	glm::vec2 pen(0, 0);
+	Vector2F pen(0, 0);
 
-	for (int i = 0; i < string.size(); i++)
+	for (s32 i = 0; i < string.size(); i++)
 	{
 		if (m_IndicesCount >= m_MaxIndices)
 			Flush();
@@ -308,13 +310,13 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 			continue;
 		if (string[i] == '\n')
 		{
-			pen.x = 0;
-			pen.y -= static_cast<float>(metrics.lineHeight) * fsScale;
+			pen.X = 0;
+			pen.Y -= static_cast<float>(metrics.lineHeight) * fsScale;
 			continue;
 		}
 		if (string[i] == '\t')
 		{
-			pen.x += static_cast<float>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
+			pen.X += static_cast<float>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
 			continue;
 		}
 		
@@ -331,39 +333,39 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 
 		double atlasLeft, atlasBottom, atlasRight, atlasTop;
 		glyph->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
-		float     texelWidth  = 1.0f / atlasTexture->GetWidth();
-		float     texelHeight = 1.0f / atlasTexture->GetHeight();
-		glm::vec2 uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
-		glm::vec2 uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
+		float    texelWidth  = 1.0f / static_cast<float>(atlasTexture->GetWidth());
+		float    texelHeight = 1.0f / static_cast<float>(atlasTexture->GetHeight());
+		Vector2F uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
+		Vector2F uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
 
 		double quadLeft, quadBottom, quadRight, quadTop;
 		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
-		glm::vec2 quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
-		glm::vec2 quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
+		Vector2F quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
+		Vector2F quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
 		quadMin += pen;
 		quadMax += pen;
 
-		m_VertexPtr->Position  = transformation * glm::vec4(quadMin, 0.0f, 1.0f);
+		m_VertexPtr->Position  = static_cast<Vector3F>(transformation * Vector4F(quadMin, 0.0f, 1.0f));
 		m_VertexPtr->Color     = colour;
 		m_VertexPtr->TexCoord  = uvMin;
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position  = transformation * glm::vec4(quadMax.x, quadMin.y, 0.0f, 1.0f);
+		m_VertexPtr->Position  = static_cast<Vector3F>(transformation * Vector4F(quadMax.X, quadMin.Y, 0.0f, 1.0f));
 		m_VertexPtr->Color     = colour;
-		m_VertexPtr->TexCoord  = glm::vec2(uvMax.x, uvMin.y);
+		m_VertexPtr->TexCoord  = Vector2F(uvMax.X, uvMin.Y);
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position  = transformation * glm::vec4(quadMax, 0.0f, 1.0f);
+		m_VertexPtr->Position  = static_cast<Vector3F>(transformation * Vector4F(quadMax, 0.0f, 1.0f));
 		m_VertexPtr->Color     = colour;
 		m_VertexPtr->TexCoord  = uvMax;
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
-		m_VertexPtr->Position  = transformation * glm::vec4(quadMin.x, quadMax.y, 0.0f, 1.0f);
+		m_VertexPtr->Position  = static_cast<Vector3F>(transformation * Vector4F(quadMin.X, quadMax.Y, 0.0f, 1.0f));
 		m_VertexPtr->Color     = colour;
-		m_VertexPtr->TexCoord  = glm::vec2(uvMin.x, uvMax.y);
+		m_VertexPtr->TexCoord  = Vector2F(uvMin.X, uvMax.Y);
 		m_VertexPtr->FontAtlas = static_cast<float>(textureID);
 		m_VertexPtr++;
 
@@ -373,7 +375,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const g
 		double advance = glyph->getAdvance();
 		fontGeo.getAdvance(advance, string[i], i == string.size() - 1 ? 0 : string[i + 1]);
 		float kerningOffset = 0; // MW @todo: Where to put this?
-		pen.x += static_cast<float>(advance) * fsScale + kerningOffset;
+		pen.X += static_cast<float>(advance) * fsScale + kerningOffset;
 	}
 }
 
@@ -440,7 +442,7 @@ void TextRenderer::Flush()
 	m_TextShader->SetUniformMatrix4f("u_ViewProjection",
 	                                 viewport
 		                                 ? viewport->GetCamera()->GetOrthographicViewProjMatrix()
-		                                 : glm::mat4(1.0f));
+		                                 : Matrix4x4F(1.0f));
 
 	// Now let's bind our array and textures.
 	m_Textures.BindTextures();
@@ -488,13 +490,13 @@ bool Renderer::Init(Ref<Window> window)
 
 	m_QuadBatch = CreateRef<QuadBatch>(m_Data, 20000);
 
-	glm::vec3 quadPositions[4];
+	Vector3F quadPositions[4];
 	// MW @hack: Bodged fix for tilemap seams - each quad is very slightly larger than 1x1, to avoid any seams.
 	quadPositions[0]       = {0.0f, 0.0f, 0.0f};
 	quadPositions[1]       = {1.0001f, 0.0f, 0.0f};
 	quadPositions[2]       = {1.0001f, 1.0001f, 0.0f};
 	quadPositions[3]       = {0.0f, 1.0001f, 0.0f};
-	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<uint32_t>(sizeof(glm::vec3) * 4));
+	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<uint32_t>(sizeof(Vector3F) * 4));
 	m_TileQuadVertexBuffer->SetLayout(BufferLayout({
 		{"a_Position", ShaderDataType::Float3},
 	}));
@@ -528,7 +530,7 @@ bool Renderer::InitOpenGL()
 	static bool glInitialised = false;
 	if (!glInitialised)
 	{
-		int version = gladLoadGL(SDL_GL_GetProcAddress);
+		s32 version = gladLoadGL(SDL_GL_GetProcAddress);
 		if (version == 0)
 		{
 			const char *error = "Failed to initialise OpenGL with GLAD";
@@ -602,7 +604,7 @@ bool Renderer::InitImGUI()
 	return true;
 }
 
-bool Renderer::OnWindowResize(Window *window, const glm::ivec2 &size)
+bool Renderer::OnWindowResize(Window *window, Vector2I size)
 {
 	// Here, we should layout our viewports. For now, we'll just have one viewport that takes up the whole window.
 	if (m_Viewports.size() > 0)

@@ -36,7 +36,7 @@ void World::DestroyEntity(UUID id)
 	m_Entities.erase(it);
 }
 
-void World::DestroyEntity(Entity *entity)
+void World::DestroyEntity(const Entity *entity)
 {
 	DestroyEntity(entity->GetUUID());
 }
@@ -54,17 +54,17 @@ void World::Tick(double delta)
 	m_Delta         = delta * m_TimeScale;
 
 	// MW @todo: This sucks; players should either update the tilemap themselves (or call a function on the world that does it),
-	// or the World should keep a list of all the players. Regardless, we should not be interating over all entities to find
+	// or the World should keep a list of all the players. Regardless, we should not be iterating over all entities to find
 	// all the players every frame.
-	std::vector<glm::ivec2> playerPositions;
+	std::vector<Vector2I> playerPositions;
 	for (const auto &entity : m_Entities | std::views::values)
 	{
 		entity->Tick(m_Delta);
 
 		if (entity->GetTypeID() == Player::s_EntityTypeID)
 		{
-			Player *player = static_cast<Player*>(entity.get());
-			playerPositions.push_back(player->GetPosition());
+			Player *player = dynamic_cast<Player*>(entity.get());
+			playerPositions.push_back(static_cast<Vector2I>(player->GetPosition()));
 		}
 	}
 	
@@ -81,15 +81,12 @@ void World::Render()
 		entity->Render();
 }
 
-bool World::RectOverlapsAnySolidTile(const FRect &rect) const
+bool World::RectOverlapsAnySolidTile(const RectF &rect) const
 {
-	for (const auto& tilemap : m_TileMaps)
+	return std::ranges::any_of(m_TileMaps, [&rect](const Ref<TileMap>& tilemap)
 	{
-		if (tilemap->RectOverlapsSolidTile(rect))
-			return true;
-	}
-	
-	return false;
+		return tilemap->RectOverlapsSolidTile(rect);
+	});
 }
 
 void World::Clean()

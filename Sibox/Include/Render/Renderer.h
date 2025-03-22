@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL_events.h>
 
+#include "Core/SiboxCore.h"
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
@@ -20,102 +21,107 @@ struct RendererSpecification
 
 struct QuadVertex
 {
-	glm::vec3 Position;
-	glm::vec4 Color;
-	glm::vec2 TexCoord;
-	float     TexIndex;
+	Vector3F Position;
+	Vector4F Color;
+	Vector2F TexCoord;
+	f32      TexIndex;
 
 	static BufferLayout GetLayout()
 	{
-		return std::move(BufferLayout({
+		return BufferLayout({
 			{"a_Position", ShaderDataType::Float3},
 			{"a_Color", ShaderDataType::Float4},
 			{"a_TexCoord", ShaderDataType::Float2},
 			{"a_TexIndex", ShaderDataType::Float},
-		}));
+		});
 	}
 };
 
 struct TileVertex
 {
-	glm::vec2 Position;
+	Vector2F Position;
 };
 
 struct TextVertex
 {
-	glm::vec3 Position;
-	glm::vec4 Color;
-	glm::vec2 TexCoord;
-	float     FontAtlas;
+	Vector3F Position;
+	Vector4F Color;
+	Vector2F TexCoord;
+	f32      FontAtlas;
 
 	static BufferLayout GetLayout()
 	{
-		return std::move(BufferLayout({
+		return BufferLayout({
 			{"a_Position", ShaderDataType::Float3},
 			{"a_Color", ShaderDataType::Float4},
 			{"a_TexCoord", ShaderDataType::Float2},
 			{"a_FontAtlas", ShaderDataType::Float},
-		}));
+		});
 	}
 };
 
 class TextureSet
 {
 public:
-	void SetMaxSlots(int max);
+	void SetMaxSlots(s32 max);
 
 	void BindTextures() const;
 	void Reset();
-	bool HasTexture(const Ref<Texture> &texture, int &index);
-	int  FindOrAddTexture(const Ref<Texture> &texture);
+	bool HasTexture(const Ref<Texture> &texture, s32 &index) const;
+	s32  FindOrAddTexture(const Ref<Texture> &texture);
 
 	MulticastDelegate<> OnFlush;
 
 protected:
-	int                       m_MaxSlots = 0;
+	s32                       m_MaxSlots = 0;
 	std::vector<Ref<Texture>> m_TextureSlots;
-	size_t                    m_TextureSlotIndex = 0;
+	s32                       m_TextureSlotIndex = 0;
 };
 
 class QuadBatch
 {
 public:
-	QuadBatch(class RendererData *data, uint32_t MaxQuads = 10000);
+	QuadBatch(class RendererData *data, u32 MaxQuads = 10000);
 	~QuadBatch();
 
-	void DrawQuad(const glm::mat4 &transform, const glm::vec4 &     tintColor, const glm::vec2 &texCoordMin,
-	              const glm::vec2 &texCoordMax, const Ref<Texture> &texture);
-	FORCEINLINE void DrawQuad(const glm::mat4 &transform, const glm::vec4 &tintColor, const Ref<Texture> &texture)
+	QuadBatch(const QuadBatch &)            = delete;
+	QuadBatch& operator=(const QuadBatch &) = delete;
+	QuadBatch(QuadBatch &&)                 = delete;
+	QuadBatch& operator=(QuadBatch &&)      = delete;
+
+	void DrawQuad(const Matrix4x4F &transform, const Vector4F &      tintColor, const Vector2F &texCoordMin,
+	              const Vector2F &  texCoordMax, const Ref<Texture> &texture);
+	FORCEINLINE void DrawQuad(const Matrix4x4F &transform, const Vector4F &tintColor, const Ref<Texture> &texture)
 	{
 		DrawQuad(transform, tintColor, {0.0f, 0.0f}, {1.0f, 1.0f}, texture);
 	}
 
-	void DrawQuad(const glm::mat4 &transform, const glm::vec4 &tintColor);
+	void DrawQuad(const Matrix4x4F &transform, const Vector4F &tintColor);
 
-	void DrawQuad(const glm::vec3 &centerPosition, const glm::vec2 &size, const glm::vec2 &        texCoordMin,
-	              const glm::vec2 &texCoordMax, const glm::vec4 &   tintColor, const Ref<Texture> &texture);
-	FORCEINLINE void DrawQuad(const glm::vec3 &   position, const glm::vec2 &size, const glm::vec4 &tintColor,
+	void DrawQuad(const Vector3F &centerPosition, const Vector2F &size, const Vector2F &         texCoordMin,
+	              const Vector2F &texCoordMax, const Vector4F &   tintColor, const Ref<Texture> &texture);
+	FORCEINLINE void DrawQuad(const Vector3F &    position, const Vector2F &size, const Vector4F &tintColor,
 	                          const Ref<Texture> &texture)
 	{
 		DrawQuad(position, size, {0.0f, 0.0f}, {1.0f, 1.0f}, tintColor, texture);
 	}
 
-	void DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &tintColor);
+	void DrawQuad(const Vector3F &position, Vector2F size, const Vector4F &tintColor);
 
-	void DrawRectangle(const FRect& rect, const glm::vec4& colour);
-	void DrawRectangleLines(const FRect& rect, const glm::vec4& colour, float thickness);
+	void DrawRectangle(const RectF &rect, const Vector4F &colour);
+	void DrawRectangleLines(const RectF &rect, const Vector4F &colour, float thickness);
 
 	void Flush();
 	void Reset();
 
 private:
 	RendererData *m_Data = nullptr;
-	uint32_t      m_MaxQuads, m_MaxVertices, m_MaxIndices;
-	glm::vec4     m_QuadPositions[4];
-	glm::vec3     m_QuadPositions3[4];
+	u32           m_MaxQuads, m_MaxVertices, m_MaxIndices;
+	Vector4F      m_QuadPositions[4];
+	Vector3F      m_QuadPositions3[4];
 
 	TextureSet        m_Textures;
-	uint32_t          m_IndicesCount = 0;
+	u32               m_IndicesCount = 0;
 	Ref<Shader>       m_Shader;
 	Ref<VertexArray>  m_VertexArray;
 	Ref<VertexBuffer> m_VertexBuffer;
@@ -128,7 +134,7 @@ class TilemapRenderer
 public:
 	void Init(RendererData *data);
 
-	void DrawTileMapChunk(glm::vec3 bottomLeftPosition, TileMapChunk *chunk) const;
+	void DrawTileMapChunk(Vector3F bottomLeftPosition, TileMapChunk *chunk) const;
 
 private:
 	RendererData *m_Data = nullptr;
@@ -137,10 +143,10 @@ private:
 
 struct RenderStats
 {
-	uint32_t DrawCalls = 0;
-	uint32_t QuadCount = 0;
-	uint32_t TileCount = 0;
-	uint32_t CharCount = 0;
+	u32 DrawCalls = 0;
+	u32 QuadCount = 0;
+	u32 TileCount = 0;
+	u32 CharCount = 0;
 
 	void Reset();
 };
@@ -148,14 +154,19 @@ struct RenderStats
 class TextRenderer
 {
 public:
+	TextRenderer() = default;
 	~TextRenderer();
+	TextRenderer(const TextRenderer &)            = delete;
+	TextRenderer& operator=(const TextRenderer &) = delete;
+	TextRenderer(TextRenderer &&)                 = delete;
+	TextRenderer& operator=(TextRenderer &&)      = delete;
 
-	FORCEINLINE void Init(RendererData *data, uint32_t maxQuads = 10000);
+	FORCEINLINE void Init(RendererData *data, u32 maxQuads = 10000);
 	void             Flush();
 	void             Reset();
 
-	void DrawString(const std::string &string, Ref<Font> font, const glm::mat4 &transformation,
-	                const glm::vec4 &  colour);
+	void DrawString(const std::string &string, Ref<Font> font, const Matrix4x4F &transformation,
+	                const Vector4F &   colour);
 
 private:
 	Ref<VertexArray>  m_VertexArray;
@@ -167,7 +178,7 @@ private:
 
 	TextVertex *m_VertexPtr     = nullptr;
 	TextVertex *m_VertexPtrBase = nullptr;
-	int32_t     m_IndicesCount  = 0, m_MaxIndices = 0;
+	s32        m_IndicesCount  = 0, m_MaxIndices = 0;
 };
 
 class RendererData
@@ -175,7 +186,7 @@ class RendererData
 public:
 	Ref<Texture> WhiteTexture;
 
-	int MaxTextureSlots;
+	s32 MaxTextureSlots;
 
 	RenderStats Stats;
 };
@@ -185,6 +196,11 @@ class Renderer
 public:
 	Renderer(RendererSpecification rendererSpecification);
 	~Renderer();
+
+	Renderer(const Renderer &)            = delete;
+	Renderer& operator=(const Renderer &) = delete;
+	Renderer(Renderer &&)                 = delete;
+	Renderer& operator=(Renderer &&)      = delete;
 
 	NODISCARD static FORCEINLINE Viewport* GetCurrentViewport() { return s_CurrentViewport; }
 
@@ -221,7 +237,7 @@ public:
 private:
 	bool InitOpenGL();
 	bool InitImGUI();
-	bool OnWindowResize(Window *window, const glm::ivec2 &size);
+	bool OnWindowResize(Window *window, Vector2I size);
 
 	void RenderImGUI();
 

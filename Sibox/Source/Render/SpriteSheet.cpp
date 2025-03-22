@@ -13,11 +13,11 @@ uint32_t SpriteSheet::CreateSprite(uint32_t x, uint32_t y, uint32_t width, uint3
 	SIBOX_ASSERT(m_Texture != nullptr && "SpriteSheet has no texture!");
 
 	uint32_t  index = static_cast<uint32_t>(m_Sprites.size());
-	glm::vec2 coordsMin, coordsMax;
-	coordsMin.x = static_cast<float>(x) / static_cast<float>(m_Texture->GetWidth());
-	coordsMin.y = static_cast<float>(y) / static_cast<float>(m_Texture->GetHeight());
-	coordsMax.x = static_cast<float>(x + width) / static_cast<float>(m_Texture->GetWidth());
-	coordsMax.y = static_cast<float>(y + height) / static_cast<float>(m_Texture->GetHeight());
+	Vector2F coordsMin, coordsMax;
+	coordsMin.X = static_cast<float>(x) / static_cast<float>(m_Texture->GetWidth());
+	coordsMin.Y = static_cast<float>(y) / static_cast<float>(m_Texture->GetHeight());
+	coordsMax.X = static_cast<float>(x + width) / static_cast<float>(m_Texture->GetWidth());
+	coordsMax.Y = static_cast<float>(y + height) / static_cast<float>(m_Texture->GetHeight());
 	m_Sprites.push_back({coordsMin, coordsMax});
 
 	return index;

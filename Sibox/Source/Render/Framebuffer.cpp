@@ -105,13 +105,13 @@ void Framebuffer::Invalidate()
 		if (multisample)
 		{
 			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Spec.Samples,
-			                        FramebufferTextureFormatToGLInternalFormat(attachment.Format), m_Spec.Size.x,
-			                        m_Spec.Size.y, GL_FALSE);
+			                        FramebufferTextureFormatToGLInternalFormat(attachment.Format), m_Spec.Size.X,
+			                        m_Spec.Size.Y, GL_FALSE);
 		}
 		else
 		{
-			glTexImage2D(GL_TEXTURE_2D, 0, FramebufferTextureFormatToGLInternalFormat(attachment.Format), m_Spec.Size.x,
-			             m_Spec.Size.y, 0, FramebufferTextureFormatToGLFormat(attachment.Format), GL_UNSIGNED_BYTE,
+			glTexImage2D(GL_TEXTURE_2D, 0, FramebufferTextureFormatToGLInternalFormat(attachment.Format), m_Spec.Size.X,
+			             m_Spec.Size.Y, 0, FramebufferTextureFormatToGLFormat(attachment.Format), GL_UNSIGNED_BYTE,
 			             nullptr);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -130,13 +130,13 @@ void Framebuffer::Invalidate()
 		if (multisample)
 		{
 			glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, m_Spec.Samples,
-			                        FramebufferTextureFormatToGLInternalFormat(m_DepthAttachment.Format), m_Spec.Size.x,
-			                        m_Spec.Size.y, GL_FALSE);
+			                        FramebufferTextureFormatToGLInternalFormat(m_DepthAttachment.Format), m_Spec.Size.X,
+			                        m_Spec.Size.Y, GL_FALSE);
 		}
 		else
 		{
 			glTexStorage2D(GL_TEXTURE_2D, 1, FramebufferTextureFormatToGLInternalFormat(m_DepthAttachment.Format),
-			               m_Spec.Size.x, m_Spec.Size.y);
+			               m_Spec.Size.X, m_Spec.Size.Y);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -166,7 +166,7 @@ void Framebuffer::Invalidate()
 	Unbind();
 }
 
-void Framebuffer::Resize(uint32_t width, uint32_t height)
+void Framebuffer::Resize(s32 width, s32 height)
 {
 	if (width == 0 || height == 0)
 	{
@@ -178,9 +178,9 @@ void Framebuffer::Resize(uint32_t width, uint32_t height)
 	Invalidate();
 }
 
-void Framebuffer::Resize(glm::ivec2 size)
+void Framebuffer::Resize(Vector2I size)
 {
-	Resize(size.x, size.y);
+	Resize(size.X, size.Y);
 }
 
 int32_t Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
@@ -207,7 +207,7 @@ void Framebuffer::ClearColorAttachment(uint32_t attachmentIndex, int value)
 void Framebuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Spec.SwapChainTarget ? 0 : m_RendererID);
-	glViewport(0, 0, m_Spec.Size.x, m_Spec.Size.y);
+	glViewport(0, 0, m_Spec.Size.X, m_Spec.Size.Y);
 }
 
 void Framebuffer::Unbind()

@@ -5,7 +5,7 @@ bool      Input::s_Keys[SIBOX_KEY_COUNT];
 bool      Input::s_PreviousKeys[SIBOX_KEY_COUNT];
 bool      Input::s_MouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
 bool      Input::s_PreviousMouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
-glm::vec2 Input::s_MousePosition, Input::s_MouseDelta;
+Vector2F  Input::s_MousePosition, Input::s_MouseDelta;
 bool      Input::s_ImGuiHasKeyboardFocus = false;
 bool      Input::s_ImGuiHasMouseFocus    = false;
 

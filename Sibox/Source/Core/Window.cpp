@@ -10,7 +10,7 @@ Window::Window(const WindowSpecification &spec)
 
 	SIBOX_TRACE("Creating window \"{}\"", m_Specification.Title);
 
-	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.x, m_Specification.Size.y,
+	m_Window = SDL_CreateWindow(m_Specification.Title.c_str(), m_Specification.Size.X, m_Specification.Size.Y,
 	                            SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
 	if (!m_Window)
 	{
@@ -24,10 +24,10 @@ Window::Window(const WindowSpecification &spec)
 	if (m_Specification.Centered)
 		SDL_SetWindowPosition(m_Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	else
-		SDL_SetWindowPosition(m_Window, m_Specification.Position.x, m_Specification.Position.y);
+		SDL_SetWindowPosition(m_Window, m_Specification.Position.X, m_Specification.Position.Y);
 
-	SDL_SetWindowMinimumSize(m_Window, m_Specification.MinSize.x, m_Specification.MinSize.y);
-	SDL_SetWindowMaximumSize(m_Window, m_Specification.MaxSize.x, m_Specification.MaxSize.y);
+	SDL_SetWindowMinimumSize(m_Window, m_Specification.MinSize.X, m_Specification.MinSize.Y);
+	SDL_SetWindowMaximumSize(m_Window, m_Specification.MaxSize.X, m_Specification.MaxSize.Y);
 	SDL_SetWindowResizable(m_Window, m_Specification.Resizable);
 
 	// Associate the Window object with the SDL window, so we can call Window functions from SDL events
@@ -35,7 +35,7 @@ Window::Window(const WindowSpecification &spec)
 	SDL_SetPointerProperty(props, "Window", this);
 
 	// MW @gotcha: Don't set up delegates here that capture because the window will likely move around in memory and the this pointer will be invalid
-	OnResize.BindLambda([](Window *window, const glm::ivec2 &size)
+	OnResize.BindLambda([](Window *window, Vector2I size)
 	{
 		SIBOX_INFO("Window \"{}\" resized to {}", window->GetTitle(), size);
 		window->m_Specification.Size = size;

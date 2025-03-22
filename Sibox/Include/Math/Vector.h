@@ -1,11 +1,40 @@
 ﻿#pragma once
 
+// template<typename T, int Size>
+// struct Vector
+// {
+// public:
+//     union
+//     {
+//         T Data[Size];
+//         struct
+//         {
+//             T X, Y, Z, W;
+//         };
+//     };
+// };
+
+// Forward declare Vector3 and Vector4 so we can use them in Vector2.
 template<typename T>
+    requires std::is_arithmetic_v<T>
+struct Vector3;
+
+template<typename T>
+    requires std::is_arithmetic_v<T>
+struct Vector4;
+
+template<typename T>
+	requires std::is_arithmetic_v<T>
 struct Vector2
 {
 public:
-    T X, Y;
+    union { T X, R; };
+    union { T Y, G; };
 
+    Vector2()
+        : X(0), Y(0)
+    { }
+    
     Vector2(T scalar)
         : X(scalar), Y(scalar)
     { }
@@ -14,6 +43,16 @@ public:
         : X(x), Y(y)
     { }
 
+    bool operator==(const Vector2 &other) const
+    {
+        return X == other.X && Y == other.Y;
+    }
+
+    bool operator!=(const Vector2 &other) const
+    {
+        return !(*this == other);
+    }
+    
     Vector2 operator+(const Vector2 &other) const
     {
         return { X + other.X, Y + other.Y };
@@ -23,7 +62,7 @@ public:
     {
         return { X - other.X, Y - other.Y };
     }
-    
+
     Vector2 operator*(const Vector2 &other) const
     {
         return { X * other.X, Y * other.Y };
@@ -80,50 +119,118 @@ public:
         Y /= scalar;
     }
 
-    NODISCARD FORCEINLINE float LengthSquared() const
+    Vector2 operator-() const
+    {
+        return { -X, -Y };
+    }
+    
+    T operator[](int index) const
+    {
+        return (&X)[index];
+    }
+
+    T &operator[](int index)
+    {
+        return (&X)[index];
+    }
+
+    NODISCARD FORCEINLINE T* Data() { return &X; }
+    
+    NODISCARD FORCEINLINE T LengthSquared() const
     {
         return X * X + Y * Y;
     }
 
-    NODISCARD FORCEINLINE float Length() const
+    NODISCARD FORCEINLINE T Length() const
     {
         return sqrtf(LengthSquared());
     }
 
     FORCEINLINE void Normalize()
     {
-        this /= Length();
+        T length = Length();
+        X /= length;
+        Y /= length;
     }
 
     NODISCARD FORCEINLINE Vector2 Normalized() const
     {
-        return *this / Length();
+        Vector2 result = *this;
+        result.Normalize();
+        return result;
+    }
+
+    NODISCARD FORCEINLINE bool IsNormalized() const
+    {
+        return LengthSquared() - 1.0f < 0.0001f;
     }
     
-    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
-    NODISCARD FORCEINLINE float Dot(const Vector2 &other) const
+    // Calculate the dot product between this vector and another.
+    NODISCARD FORCEINLINE T Dot(const Vector2 &other, bool normalise = true) const
     {
+        if (normalise)
+            return Normalized().Dot(other.Normalized(), false);
+        
         return (X * other.X)
             + (Y * other.Y);
     }
 
-    FORCEINLINE float DistanceSquared(const Vector2 &other) const
+    FORCEINLINE T DistanceSquared(const Vector2 &other) const
     {
         return (*this - other).LengthSquared();
     }
     
-    FORCEINLINE float Distance(const Vector2 &other) const
+    FORCEINLINE T Distance(const Vector2 &other) const
     {
         return (*this - other).Length();
+    }
+
+    FORCEINLINE void Zero()
+    {
+        X = 0;
+        Y = 0;
+    }
+
+    FORCEINLINE bool IsValid() const
+    {
+        // A quirk of floating point arithmetic is that NaN values are NEVER equal to anything - not even themselves.
+        // Therefore, if a float multiplied by zero is not equal to the same float multiplied by zero, then it is NaN.
+        // We'll also check for infinity.
+        if (X * 0.0f != X * 0.0f || std::isinf(X))
+            return false;
+        if (Y * 0.0f != Y * 0.0f || std::isinf(Y))
+            return false;
+        
+        return true;
+    }
+
+    // Casting operators
+    template<typename OT>
+    FORCEINLINE explicit operator Vector3<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y), 0 };
+    }
+
+    template<typename OT>
+    FORCEINLINE explicit operator Vector4<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y), 0, 0 };
     }
 };
 
 template<typename T>
+	requires std::is_arithmetic_v<T>
 struct Vector3
 {
 public:
-    T X, Y, Z;
+    union { T X, R; };
+    union { T Y, G; };
+    union { T Z, B; };
 
+    Vector3()
+        : X(0), Y(0), Z(0)
+    { }
+    
     Vector3(T scalar)
         : X(scalar), Y(scalar), Z(scalar)
     { }
@@ -132,10 +239,21 @@ public:
         : X(x), Y(y), Z(z)
     { }
 
-    Vector3(Vector2<T> xy, T z)
-        : X(xy.X), Y(xy.Y), Z(z)
+    template<typename OT>
+    Vector3(Vector2<OT> xy, T z)
+        : X(static_cast<T>(xy.X)), Y(static_cast<T>(xy.Y)), Z(z)
     { }
 
+    bool operator==(const Vector3 &other) const
+    {
+        return X == other.X && Y == other.Y && Z == other.Z;
+    }
+
+    bool operator!=(const Vector3 &other) const
+    {
+        return !(*this == other);
+    }
+    
     Vector3 operator+(const Vector3 &other) const
     {
         return { X + other.X, Y + other.Y, Z + other.Z };
@@ -208,51 +326,131 @@ public:
         Z /= scalar;
     }
     
-    NODISCARD FORCEINLINE float LengthSquared() const
+    Vector3 operator-() const
+    {
+        return { -X, -Y, -Z };
+    }
+    
+    T operator[](int index) const
+    {
+        return (&X)[index];
+    }
+
+    T &operator[](int index)
+    {
+        return (&X)[index];
+    }
+    
+    NODISCARD FORCEINLINE T* Data() { return &X; }
+    
+    NODISCARD FORCEINLINE T LengthSquared() const
     {
         return X * X + Y * Y + Z * Z;
     }
 
-    NODISCARD FORCEINLINE float Length() const
+    NODISCARD FORCEINLINE T Length() const
     {
         return sqrtf(LengthSquared());
     }
 
     FORCEINLINE void Normalize()
     {
-        this /= Length();
+        T length = Length();
+        X /= length;
+        Y /= length;
+        Z /= length;
     }
 
     NODISCARD FORCEINLINE Vector3 Normalized() const
     {
-        return *this / Length();
+        Vector2 result = *this;
+        result.Normalize();
+        return result;
+    }
+
+    NODISCARD FORCEINLINE bool IsNormalized() const
+    {
+        return LengthSquared() - 1.0f < 0.0001f;
     }
     
-    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
-    NODISCARD FORCEINLINE float Dot(const Vector3 &other) const
+    // Calculate the dot product between this vector and another.
+    NODISCARD FORCEINLINE T Dot(const Vector3 &other, bool normalise = true) const
     {
+        if (normalise)
+            return Normalized().Dot(other.Normalized(), false);
+        
         return (X * other.X)
             + (Y * other.Y)
             + (Z * other.Z);
     }
     
-    FORCEINLINE float DistanceSquared(const Vector3 &other) const
+    FORCEINLINE T DistanceSquared(const Vector3 &other) const
     {
         return (*this - other).LengthSquared();
     }
     
-    FORCEINLINE float Distance(const Vector3 &other) const
+    FORCEINLINE T Distance(const Vector3 &other) const
     {
         return (*this - other).Length();
+    }
+
+    FORCEINLINE Vector3 Cross(const Vector3 &other) const
+    {
+        return
+        {
+            (Y * other.Z) - (Z * other.Y),
+            (Z * other.X) - (X * other.Z),
+            (X * other.Y) - (Y * other.X)
+        };
+    }
+    
+    FORCEINLINE void Zero()
+    {
+        X = 0;
+        Y = 0;
+        Z = 0;
+    }
+    
+    FORCEINLINE bool IsValid() const
+    {
+        if (X * 0.0f != X * 0.0f || std::isinf(X))
+            return false;
+        if (Y * 0.0f != Y * 0.0f || std::isinf(Y))
+            return false;
+        if (Z * 0.0f != Z * 0.0f || std::isinf(Z))
+            return false;
+        
+        return true;
+    }
+
+    // Casting operators
+    template<typename OT>
+    FORCEINLINE explicit operator Vector2<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y) };
+    }
+
+    template<typename OT>
+    FORCEINLINE explicit operator Vector4<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y), static_cast<OT>(Z), 0 };
     }
 };
 
 template<typename T>
+	requires std::is_arithmetic_v<T>
 struct Vector4
 {
 public:
-    T X, Y, Z, W;
+    union { T X, R; };
+    union { T Y, G; };
+    union { T Z, B; };
+    union { T W, A; };
 
+    Vector4()
+        : X(0), Y(0), Z(0), W(0)
+    { }
+    
     Vector4(T scalar)
         : X(scalar), Y(scalar), Z(scalar), W(scalar)
     { }
@@ -260,19 +458,32 @@ public:
     Vector4(T x, T y, T z, T w)
         : X(x), Y(y), Z(z), W(w)
     { }
-    
-    Vector4(Vector2<T> xy, T z, T w)
-        : X(xy.X), Y(xy.Y), Z(z), W(w)
+
+    template<typename OT>
+    Vector4(Vector2<OT> xy, T z, T w)
+        : X(static_cast<T>(xy.X)), Y(static_cast<T>(xy.Y)), Z(z), W(w)
     { }
 
-    Vector4(Vector2<T> xy, Vector2<T> zw)
-        : X(xy.X), Y(xy.Y), Z(zw.X), W(zw.Y)
-    { }
-    
-    Vector4(Vector3<T> xyz, T w)
-        : X(xyz.X), Y(xyz.Y), Z(xyz.Z), W(w)
+    template<typename OT>
+    Vector4(Vector2<OT> xy, Vector2<T> zw)
+        : X(static_cast<T>(xy.X)), Y(static_cast<T>(xy.Y)), Z(static_cast<T>(zw.X)), W(static_cast<T>(zw.Y))
     { }
 
+    template<typename OT>
+    Vector4(Vector3<OT> xyz, T w)
+        : X(static_cast<T>(xyz.X)), Y(static_cast<T>(xyz.Y)), Z(static_cast<T>(xyz.Z)), W(w)
+    { }
+
+    bool operator==(const Vector4 &other) const
+    {
+        return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
+    }
+
+    bool operator!=(const Vector4 &other) const
+    {
+        return !(*this == other);
+    }
+    
     Vector4 operator+(const Vector4 &other) const
     {
         return { X + other.X, Y + other.Y, Z + other.Z, W + other.W };
@@ -351,54 +562,137 @@ public:
         W /= scalar;
     }
     
-    NODISCARD FORCEINLINE float LengthSquared() const
+    Vector4 operator-() const
+    {
+        return { -X, -Y, -Z, -W };
+    }
+    
+    T operator[](int index) const
+    {
+        return (&X)[index];
+    }
+
+    T &operator[](int index)
+    {
+        return (&X)[index];
+    }
+    
+    NODISCARD FORCEINLINE T* Data() { return &X; }
+    
+    NODISCARD FORCEINLINE T LengthSquared() const
     {
         return X * X + Y * Y + Z * Z + W * W;
     }
 
-    NODISCARD FORCEINLINE float Length() const
+    NODISCARD FORCEINLINE T Length() const
     {
         return sqrtf(LengthSquared());
     }
 
     FORCEINLINE void Normalize()
     {
-        this /= Length();
+        T length = Length();
+        X /= length;
+        Y /= length;
+        Z /= length;
+        W /= length;
     }
 
     NODISCARD FORCEINLINE Vector4 Normalized() const
     {
-        return *this / Length();
+        Vector2 result = *this;
+        result.Normalize();
+        return result;
     }
 
-    // Calculate the dot product between this vector and another. We assume that both vectors are normalised.
-    NODISCARD FORCEINLINE float Dot(const Vector4 &other) const
+    NODISCARD FORCEINLINE bool IsNormalized() const
     {
+        return LengthSquared() - 1.0f < 0.0001f;
+    }
+    
+    // Calculate the dot product between this vector and another.
+    NODISCARD FORCEINLINE T Dot(const Vector4 &other, bool normalise = true) const
+    {
+        if (normalise)
+            return Normalized().Dot(other.Normalized(), false);
+        
         return (X * other.X)
             + (Y * other.Y)
             + (Z * other.Z)
             + (W * other.W);
     }
     
-    FORCEINLINE float DistanceSquared(const Vector4 &other) const
+    FORCEINLINE T DistanceSquared(const Vector4 &other) const
     {
         return (*this - other).LengthSquared();
     }
     
-    FORCEINLINE float Distance(const Vector4 &other) const
+    FORCEINLINE T Distance(const Vector4 &other) const
     {
         return (*this - other).Length();
     }
+
+    FORCEINLINE void Zero()
+    {
+        X = 0;
+        Y = 0;
+        Z = 0;
+        W = 0;
+    }
+    
+    FORCEINLINE bool IsValid() const
+    {
+        if (X * 0.0f != X * 0.0f || std::isinf(X))
+            return false;
+        if (Y * 0.0f != Y * 0.0f || std::isinf(Y))
+            return false;
+        if (Z * 0.0f != Z * 0.0f || std::isinf(Z))
+            return false;
+        if (W * 0.0f != W * 0.0f || std::isinf(W))
+            return false;
+        
+        return true;
+    }
+
+    // Casting operators
+    template<typename OT>
+    FORCEINLINE explicit operator Vector2<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y) };
+    }
+
+    template<typename OT>
+    FORCEINLINE explicit operator Vector3<OT>() const
+    {
+        return { static_cast<OT>(X), static_cast<OT>(Y), static_cast<OT>(Z) };
+    }
 };
 
-typedef Vector2<int> Vector2i;
-typedef Vector2<float> Vector2f;
-typedef Vector2<double> Vector2d;
+using Vector2I = Vector2<s32>;
+using Vector2F = Vector2<f32>;
+using Vector2D = Vector2<f64>;
 
-typedef Vector3<int> Vector3i;
-typedef Vector3<float> Vector3f;
-typedef Vector3<double> Vector3d;
+using Vector3I = Vector3<s32>;
+using Vector3F = Vector3<f32>;
+using Vector3D = Vector3<f64>;
 
-typedef Vector4<int> Vector4i;
-typedef Vector4<float> Vector4f;
-typedef Vector4<double> Vector4d;
+using Vector4I = Vector4<s32>;
+using Vector4F = Vector4<f32>;
+using Vector4D = Vector4<f64>;
+
+// Hashing implementations.
+namespace std
+{
+    template <>
+    struct hash<Vector2I>
+    {
+        std::size_t operator()(const Vector2I &v) const noexcept
+        {
+            // Combine the two integers (x, y) into a single hash value.
+            // Use a prime number multiplier for better distribution.
+            size_t h1 = std::hash<int>{}(v.X);
+            size_t h2 = std::hash<int>{}(v.Y);
+            return h1 ^ (h2 << 1); // Combine the two hash values
+        }
+    };
+}

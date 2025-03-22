@@ -106,65 +106,65 @@ void AddSinkToLog(const spdlog::sink_ptr &sink);
 // };
 
 template <>
-class fmt::formatter<Vector2i>
+class fmt::formatter<Vector2I>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const Vector2i &vec, Context &ctx) const
+	constexpr auto format(const Vector2I &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.X, vec.Y);
 	}
 };
 
 template <>
-class fmt::formatter<Vector3i>
+class fmt::formatter<Vector3I>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const Vector3i &vec, Context &ctx) const
+	constexpr auto format(const Vector3I &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.X, vec.Y, vec.Z);
 	}
 };
 
 template <>
-class fmt::formatter<Vector2f>
+class fmt::formatter<Vector2F>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const Vector2f &vec, Context &ctx) const
+	constexpr auto format(const Vector2F &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {})", vec.X, vec.Y);
 	}
 };
 
 template <>
-class fmt::formatter<Vector3f>
+class fmt::formatter<Vector3F>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const Vector3f &vec, Context &ctx) const
+	constexpr auto format(const Vector3F &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {})", vec.X, vec.Y, vec.Z);
 	}
 };
 
 template <>
-class fmt::formatter<Vector4f>
+class fmt::formatter<Vector4F>
 {
 public:
 	constexpr auto parse(format_parse_context &ctx) { return ctx.begin(); }
 
 	template <typename Context>
-	constexpr auto format(const Vector4f &vec, Context &ctx) const
+	constexpr auto format(const Vector4F &vec, Context &ctx) const
 	{
 		return fmt::format_to(ctx.out(), "({}, {}, {}, {})", vec.X, vec.Y, vec.Z, vec.W);
 	}

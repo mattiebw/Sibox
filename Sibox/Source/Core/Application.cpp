@@ -69,7 +69,7 @@ void Application::Construct()
 bool Application::Init()
 {
 	Stopwatch sw;
-	
+
 	// First, initialise our core APIs.
 	if (!InitSDL())
 		return false;
@@ -117,13 +117,13 @@ bool Application::Init()
 			Shutdown();
 			return false;
 		}
-		
+
 		Font::InitFontSystem();
 	}
 
 	sw.End();
 	SIBOX_TRACE("Application initialisation took {0}ms", sw.GetElapsedMilliseconds());
-	
+
 	return true;
 }
 
@@ -148,7 +148,7 @@ void Application::BindDelegates()
 void Application::Run()
 {
 	Stopwatch sw;
-	
+
 	m_Running = true;
 
 	BindDelegates();
@@ -198,13 +198,13 @@ void Application::Shutdown()
 	for (const Ref<Layer> &layer : m_Layers)
 		layer->OnDetach();
 	m_Layers.clear();
-	
+
 	if (m_SteamManager)
 	{
 		m_SteamManager->Shutdown();
 		m_SteamManager = nullptr;
 	}
-	
+
 	Font::ShutdownFontSystem();
 	Input::Shutdown();
 	AudioManager::Shutdown();
@@ -241,7 +241,7 @@ void Application::RemoveLayer(const Ref<Layer> &layer)
 
 Ref<World> Application::AddWorld()
 {
-	auto world = m_Worlds.emplace_back(CreateRef<World>());
+	auto world           = m_Worlds.emplace_back(CreateRef<World>());
 	world->m_NetworkType = m_NetworkType;
 	return world;
 }
@@ -311,7 +311,7 @@ bool Application::CreateServer()
 	{
 		m_Server = nullptr; // Destroy our old server.
 	}
-	
+
 	m_Server = CreateRef<Server>();
 
 	return true;
@@ -327,7 +327,7 @@ void Application::PollEvents()
 {
 	if (!HasFrontend())
 		return;
-	
+
 	SDL_Event e;
 	while (SDL_PollEvent(&e))
 	{
@@ -347,8 +347,9 @@ void Application::PollEvents()
 				SDL_PropertiesID props = SDL_GetWindowProperties(SDL_GetWindowFromEvent(&e));
 				if (Window *window = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", nullptr)))
 				{
-					// Skip creating a temporary glm::ivec2
-					window->OnResize.Execute(std::move(window), *reinterpret_cast<const glm::ivec2*>(&e.window.data1));
+					// Skip creating a temporary Vector2I
+					window->OnResize.Execute(std::move(window),
+					                         std::move(*reinterpret_cast<Vector2I*>(&e.window.data1)));
 				}
 			}
 			break;
@@ -415,8 +416,9 @@ void Application::PollEvents()
 					window                 = static_cast<Window*>(SDL_GetPointerProperty(props, "Window", window));
 				}
 
-				window->OnMouseMove.Execute(std::move(window), {e.motion.x, e.motion.y},
-				                            {e.motion.xrel, e.motion.yrel});
+				window->OnMouseMove.Execute(std::move(window),
+				                            {static_cast<s32>(e.motion.x), static_cast<s32>(e.motion.y)},
+				                            {static_cast<s32>(e.motion.xrel), static_cast<s32>(e.motion.yrel)});
 			}
 			break;
 		default: // Just here to suppress warnings.

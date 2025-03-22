@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-template <typename T = float>
+template <typename T = f32>
 	requires std::is_arithmetic_v<T>
 struct TRect
 {
@@ -19,30 +19,30 @@ struct TRect
 
 	NODISCARD FORCEINLINE bool OverlapsWith(const TRect &other) const
 	{
-		return Position.x < other.Position.x + other.Size.x && // Not to the right of the other rectangle
-			Position.x + Size.x > other.Position.x &&          // Not to the left of the other rectangle
-			Position.y < other.Position.y + other.Size.y &&    // Not below the other rectangle
-			Position.y + Size.y > other.Position.y;            // Not above the other rectangle
+		return Position.X < other.Position.X + other.Size.X && // Not to the right of the other rectangle
+			Position.X + Size.X > other.Position.X &&          // Not to the left of the other rectangle
+			Position.Y < other.Position.Y + other.Size.Y &&    // Not below the other rectangle
+			Position.Y + Size.Y > other.Position.Y;            // Not above the other rectangle
 	}
 
 	NODISCARD FORCEINLINE bool OverlapsWith(T x, T y, T width, T height) const
 	{
-		return Position.x < x + width && // Not to the right of the other rectangle
-			Position.x + Size.x > x &&   // Not to the left of the other rectangle
-			Position.y < y + height &&   // Not below the other rectangle
-			Position.y + Size.y > y;     // Not above the other rectangle
+		return Position.X < x + width && // Not to the right of the other rectangle
+			Position.X + Size.X > x &&   // Not to the left of the other rectangle
+			Position.Y < y + height &&   // Not below the other rectangle
+			Position.Y + Size.Y > y;     // Not above the other rectangle
 	}
 
 	NODISCARD FORCEINLINE bool ContainsRect(const TRect &other) const
 	{
-		return Position.x <= other.Position.x && Position.x + Size.x >= other.Position.x + other.Size.x
-			&& Position.y <= other.Position.y && Position.y + Size.y >= other.Position.y + other.Size.y;
+		return Position.X <= other.Position.X && Position.X + Size.X >= other.Position.X + other.Size.X
+			&& Position.Y <= other.Position.Y && Position.Y + Size.Y >= other.Position.Y + other.Size.Y;
 	}
 
 	NODISCARD FORCEINLINE bool ContainsPoint(const Vector2<T> &point) const
 	{
-		return Position.x <= point.x && Position.x + Size.x >= point.x
-			&& Position.y <= point.y && Position.y + Size.y >= point.y;
+		return Position.X <= point.X && Position.X + Size.X >= point.X
+			&& Position.Y <= point.Y && Position.Y + Size.Y >= point.Y;
 	}
 
 	NODISCARD FORCEINLINE Vector2<T> GetCenter() const
@@ -51,27 +51,49 @@ struct TRect
 	}
 };
 
-using FRect = TRect<float>;
-using DRect = TRect<double>;
-using IRect = TRect<int>;
+using RectF = TRect<f32>;
+using RectD = TRect<f64>;
+using RectI = TRect<int>;
 
 class MathUtil
 {
 public:
-	NODISCARD static glm::mat4 CreateTransformationMatrix(const Vector3f &translation, const Vector3f &rotation,
-	                                                      const Vector3f &scale);
+	template<typename T>
+	NODISCARD FORCEINLINE static T DegreesToRadians(T degrees)
+	{
+		return degrees * static_cast<T>(0.017453292519943295769236907684886);
+	}
 
-	NODISCARD FORCEINLINE static float LerpSmooth(float a, float b, float r, float delta)
+	template<typename T>
+	NODISCARD FORCEINLINE static T RadiansToDegrees(T radians)
+	{
+		return radians * static_cast<T>(57.295779513082320876798154814105);
+	}
+	
+	template<typename T>
+	NODISCARD static Matrix<T, 4> CreateTransformationMatrix(const Vector3<T> &translation, const Vector3<T> &rotation,
+	                                                      const Vector3<T> &scale)
+	{
+		Matrix<T, 4> mat; // Identity matrix
+		// mat = translate(mat, translation);
+		// mat = rotate(mat, glm::radians(rotation.X), glm::vec3(1, 0, 0));
+		// mat = rotate(mat, glm::radians(rotation.Y), glm::vec3(0, 1, 0));
+		// mat = rotate(mat, glm::radians(rotation.Z), glm::vec3(0, 0, 1));
+		// mat = glm::scale(mat, scale);
+		return mat;
+	}
+
+	NODISCARD FORCEINLINE static f32 LerpSmooth(f32 a, f32 b, f32 r, f32 delta)
 	{
 		return (a - b) * pow(r, delta) + b;
 	}
 
-	NODISCARD FORCEINLINE static Vector2f LerpSmooth(Vector2f a, Vector2f b, float r, float delta)
+	NODISCARD FORCEINLINE static Vector2F LerpSmooth(Vector2F a, Vector2F b, f32 r, f32 delta)
 	{
 		return {LerpSmooth(a.X, b.X, r, delta), LerpSmooth(a.Y, b.Y, r, delta)};
 	}
 
-	NODISCARD FORCEINLINE static Vector3f LerpSmooth(const Vector3f &a, const Vector3f &b, float r, float delta)
+	NODISCARD FORCEINLINE static Vector3F LerpSmooth(const Vector3F &a, const Vector3F &b, f32 r, f32 delta)
 	{
 		return {LerpSmooth(a.X, b.X, r, delta), LerpSmooth(a.Y, b.Y, r, delta), LerpSmooth(a.Z, b.Z, r, delta)};
 	}

@@ -12,32 +12,35 @@ public:
 
 	// MW @todo: Cache these matrices?
 
-	NODISCARD FORCEINLINE glm::mat4 GetViewMatrix() const
+	NODISCARD FORCEINLINE Matrix4x4F GetViewMatrix() const
 	{
-		return inverse(
-			MathUtil::CreateTransformationMatrix(Transformation.Position, Transformation.Rotation,
-			                                     Transformation.Scale));
+		// return
+		// 	MathUtil::CreateTransformationMatrix(Transformation.Position, Transformation.Rotation,
+		// 	                                     Transformation.Scale).Inverse();
+		return Matrix4x4F(1);
 	}
 
-	NODISCARD FORCEINLINE glm::mat4 GetPerspectiveViewProjMatrix() const
+	NODISCARD FORCEINLINE Matrix4x4F GetPerspectiveViewProjMatrix() const
 	{
-		return glm::perspective(FOV, Aspect, NearPlane, FarPlane) * GetViewMatrix();
+		// return Matrix4x4F::MakePerspective(FOV, Aspect, NearPlane, FarPlane) * GetViewMatrix();
+		return Matrix4x4F(1);
 	}
 
-	NODISCARD FORCEINLINE glm::mat4 GetOrthographicViewProjMatrix() const
+	NODISCARD FORCEINLINE Matrix4x4F GetOrthographicViewProjMatrix() const
 	{
-		return glm::ortho(OrthoSize * Aspect / -2, OrthoSize * Aspect / 2, OrthoSize / -2, OrthoSize / 2, NearPlane,
-		                  FarPlane) * GetViewMatrix();
+		// return Matrix4x4F::MakeOrthographic(OrthoSize * Aspect / -2, OrthoSize * Aspect / 2, OrthoSize / -2, OrthoSize / 2, NearPlane,
+		//                   FarPlane) * GetViewMatrix();
+		return Matrix4x4F(1);
 	}
 
-	NODISCARD FORCEINLINE FRect GetCameraRect() const
+	NODISCARD FORCEINLINE RectF GetCameraRect() const
 	{
 		float height = OrthoSize;
-		float width = height * Aspect;
-		return FRect(Transformation.Position.x - width / 2, Transformation.Position.y - height / 2, width, height);
+		float width  = height * Aspect;
+		return RectF(Transformation.Position.X - width / 2, Transformation.Position.Y - height / 2, width, height);
 	}
-	
-	NODISCARD FORCEINLINE bool RectOverlapsCamera(const FRect& rect) const
+
+	NODISCARD FORCEINLINE bool RectOverlapsCamera(const RectF &rect) const
 	{
 		return rect.OverlapsWith(GetCameraRect());
 	}

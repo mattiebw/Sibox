@@ -42,15 +42,15 @@ public:
 		return !s_ImGuiHasMouseFocus && !s_MouseButtons[button] && s_PreviousMouseButtons[button];
 	}
 
-	NODISCARD static FORCEINLINE glm::vec2 GetMousePosition() { return s_MousePosition; }
-	NODISCARD static FORCEINLINE glm::vec2 GetMouseDelta() { return s_MouseDelta; }
+	NODISCARD static FORCEINLINE Vector2F GetMousePosition() { return s_MousePosition; }
+	NODISCARD static FORCEINLINE Vector2F GetMouseDelta() { return s_MouseDelta; }
 
 	FORCEINLINE static void PreUpdate()
 	{
 		// Can't use memcpy_s here because it's not available on all compilers :(
 		memcpy(s_PreviousKeys, s_Keys, SIBOX_KEY_COUNT * sizeof(bool));
 		memcpy(s_PreviousMouseButtons, s_MouseButtons, SIBOX_MOUSE_BUTTON_COUNT * sizeof(bool));
-		s_MouseDelta = glm::vec2(0.0f);
+		s_MouseDelta = Vector2F(0.0f);
 		#ifndef SIBOX_NO_IMGUI
 		ImGuiIO &io             = ImGui::GetIO();
 		s_ImGuiHasKeyboardFocus = io.WantCaptureKeyboard;
@@ -69,7 +69,7 @@ protected:
 	static bool      s_PreviousKeys[SIBOX_KEY_COUNT];
 	static bool      s_MouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
 	static bool      s_PreviousMouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
-	static glm::vec2 s_MousePosition, s_MouseDelta;
+	static Vector2F  s_MousePosition, s_MouseDelta;
 
 	static bool s_ImGuiHasKeyboardFocus;
 	static bool s_ImGuiHasMouseFocus;

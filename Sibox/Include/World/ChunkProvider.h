@@ -13,13 +13,18 @@ public:
 	ChunkProvider& operator=(const ChunkProvider &other)     = delete;
 	ChunkProvider& operator=(ChunkProvider &&other) noexcept = delete;
 
-	virtual uint16_t GetTileAt(int x, int y) const = 0;
+	virtual u16 GetTileAt(int x, int y) const = 0;
 };
 
 class NullChunkProvider : public ChunkProvider
 {
-	uint16_t GetTileAt(int x, int y) const override
+	u16 GetTileAt(int x, int y) const override
 	{
 		return 0;
 	}
+};
+
+class DefaultChunkProvider : public ChunkProvider
+{
+	u16 GetTileAt(int x, int y) const override;
 };

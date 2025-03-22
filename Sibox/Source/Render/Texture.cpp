@@ -71,6 +71,8 @@ Texture::~Texture()
 	CleanUp();
 }
 
+// Since we don't modify any class data, Rider thinks this can be const. But, semantically, I feel like it shouldn't be.
+// ReSharper disable once CppMemberFunctionMayBeConst
 void Texture::SetData(const uint8_t *data)
 {
 	// MW @todo: Error checking of size. Either take a size parameter, or remove this overload and require a Buffer.

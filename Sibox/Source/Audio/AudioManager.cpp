@@ -40,3 +40,36 @@ bool AudioManager::Init()
 	SIBOX_TRACE("Initialised AudioManager/FMOD in {0}ms", sw.GetElapsedMilliseconds());
 	return true;
 }
+
+void AudioManager::Update()
+{
+	if (!Application::Get()->HasFrontend())
+		return;
+
+	float deltaTime = Application::Get()->GetDeltaTime();
+	
+	if (m_FMODSystem)
+	{
+		FMOD_RESULT result = m_FMODSystem->update();
+		if (result != FMOD_OK)
+		{
+			std::string error = fmt::format("Failed to update FMOD system! Error: {}", FMOD_ErrorString(result));
+			SIBOX_ERROR("{}", error);
+			Application::Get()->ShowError(error.c_str(), "FMOD Error");
+		}
+	}
+}
+
+void AudioManager::Shutdown()
+{
+	if (!Application::Get()->HasFrontend())
+		return;
+
+	SIBOX_TRACE("Shutting down AudioManager and FMOD.");
+
+	if (m_FMODSystem)
+	{
+		m_FMODSystem->release();
+		m_FMODSystem = nullptr;
+	}
+}

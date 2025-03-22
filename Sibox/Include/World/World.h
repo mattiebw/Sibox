@@ -52,14 +52,14 @@ public:
 
 	void UpdateEntityUUID(UUID oldID, UUID newID);
 	void DestroyEntity(UUID id);
-	void DestroyEntity(Entity *entity);
+	void DestroyEntity(const const Entity *entity);
 
 	Ref<TileMap> CreateTileMap(const Ref<class TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
 	void Tick(double delta);
 	void Render();
 
-	NODISCARD bool RectOverlapsAnySolidTile(const FRect &rect) const;
+	NODISCARD bool RectOverlapsAnySolidTile(const RectF &rect) const;
 
 	void Clean();
 

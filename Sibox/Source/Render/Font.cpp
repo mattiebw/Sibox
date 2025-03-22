@@ -170,7 +170,7 @@ Font::Font(const std::filesystem::path &fontPath)
 
 	sw.End();
 	SIBOX_TRACE("Loaded font ({0}/{1} glyphs) from file \"{2}\" in {3}ms", m_GlyphCount, charset.size(), pathString,
-	           sw.GetElapsedMilliseconds());
+	            sw.GetElapsedMilliseconds());
 }
 
 Font::~Font()
@@ -197,11 +197,11 @@ void Font::ShutdownFontSystem()
 	s_FTHandle = nullptr;
 }
 
-FontMeasurement Font::MeasureString(const std::string &string, const glm::vec3 &scale)
+FontMeasurement Font::MeasureString(const std::string &string, const Vector3F &scale)
 {
 	msdfgen::FontMetrics metrics = m_Data->FontGeo.getMetrics();
 	float                fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
-	glm::vec2            pen(0, 0);
+	Vector2F             pen(0, 0);
 
 	float minX = 0, maxX = 0;
 	float minY = 0, maxY = 0;
@@ -219,28 +219,28 @@ FontMeasurement Font::MeasureString(const std::string &string, const glm::vec3 &
 
 		double quadLeft, quadBottom, quadRight, quadTop;
 		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
-		glm::vec2 quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
-		glm::vec2 quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
+		Vector2F quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
+		Vector2F quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
 		quadMin += pen;
 		quadMax += pen;
 
-		minX = std::min(minX, quadMin.x);
-		minY = std::min(minY, quadMin.y);
-		maxX = std::max(maxX, quadMax.x);
-		maxY = std::max(maxY, quadMax.y);
+		minX = std::min(minX, quadMin.X);
+		minY = std::min(minY, quadMin.Y);
+		maxX = std::max(maxX, quadMax.X);
+		maxY = std::max(maxY, quadMax.Y);
 
 		double advance = glyph->getAdvance();
 		if (i != string.size() - 1)
 			m_Data->FontGeo.getAdvance(advance, string[i], string[i + 1]);
-		pen.x += static_cast<float>(advance) * fsScale;
+		pen.X += static_cast<float>(advance) * fsScale;
 	}
 
 	FontMeasurement measurement;
 	measurement.Size   = {maxX - minX, maxY - minY};
 	measurement.Offset = {minX, minY};
-	measurement.Size.x *= scale.x;
-	measurement.Size.y *= scale.y;
-	measurement.Offset.x *= scale.x;
-	measurement.Offset.y *= scale.y;
+	measurement.Size.X *= scale.X;
+	measurement.Size.Y *= scale.Y;
+	measurement.Offset.X *= scale.X;
+	measurement.Offset.Y *= scale.Y;
 	return measurement;
 }

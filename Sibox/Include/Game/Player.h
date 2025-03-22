@@ -17,7 +17,7 @@ class Player : public Entity
 
 	NODISCARD FORCEINLINE Ref<Camera>& GetCamera() { return m_Camera; }
 
-	RPC(Multicast, SendMovement, glm::vec2 position, glm::vec2 velocity);
+	RPC(Multicast, SendMovement, Vector2F position, Vector2F velocity);
 	RPC(Multicast, OnDeath);
 
 	std::string Name = "Qerma";
@@ -29,7 +29,4 @@ private:
 	Ref<Texture>  m_Texture;
 	Ref<Viewport> m_Viewport;
 	Ref<Camera>   m_Camera;
-
-	bool m_WasPDown = false;
-	bool m_WasBDown = false;
 };

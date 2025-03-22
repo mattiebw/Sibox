@@ -10,11 +10,11 @@ struct WindowSpecification
 	std::string Title = "Window";
 
 	// (0, 0) for default position. Ignored if Centered is true.
-	glm::ivec2 Position     = {0, 0};
-	glm::ivec2 Size         = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
-	glm::ivec2 OriginalSize = Size;
-	bool       Centered     = true;
-	bool       Fullscreen   = false;
+	Vector2I Position     = {0, 0};
+	Vector2I Size         = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
+	Vector2I OriginalSize = Size;
+	bool     Centered     = true;
+	bool     Fullscreen   = false;
 
 	bool Resizable = true;
 };
@@ -47,14 +47,14 @@ public:
 	bool                       ToggleFullscreen();
 	NODISCARD FORCEINLINE bool IsFullscreen() { return m_Specification.Fullscreen; };
 
-	CascadingMulticastDelegate<false, Window*, const glm::ivec2&>                  OnResize;
-	CascadingMulticastDelegate<false, Window*>                                     OnCloseRequested;
-	MulticastDelegate<Window*>                                                     OnClose;
-	CascadingMulticastDelegate<false, Window*, Scancode, bool>                     OnKeyPressed;
-	CascadingMulticastDelegate<false, Window*, Scancode>                           OnKeyReleased;
-	CascadingMulticastDelegate<false, Window*, MouseButton>                        OnMouseButtonDown;
-	CascadingMulticastDelegate<false, Window*, MouseButton>                        OnMouseButtonUp;
-	CascadingMulticastDelegate<false, Window*, const glm::vec2&, const glm::vec2&> OnMouseMove; // Position, Delta
+	CascadingMulticastDelegate<false, Window*, Vector2I>           OnResize;
+	CascadingMulticastDelegate<false, Window*>                     OnCloseRequested;
+	MulticastDelegate<Window*>                                     OnClose;
+	CascadingMulticastDelegate<false, Window*, Scancode, bool>     OnKeyPressed;
+	CascadingMulticastDelegate<false, Window*, Scancode>           OnKeyReleased;
+	CascadingMulticastDelegate<false, Window*, MouseButton>        OnMouseButtonDown;
+	CascadingMulticastDelegate<false, Window*, MouseButton>        OnMouseButtonUp;
+	CascadingMulticastDelegate<false, Window*, Vector2I, Vector2I> OnMouseMove; // Position, Delta
 
 protected:
 	bool                m_IsVisible = false;

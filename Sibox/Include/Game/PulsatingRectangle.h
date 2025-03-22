@@ -11,6 +11,6 @@ public:
 	void Render() override;
 
 private:
-	glm::vec3 m_Color;
-	float     m_Time = 0;
+	Vector3F m_Color;
+	float    m_Time = 0;
 };
