@@ -16,7 +16,7 @@ public:
 
 	void Stop();
 	void Pause(bool pause);
-	void SetVolume(float volume);
+	void SetVolume(f32 volume);
 	bool IsPlaying() const;
 
 private:

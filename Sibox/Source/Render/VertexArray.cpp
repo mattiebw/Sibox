@@ -49,13 +49,13 @@ void VertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer)
 		case ShaderDataType::Mat3:
 		case ShaderDataType::Mat4:
 			{
-				uint8_t count = element.GetComponentCount();
-				for (uint8_t i = 0; i < count; i++)
+				u8 count = element.GetComponentCount();
+				for (u8 i = 0; i < count; i++)
 				{
 					glEnableVertexAttribArray(m_VertexBufferIndex);
 					glVertexAttribPointer(m_VertexBufferIndex, count, ShaderDataTypeToGLBaseType(element.Type),
 					                      element.Normalized ? GL_TRUE : GL_FALSE, layout.GetStride(),
-					                      reinterpret_cast<const void*>(element.Offset + (sizeof(float) * count * i)));
+					                      reinterpret_cast<const void*>(element.Offset + (sizeof(f32) * count * i)));
 					if (element.InstancingDivisor != 0)
 						glVertexAttribDivisor(m_VertexBufferIndex, element.InstancingDivisor);
 					m_VertexBufferIndex++;

@@ -12,7 +12,7 @@ Shader::~Shader()
 	CleanUp();
 }
 
-int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
+s32 Shader::AddStageFromSource(GLenum stage, std::string_view source)
 {
 	if (m_IsComplete)
 	{
@@ -28,11 +28,11 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 		return -1;
 	}
 
-	for (uint32_t i = 0; i < m_UsedVertexAttributes; i++)
+	for (u32 i = 0; i < m_UsedVertexAttributes; i++)
 		glEnableVertexAttribArray(i);
 
-	int32_t     shaderID = glCreateShader(stage);
-	int32_t     length   = static_cast<int32_t>(source.length());
+	s32     shaderID = glCreateShader(stage);
+	s32     length   = static_cast<s32>(source.length());
 	const char *data     = source.data();
 
 	// Check for version, and remove any BOM that can break the shader on Linux.
@@ -71,7 +71,7 @@ int32_t Shader::AddStageFromSource(GLenum stage, std::string_view source)
 	return shaderID;
 }
 
-int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
+s32 Shader::AddStageFromFile(GLenum stage, std::string_view source)
 {
 	if (m_IsComplete)
 	{
@@ -90,7 +90,7 @@ int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
 	buffer << sourceFile.rdbuf();
 
 	// Call into add stage from source
-	const int32_t result = AddStageFromSource(stage, buffer.str());
+	const s32 result = AddStageFromSource(stage, buffer.str());
 
 	// Clean up
 	sourceFile.close();
@@ -98,21 +98,21 @@ int32_t Shader::AddStageFromFile(GLenum stage, std::string_view source)
 	return result;
 }
 
-int32_t Shader::LinkProgram()
+s32 Shader::LinkProgram()
 {
 	BindAttributes();
 
-	for (uint32_t i = 0; i < m_UsedVertexAttributes; i++)
+	for (u32 i = 0; i < m_UsedVertexAttributes; i++)
 		glEnableVertexAttribArray(i);
 
 	// Create the program and attach and link all shaders
-	for (const int32_t shaderID : m_ShaderStages)
+	for (const s32 shaderID : m_ShaderStages)
 		glAttachShader(m_ProgramID, shaderID);
 	glLinkProgram(m_ProgramID);
 	glValidateProgram(m_ProgramID);
 
 	// Check we linked successfully
-	int32_t success = 0;
+	s32 success = 0;
 	glGetProgramiv(m_ProgramID, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
 	{
@@ -127,7 +127,7 @@ int32_t Shader::LinkProgram()
 		SIBOX_ERROR("Failed to link shader {0}: {1}", m_Name, infoLog.data());
 
 		// Clean up
-		for (const int32_t shaderID : m_ShaderStages)
+		for (const s32 shaderID : m_ShaderStages)
 		{
 			glDetachShader(m_ProgramID, shaderID);
 			glDeleteShader(shaderID);
@@ -139,7 +139,7 @@ int32_t Shader::LinkProgram()
 	SIBOX_INFO("Created shader program {0}!", m_Name);
 
 	// Clean up by detaching
-	for (const int32_t shaderID : m_ShaderStages)
+	for (const s32 shaderID : m_ShaderStages)
 	{
 		glDetachShader(m_ProgramID, shaderID);
 		glDeleteShader(shaderID);
@@ -171,7 +171,7 @@ void Shader::BindAttributes()
 void Shader::BindAttribute(int attribute, std::string_view variableName)
 {
 	glBindAttribLocation(m_ProgramID, attribute, variableName.data());
-	m_UsedVertexAttributes = std::max(m_UsedVertexAttributes, static_cast<uint32_t>(attribute + 1));
+	m_UsedVertexAttributes = std::max(m_UsedVertexAttributes, static_cast<u32>(attribute + 1));
 }
 
 void Shader::CleanUp()
@@ -245,12 +245,12 @@ void Shader::SetUniform1i(std::string_view uniformName, int value) const
 	glUniform1i(GetUniformLocation(uniformName), value);
 }
 
-void Shader::SetUniform1f(std::string_view uniformName, float value) const
+void Shader::SetUniform1f(std::string_view uniformName, f32 value) const
 {
 	glUniform1f(GetUniformLocation(uniformName), value);
 }
 
-void Shader::SetUniform2f(std::string_view uniformName, float x, float y) const
+void Shader::SetUniform2f(std::string_view uniformName, f32 x, f32 y) const
 {
 	glUniform2f(GetUniformLocation(uniformName), x, y);
 }
@@ -270,7 +270,7 @@ void Shader::SetUniformIVec2(std::string_view uniformName, const Vector2I &vec) 
 	glUniform2i(GetUniformLocation(uniformName), vec.X, vec.Y);
 }
 
-void Shader::SetUniform3f(std::string_view uniformName, float x, float y, float z) const
+void Shader::SetUniform3f(std::string_view uniformName, f32 x, f32 y, float z) const
 {
 	glUniform3f(GetUniformLocation(uniformName), x, y, z);
 }

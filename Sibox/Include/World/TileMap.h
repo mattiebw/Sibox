@@ -9,12 +9,12 @@ class TileMap
 public:
 	TileMap(const Ref<TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
-	void               SetTile(int x, int y, uint32_t tile, bool canCreateChunk = false);
-	NODISCARD uint32_t GetTile(int x, int y, bool canCreateChunk = true);
-	NODISCARD uint32_t GetTile(int x, int y) const;
+	void               SetTile(int x, int y, u32 tile, bool canCreateChunk = false);
+	NODISCARD u32 GetTile(int x, int y, bool canCreateChunk = true);
+	NODISCARD u32 GetTile(int x, int y) const;
 
-	NODISCARD FORCEINLINE uint32_t            GetChunkWidth() const { return m_ChunkSize.X; }
-	NODISCARD FORCEINLINE uint32_t            GetChunkHeight() const { return m_ChunkSize.Y; }
+	NODISCARD FORCEINLINE u32            GetChunkWidth() const { return m_ChunkSize.X; }
+	NODISCARD FORCEINLINE u32            GetChunkHeight() const { return m_ChunkSize.Y; }
 	NODISCARD FORCEINLINE const Ref<TileSet>& GetTileSet() const { return m_TileSet; }
 
 	NODISCARD FORCEINLINE size_t GetLoadedChunkCount() const { return m_Chunks.size(); }
@@ -33,7 +33,7 @@ public:
 	void UpdateChunkLoading(const std::vector<Vector2I> &playerPositions);
 	void Render();
 
-	float Z = 0;
+	f32 Z = 0;
 
 protected:
 	// The key in our chunk map is the chunk coordinate.

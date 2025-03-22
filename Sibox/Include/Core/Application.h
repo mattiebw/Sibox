@@ -24,22 +24,22 @@ class FPSCounter
 public:
 	FPSCounter();
 
-	void                           AddSample(uint16_t fps);
-	NODISCARD FORCEINLINE uint16_t GetFPS()
+	void                           AddSample(u16 fps);
+	NODISCARD FORCEINLINE u16 GetFPS()
 	{
 		if (m_Dirty) RecalculateFPS();
 		return m_FPS;
 	};
-	NODISCARD FORCEINLINE double GetAverageFrameTimeMS() { return 1000.0 / GetFPS(); }
+	NODISCARD FORCEINLINE f64 GetAverageFrameTimeMS() { return 1000.0 / GetFPS(); }
 
 private:
 	void RecalculateFPS();
 
-	constexpr static uint16_t s_MaxSamples = 200;
+	constexpr static u16 s_MaxSamples = 200;
 
-	uint16_t m_Samples[s_MaxSamples];
-	uint8_t  m_sampleIndex = 0;
-	uint16_t m_FPS         = 0;
+	u16 m_Samples[s_MaxSamples];
+	u8  m_sampleIndex = 0;
+	u16 m_FPS         = 0;
 	bool     m_Dirty       = true;
 };
 
@@ -94,7 +94,7 @@ public:
 		return s_Instance->m_Renderer->GetTextRenderer();
 	}
 
-	NODISCARD static FORCEINLINE uint16_t GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
+	NODISCARD static FORCEINLINE u16 GetFPS() { return s_Instance->m_FPSCounter.GetFPS(); };
 
 	NODISCARD static FORCEINLINE SavedDataManager& GetSavedDataManager()
 	{
@@ -104,7 +104,7 @@ public:
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
-	NODISCARD FORCEINLINE double           GetDeltaTime() const { return m_DeltaTime; }
+	NODISCARD FORCEINLINE f64           GetDeltaTime() const { return m_DeltaTime; }
 	NODISCARD FORCEINLINE NetworkType      GetNetworkType() const { return m_NetworkType; }
 	NODISCARD FORCEINLINE bool             HasFrontend() const { return m_NetworkType != NetworkType::DedicatedServer; }
 
@@ -132,7 +132,7 @@ protected:
 	Ref<SteamManager>        m_SteamManager;
 	Ref<Client>              m_Client;
 	Ref<Server>              m_Server;
-	double                   m_DeltaTime = 0;
+	f64                   m_DeltaTime = 0;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	NetworkType              m_NetworkType = NetworkType::Standalone;

@@ -12,14 +12,14 @@ void PulsatingRectangle::Created()
 	m_Time += Random::Float();
 }
 
-void PulsatingRectangle::Tick(double delta)
+void PulsatingRectangle::Tick(f64 delta)
 {
-	m_Time += static_cast<float>(delta);
+	m_Time += static_cast<f32>(delta);
 }
 
 void PulsatingRectangle::Render()
 {
-	float sine = sin(m_Time * 5);
+	f32 sine = sin(m_Time * 5);
 	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(GetPosition(), Vector2F(1.0f + sine, 1.0f),
 	                                                        Vector4F(m_Color, 1.0f));
 }

@@ -5,13 +5,13 @@
 struct UUID
 {
 	UUID();
-	UUID(uint64_t uuid);
+	UUID(u64 uuid);
 	UUID(const UUID &other) = default;
 
-	operator uint64_t() const { return m_UUID; }
+	operator u64() const { return m_UUID; }
 
 private:
-	uint64_t m_UUID;
+	u64 m_UUID;
 };
 
 namespace std

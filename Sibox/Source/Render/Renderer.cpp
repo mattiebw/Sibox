@@ -78,7 +78,7 @@ s32 TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
 		if (m_TextureSlotIndex >= m_TextureSlots.size())
 			OnFlush.Execute();
 
-		index                              = static_cast<int32_t>(m_TextureSlotIndex);
+		index                              = static_cast<s32>(m_TextureSlotIndex);
 		m_TextureSlots[m_TextureSlotIndex] = texture;
 		m_TextureSlotIndex++;
 		return index;
@@ -86,7 +86,7 @@ s32 TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
 	return index;
 }
 
-QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
+QuadBatch::QuadBatch(RendererData *data, u32 MaxQuads)
 {
 	m_Data        = data;
 	m_MaxQuads    = MaxQuads;
@@ -105,13 +105,13 @@ QuadBatch::QuadBatch(RendererData *data, uint32_t MaxQuads)
 
 	m_VertexArray = CreateRef<VertexArray>();
 
-	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>(m_MaxVertices * sizeof(QuadVertex)),
+	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<u32>(m_MaxVertices * sizeof(QuadVertex)),
 	                                         BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(QuadVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-	uint32_t *quadIndices = new uint32_t[m_MaxIndices];
-	for (uint32_t i = 0; i < m_MaxQuads; i++)
+	u32 *quadIndices = new u32[m_MaxIndices];
+	for (u32 i = 0; i < m_MaxQuads; i++)
 	{
 		quadIndices[i * 6 + 0] = i * 4 + 0;
 		quadIndices[i * 6 + 1] = i * 4 + 1;
@@ -148,7 +148,7 @@ void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &     tintC
 		Flush();
 
 	// Find texture
-	int32_t textureIndex = m_Textures.FindOrAddTexture(texture);
+	s32 textureIndex = m_Textures.FindOrAddTexture(texture);
 
 	for (size_t i = 0; i < 4; i++)
 	{
@@ -157,7 +157,7 @@ void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &     tintC
 		m_VertexBufferPtr->TexCoord = {
 			i == 0 || i == 3 ? texCoordMin.X : texCoordMax.X, i == 0 || i == 1 ? texCoordMin.Y : texCoordMax.Y
 		};
-		m_VertexBufferPtr->TexIndex = static_cast<float>(textureIndex);
+		m_VertexBufferPtr->TexIndex = static_cast<f32>(textureIndex);
 		m_VertexBufferPtr++;
 	}
 
@@ -176,7 +176,7 @@ void QuadBatch::DrawQuad(const Vector3F &centerPosition, const Vector2F &size, c
 	if (m_IndicesCount >= m_MaxIndices)
 		Flush();
 
-	int32_t textureIndex = m_Textures.FindOrAddTexture(texture);
+	s32 textureIndex = m_Textures.FindOrAddTexture(texture);
 
 	Vector3F size3 = Vector3F(size, 1.0f);
 	for (size_t i = 0; i < 4; i++)
@@ -186,7 +186,7 @@ void QuadBatch::DrawQuad(const Vector3F &centerPosition, const Vector2F &size, c
 		m_VertexBufferPtr->TexCoord = {
 			i == 0 || i == 3 ? texCoordMin.X : texCoordMax.X, i == 0 || i == 1 ? texCoordMin.Y : texCoordMax.Y
 		};
-		m_VertexBufferPtr->TexIndex = static_cast<float>(textureIndex);
+		m_VertexBufferPtr->TexIndex = static_cast<f32>(textureIndex);
 		m_VertexBufferPtr++;
 	}
 
@@ -205,7 +205,7 @@ void QuadBatch::DrawRectangle(const RectF &rect, const Vector4F &colour)
 	         {rect.Size.X, rect.Size.Y}, colour);
 }
 
-void QuadBatch::DrawRectangleLines(const RectF &rect, const Vector4F &colour, float thickness)
+void QuadBatch::DrawRectangleLines(const RectF &rect, const Vector4F &colour, f32 thickness)
 {
 	// Top
 	DrawQuad({rect.Position.X + rect.Size.X / 2.0f, rect.Position.Y, 0.0f},
@@ -228,8 +228,8 @@ void QuadBatch::Flush()
 
 	// First, lets update our vertex buffer with our new data.
 	m_VertexBuffer->SetData(m_VertexBufferBase,
-	                        static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexBufferPtr) - reinterpret_cast<
-		                        uint8_t*>(m_VertexBufferBase)));
+	                        static_cast<u32>(reinterpret_cast<u8*>(m_VertexBufferPtr) - reinterpret_cast<
+		                        u8*>(m_VertexBufferBase)));
 
 	// Bind our shader and its uniforms.
 	m_Shader->Bind();
@@ -298,7 +298,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 	const Ref<Texture> &            atlasTexture = font->GetAtlasTexture();
 	const s32                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
 
-	float     fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
+	f32     fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
 	Vector2F pen(0, 0);
 
 	for (s32 i = 0; i < string.size(); i++)
@@ -311,12 +311,12 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 		if (string[i] == '\n')
 		{
 			pen.X = 0;
-			pen.Y -= static_cast<float>(metrics.lineHeight) * fsScale;
+			pen.Y -= static_cast<f32>(metrics.lineHeight) * fsScale;
 			continue;
 		}
 		if (string[i] == '\t')
 		{
-			pen.X += static_cast<float>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
+			pen.X += static_cast<f32>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
 			continue;
 		}
 		
@@ -331,14 +331,14 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 
 		// MW @todo: A lot of this code should be done once at font generation, and cached.
 
-		double atlasLeft, atlasBottom, atlasRight, atlasTop;
+		f64 atlasLeft, atlasBottom, atlasRight, atlasTop;
 		glyph->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
-		float    texelWidth  = 1.0f / static_cast<float>(atlasTexture->GetWidth());
+		f32    texelWidth  = 1.0f / static_cast<float>(atlasTexture->GetWidth());
 		float    texelHeight = 1.0f / static_cast<float>(atlasTexture->GetHeight());
 		Vector2F uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
 		Vector2F uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
 
-		double quadLeft, quadBottom, quadRight, quadTop;
+		f64 quadLeft, quadBottom, quadRight, quadTop;
 		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
 		Vector2F quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
 		Vector2F quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
@@ -372,7 +372,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 		m_IndicesCount += 6;
 		m_Data->Stats.CharCount++;
 
-		double advance = glyph->getAdvance();
+		f64 advance = glyph->getAdvance();
 		fontGeo.getAdvance(advance, string[i], i == string.size() - 1 ? 0 : string[i + 1]);
 		float kerningOffset = 0; // MW @todo: Where to put this?
 		pen.X += static_cast<float>(advance) * fsScale + kerningOffset;
@@ -389,19 +389,19 @@ TextRenderer::~TextRenderer()
 	delete[] m_VertexPtrBase;
 }
 
-void TextRenderer::Init(RendererData *data, uint32_t maxQuads)
+void TextRenderer::Init(RendererData *data, u32 maxQuads)
 {
 	m_Data = data;
 
 	m_VertexArray  = CreateRef<VertexArray>();
-	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<uint32_t>((maxQuads * 4) * sizeof(TextVertex)),
+	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<u32>((maxQuads * 4) * sizeof(TextVertex)),
 	                                         BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 	m_MaxIndices          = maxQuads * 6;
-	uint32_t *quadIndices = new uint32_t[m_MaxIndices];
-	for (uint32_t i = 0; i < maxQuads; i++)
+	u32 *quadIndices = new u32[m_MaxIndices];
+	for (u32 i = 0; i < maxQuads; i++)
 	{
 		quadIndices[i * 6 + 0] = i * 4 + 0;
 		quadIndices[i * 6 + 1] = i * 4 + 1;
@@ -433,8 +433,8 @@ void TextRenderer::Flush()
 
 	// First, lets update our vertex buffer with our new data.
 	m_VertexBuffer->SetData(m_VertexPtrBase,
-	                        static_cast<uint32_t>(reinterpret_cast<uint8_t*>(m_VertexPtr) - reinterpret_cast<
-		                        uint8_t*>(m_VertexPtrBase)));
+	                        static_cast<u32>(reinterpret_cast<u8*>(m_VertexPtr) - reinterpret_cast<
+		                        u8*>(m_VertexPtrBase)));
 
 	// Bind our shader and its uniforms.
 	m_TextShader->Bind();
@@ -496,12 +496,12 @@ bool Renderer::Init(Ref<Window> window)
 	quadPositions[1]       = {1.0001f, 0.0f, 0.0f};
 	quadPositions[2]       = {1.0001f, 1.0001f, 0.0f};
 	quadPositions[3]       = {0.0f, 1.0001f, 0.0f};
-	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<uint32_t>(sizeof(Vector3F) * 4));
+	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<u32>(sizeof(Vector3F) * 4));
 	m_TileQuadVertexBuffer->SetLayout(BufferLayout({
 		{"a_Position", ShaderDataType::Float3},
 	}));
 
-	uint32_t quadIndices[6] = {0, 1, 2, 2, 3, 0};
+	u32 quadIndices[6] = {0, 1, 2, 2, 3, 0};
 	m_TileQuadIndexBuffer   = CreateRef<IndexBuffer>(quadIndices, 6);
 
 	m_TilemapRenderer.Init(m_Data);
@@ -556,13 +556,13 @@ bool Renderer::InitOpenGL()
 	#endif
 	
 	// Create our white texture
-	uint32_t             whiteTextureData = 0xffffffff;
+	u32             whiteTextureData = 0xffffffff;
 	TextureSpecification spec;
 	spec.Width           = 1;
 	spec.Height          = 1;
 	spec.GenerateMipmaps = false;
 	m_Data->WhiteTexture = CreateRef<Texture>(spec);
-	m_Data->WhiteTexture->SetData(Buffer(reinterpret_cast<uint8_t*>(&whiteTextureData), sizeof(uint32_t)));
+	m_Data->WhiteTexture->SetData(Buffer(reinterpret_cast<u8*>(&whiteTextureData), sizeof(u32)));
 
 	SDL_GL_SetSwapInterval(m_Specification.VSync ? 1 : 0);
 	SIBOX_INFO("Initialised renderer");

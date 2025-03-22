@@ -15,7 +15,7 @@ Ref<Font>                Font::s_DefaultFont = nullptr;
 
 struct CharRange
 {
-	uint32_t Begin, End;
+	u32 Begin, End;
 };
 
 struct AtlasConfig
@@ -23,17 +23,17 @@ struct AtlasConfig
 	int Width, Height;
 };
 
-uint8_t threadCount = std::thread::hardware_concurrency() / 2;
+u8 threadCount = std::thread::hardware_concurrency() / 2;
 
 template <typename T, typename S, int N, msdf_atlas::GeneratorFunction<S, N> GenFunc>
-static Ref<Texture> GenerateAtlasTexture(const std::string &                           fontName, float size,
+static Ref<Texture> GenerateAtlasTexture(const std::string &                           fontName, f32 size,
                                          const std::vector<msdf_atlas::GlyphGeometry> &glpyhs,
                                          const msdf_atlas::FontGeometry &              geo, const AtlasConfig &config)
 {
 	// Set up some values we'll need later..
 	TextureSpecification spec;
-	spec.Width  = static_cast<int32_t>(config.Width);
-	spec.Height = static_cast<int32_t>(config.Height);
+	spec.Width  = static_cast<s32>(config.Width);
+	spec.Height = static_cast<s32>(config.Height);
 	spec.Format = TextureFormat::RGB8;
 
 	// First, lets see if it's cached.
@@ -73,7 +73,7 @@ static Ref<Texture> GenerateAtlasTexture(const std::string &                    
 	// MW @hack: Technically the texture could have a different size due to some data manipulation by the Texture class.
 	Application::GetSavedDataManager().SaveBinaryData(cacheName, {
 		                                                  // ReSharper disable once CppCStyleCast
-		                                                  (uint8_t*)bitmap.pixels, texture->GetDataSize()
+		                                                  (u8*)bitmap.pixels, texture->GetDataSize()
 	                                                  });
 
 	return texture;
@@ -108,7 +108,7 @@ Font::Font(const std::filesystem::path &fontPath)
 	static constexpr CharRange charRanges[] = {{0x0020, 0x00FF}};
 	msdf_atlas::Charset        charset;
 	for (const auto [Begin, End] : charRanges)
-		for (uint32_t i = Begin; i <= End; i++)
+		for (u32 i = Begin; i <= End; i++)
 			charset.add(i);
 
 	// Got the charset, lets load it!
@@ -124,7 +124,7 @@ Font::Font(const std::filesystem::path &fontPath)
 	packer.setOuterPixelPadding(0);
 	packer.setInnerUnitPadding(0);
 	packer.setOuterUnitPadding(0);
-	double emSize = 40.0;
+	f64 emSize = 40.0;
 	packer.setScale(emSize);
 
 	// And do the packing
@@ -135,9 +135,9 @@ Font::Font(const std::filesystem::path &fontPath)
 	emSize = packer.getScale();
 
 	// And our edge colouring, for MSDF
-	constexpr uint64_t lcgMultiplier      = 6364136223846793005ull;
-	constexpr uint64_t lcgIncrement       = 1442695040888963407ull;
-	constexpr uint64_t colouringSeed      = 0;
+	constexpr u64 lcgMultiplier      = 6364136223846793005ull;
+	constexpr u64 lcgIncrement       = 1442695040888963407ull;
+	constexpr u64 colouringSeed      = 0;
 	constexpr bool     expensiveColouring = true;
 
 	if (expensiveColouring)
@@ -145,14 +145,14 @@ Font::Font(const std::filesystem::path &fontPath)
 		msdf_atlas::Workload([&glyphs = m_Data->Glyphs](int i, int threadNo) -> bool
 		{
 			// Copied from msdf-atlas-gen!
-			uint64_t glyphSeed = (lcgMultiplier * (colouringSeed ^ i) + lcgIncrement) * !!false;
+			u64 glyphSeed = (lcgMultiplier * (colouringSeed ^ i) + lcgIncrement) * !!false;
 			glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, 3.0, glyphSeed);
 			return true;
 		}, static_cast<int>(m_Data->Glyphs.size())).finish(threadCount);
 	}
 	else
 	{
-		uint64_t glyphSeed = colouringSeed;
+		u64 glyphSeed = colouringSeed;
 		for (auto &glyph : m_Data->Glyphs)
 		{
 			glyphSeed *= lcgMultiplier;
@@ -161,8 +161,8 @@ Font::Font(const std::filesystem::path &fontPath)
 	}
 
 	// Now let's generate the atlas texture!
-	m_Texture = GenerateAtlasTexture<uint8_t, float, 3, msdf_atlas::msdfGenerator>(
-		fontPath.filename().generic_string(), static_cast<float>(emSize), m_Data->Glyphs, m_Data->FontGeo,
+	m_Texture = GenerateAtlasTexture<u8, f32, 3, msdf_atlas::msdfGenerator>(
+		fontPath.filename().generic_string(), static_cast<f32>(emSize), m_Data->Glyphs, m_Data->FontGeo,
 		{width, height});
 
 	// Clean up!
@@ -200,11 +200,11 @@ void Font::ShutdownFontSystem()
 FontMeasurement Font::MeasureString(const std::string &string, const Vector3F &scale)
 {
 	msdfgen::FontMetrics metrics = m_Data->FontGeo.getMetrics();
-	float                fsScale = 1.0f / static_cast<float>(metrics.ascenderY - metrics.descenderY);
+	f32                fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
 	Vector2F             pen(0, 0);
 
-	float minX = 0, maxX = 0;
-	float minY = 0, maxY = 0;
+	f32 minX = 0, maxX = 0;
+	f32 minY = 0, maxY = 0;
 
 	for (int i = 0; i < string.size(); i++)
 	{
@@ -217,9 +217,9 @@ FontMeasurement Font::MeasureString(const std::string &string, const Vector3F &s
 			return {};
 		}
 
-		double quadLeft, quadBottom, quadRight, quadTop;
+		f64 quadLeft, quadBottom, quadRight, quadTop;
 		glyph->getQuadPlaneBounds(quadLeft, quadBottom, quadRight, quadTop);
-		Vector2F quadMin(static_cast<float>(quadLeft) * fsScale, static_cast<float>(quadBottom) * fsScale);
+		Vector2F quadMin(static_cast<f32>(quadLeft) * fsScale, static_cast<f32>(quadBottom) * fsScale);
 		Vector2F quadMax(static_cast<float>(quadRight) * fsScale, static_cast<float>(quadTop) * fsScale);
 		quadMin += pen;
 		quadMax += pen;
@@ -229,7 +229,7 @@ FontMeasurement Font::MeasureString(const std::string &string, const Vector3F &s
 		maxX = std::max(maxX, quadMax.X);
 		maxY = std::max(maxY, quadMax.Y);
 
-		double advance = glyph->getAdvance();
+		f64 advance = glyph->getAdvance();
 		if (i != string.size() - 1)
 			m_Data->FontGeo.getAdvance(advance, string[i], string[i + 1]);
 		pen.X += static_cast<float>(advance) * fsScale;

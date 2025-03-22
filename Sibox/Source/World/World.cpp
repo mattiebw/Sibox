@@ -48,7 +48,7 @@ Ref<TileMap> World::CreateTileMap(const Ref<TileSet> &tileSet, int chunkWidth, i
 	return tilemap;
 }
 
-void World::Tick(double delta)
+void World::Tick(f64 delta)
 {
 	m_UnscaledDelta = delta;
 	m_Delta         = delta * m_TimeScale;

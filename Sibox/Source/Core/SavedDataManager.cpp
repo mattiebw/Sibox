@@ -33,7 +33,7 @@ Buffer SavedDataManager::GetBinaryData(const std::filesystem::path &path)
 	infile.close();
 
 	// Return as buffer. We leave deleting the data to the caller.
-	return {reinterpret_cast<uint8_t*>(buffer), static_cast<size_t>(size)};
+	return {reinterpret_cast<u8*>(buffer), static_cast<size_t>(size)};
 }
 
 bool SavedDataManager::SaveBinaryData(const std::filesystem::path &path, const Buffer &buffer)

@@ -9,8 +9,8 @@ enum class FramebufferTextureFormat
 	Depth = DEPTH24_STENCIL8,
 };
 
-uint32_t FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format);
-uint32_t FramebufferTextureFormatToGLType(FramebufferTextureFormat format);
+u32 FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format);
+u32 FramebufferTextureFormatToGLType(FramebufferTextureFormat format);
 
 struct FramebufferTexture
 {
@@ -22,13 +22,13 @@ struct FramebufferTexture
 	}
 
 	FramebufferTextureFormat Format     = FramebufferTextureFormat::None;
-	uint32_t                 RendererID = 0;
+	u32                 RendererID = 0;
 };
 
 struct FramebufferSpecification
 {
 	Vector2I Size;
-	uint32_t Samples         = 1;
+	u32 Samples         = 1;
 	bool     SwapChainTarget = false;
 
 	std::vector<FramebufferTexture> Attachments;
@@ -45,10 +45,10 @@ public:
 	void Resize(s32 width, s32 height);
 	void Resize(Vector2I size);
 
-	NODISCARD int32_t ReadPixel(uint32_t attachmentIndex, int x, int y);
-	void              ClearColorAttachment(uint32_t attachmentIndex, int value);
+	NODISCARD s32 ReadPixel(u32 attachmentIndex, int x, int y);
+	void              ClearColorAttachment(u32 attachmentIndex, int value);
 
-	NODISCARD FORCEINLINE const FramebufferTexture& GetColorAttachment(uint32_t attachmentIndex) const
+	NODISCARD FORCEINLINE const FramebufferTexture& GetColorAttachment(u32 attachmentIndex) const
 	{
 		return m_Attachments[attachmentIndex];
 	};
@@ -60,7 +60,7 @@ public:
 	NODISCARD FORCEINLINE const FramebufferSpecification& GetSpecification() const { return m_Spec; }
 
 private:
-	uint32_t                        m_RendererID;
+	u32                        m_RendererID;
 	std::vector<FramebufferTexture> m_Attachments;
 	FramebufferTexture              m_DepthAttachment;
 	FramebufferSpecification        m_Spec;

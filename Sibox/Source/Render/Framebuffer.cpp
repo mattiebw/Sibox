@@ -1,7 +1,7 @@
 ﻿#include "siboxpch.h"
 #include "Render/Framebuffer.h"
 
-uint32_t FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format)
+u32 FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format)
 {
 	switch (format)
 	{
@@ -17,7 +17,7 @@ uint32_t FramebufferTextureFormatToGLFormat(FramebufferTextureFormat format)
 	return 0;
 }
 
-uint32_t FramebufferTextureFormatToGLInternalFormat(FramebufferTextureFormat format)
+u32 FramebufferTextureFormatToGLInternalFormat(FramebufferTextureFormat format)
 {
 	switch (format)
 	{
@@ -31,7 +31,7 @@ uint32_t FramebufferTextureFormatToGLInternalFormat(FramebufferTextureFormat for
 	return 0;
 }
 
-uint32_t FramebufferTextureFormatToGLType(FramebufferTextureFormat format)
+u32 FramebufferTextureFormatToGLType(FramebufferTextureFormat format)
 {
 	switch (format)
 	{
@@ -183,7 +183,7 @@ void Framebuffer::Resize(Vector2I size)
 	Resize(size.X, size.Y);
 }
 
-int32_t Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+s32 Framebuffer::ReadPixel(u32 attachmentIndex, int x, int y)
 {
 	SIBOX_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
 
@@ -195,7 +195,7 @@ int32_t Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	return pixelData;
 }
 
-void Framebuffer::ClearColorAttachment(uint32_t attachmentIndex, int value)
+void Framebuffer::ClearColorAttachment(u32 attachmentIndex, int value)
 {
 	SIBOX_ASSERT(attachmentIndex < m_Attachments.size() && "Invalid attachment index");
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 // An enum representing the current network type of the application.
-enum class NetworkType : uint8_t
+enum class NetworkType : u8
 {
     Standalone, // There is no server or client - networking is disabled.
     Client, // We are a client - there is no local server.
@@ -10,7 +10,7 @@ enum class NetworkType : uint8_t
 };
 
 // An enum representing the current state of an entity within the networking system.
-enum class EntityNetworkType : uint8_t
+enum class EntityNetworkType : u8
 {
     LocalOnly, // Only exists on the client. For example, particle systems. May have been created by the server, but isn't synced at all.
     LocalReplicated, // Exists on the server, and we are the server. We may not own it, but we do have authority.

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class BufferUsageType : uint8_t
+enum class BufferUsageType : u8
 {
 	None = 0,
 	StreamDraw, StreamRead, StreamCopy,
@@ -39,7 +39,7 @@ public:
 	}
 };
 
-enum class ShaderDataType : uint8_t // MW @copypaste: Update below function(s) if enum extended.
+enum class ShaderDataType : u8 // MW @copypaste: Update below function(s) if enum extended.
 {
 	None = 0,
 	Float,
@@ -88,7 +88,7 @@ public:
 	}
 };
 
-NODISCARD static uint32_t GetShaderDataTypeSize(ShaderDataType e)
+NODISCARD static u32 GetShaderDataTypeSize(ShaderDataType e)
 {
 	switch (e)
 	{
@@ -110,7 +110,7 @@ NODISCARD static uint32_t GetShaderDataTypeSize(ShaderDataType e)
 	}
 }
 
-NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType type)
+NODISCARD static u32 GetShaderDataTypeComponentCount(ShaderDataType type)
 {
 	switch (type)
 	{
@@ -132,7 +132,7 @@ NODISCARD static uint32_t GetShaderDataTypeComponentCount(ShaderDataType type)
 	}
 }
 
-NODISCARD static uint32_t ShaderDataTypeToGLBaseType(ShaderDataType type)
+NODISCARD static u32 ShaderDataTypeToGLBaseType(ShaderDataType type)
 {
 	switch (type)
 	{
@@ -154,27 +154,27 @@ NODISCARD static uint32_t ShaderDataTypeToGLBaseType(ShaderDataType type)
 	}
 }
 
-NODISCARD static uint32_t BufferUsageTypeToGL(BufferUsageType e);
+NODISCARD static u32 BufferUsageTypeToGL(BufferUsageType e);
 
 struct BufferElement
 {
 	std::string    Name;
 	ShaderDataType Type;
 	size_t         Offset;
-	uint32_t       Size;
-	uint32_t       InstancingDivisor;
+	u32       Size;
+	u32       InstancingDivisor;
 	bool           Normalized;
 
 	BufferElement() = default;
 
-	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, uint32_t instancingDivisor = 0,
+	BufferElement(std::string name, ShaderDataType type, size_t offset = 0, u32 instancingDivisor = 0,
 	              bool        normalized                               = false)
 		: Name(std::move(name)), Type(type), Offset(offset), Size(GetShaderDataTypeSize(type)),
 		  InstancingDivisor(instancingDivisor), Normalized(normalized)
 	{
 	}
 
-	NODISCARD FORCEINLINE uint32_t GetComponentCount() const { return GetShaderDataTypeComponentCount(Type); }
+	NODISCARD FORCEINLINE u32 GetComponentCount() const { return GetShaderDataTypeComponentCount(Type); }
 };
 
 class BufferLayout
@@ -194,7 +194,7 @@ public:
 		CalculateOffsetsAndStride();
 	}
 
-	NODISCARD FORCEINLINE uint32_t                          GetStride() const { return m_Stride; }
+	NODISCARD FORCEINLINE u32                          GetStride() const { return m_Stride; }
 	NODISCARD FORCEINLINE const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 	NODISCARD FORCEINLINE bool                              HasElements() const { return m_Elements.size() > 0; }
 
@@ -207,14 +207,14 @@ private:
 	void CalculateOffsetsAndStride();
 
 	std::vector<BufferElement> m_Elements;
-	uint32_t                   m_Stride = 0;
+	u32                   m_Stride = 0;
 };
 
 class VertexBuffer
 {
 public:
-	VertexBuffer(uint32_t size, BufferUsageType type = BufferUsageType::StaticDraw);
-	VertexBuffer(const void *data, uint32_t size, BufferUsageType type = BufferUsageType::StaticDraw);
+	VertexBuffer(u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
+	VertexBuffer(const void *data, u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
 	VertexBuffer(const Buffer &buffer, BufferUsageType type = BufferUsageType::StaticDraw);
 	~VertexBuffer();
 
@@ -226,21 +226,21 @@ public:
 	void        Bind() const;
 	static void Unbind();
 
-	void SetData(const void *data, uint32_t size);
+	void SetData(const void *data, u32 size);
 	void SetData(const Buffer &buffer);
 
 	NODISCARD FORCEINLINE const BufferLayout& GetLayout() const { return m_Layout; }
 	void                                      SetLayout(const BufferLayout &layout) { m_Layout = layout; }
 
 private:
-	uint32_t     m_RendererID;
+	u32     m_RendererID;
 	BufferLayout m_Layout;
 };
 
 class IndexBuffer
 {
 public:
-	IndexBuffer(uint32_t *indices, uint32_t count, BufferUsageType type = BufferUsageType::StaticDraw);
+	IndexBuffer(u32 *indices, u32 count, BufferUsageType type = BufferUsageType::StaticDraw);
 	IndexBuffer(const Buffer &buffer, BufferUsageType type = BufferUsageType::StaticDraw);
 	~IndexBuffer();
 
@@ -252,9 +252,9 @@ public:
 	void        Bind();
 	static void Unbind();
 
-	NODISCARD FORCEINLINE uint32_t GetCount() const { return m_Count; }
+	NODISCARD FORCEINLINE u32 GetCount() const { return m_Count; }
 
 private:
-	uint32_t m_RendererID;
-	uint32_t m_Count;
+	u32 m_RendererID;
+	u32 m_Count;
 };

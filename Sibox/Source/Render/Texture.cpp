@@ -26,7 +26,7 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	// Load texture from file using stb_image
 	SIBOX_TRACE("Loading texture from file \"{0}\"", filename);
 	stbi_set_flip_vertically_on_load(m_Spec.FlipVertically);
-	uint8_t *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, nullptr, GetChannels());
+	u8 *data = stbi_load(filename.data(), &m_Spec.Width, &m_Spec.Height, nullptr, GetChannels());
 
 	// Error check texture loading
 	if (data == nullptr)
@@ -73,7 +73,7 @@ Texture::~Texture()
 
 // Since we don't modify any class data, Rider thinks this can be const. But, semantically, I feel like it shouldn't be.
 // ReSharper disable once CppMemberFunctionMayBeConst
-void Texture::SetData(const uint8_t *data)
+void Texture::SetData(const u8 *data)
 {
 	// MW @todo: Error checking of size. Either take a size parameter, or remove this overload and require a Buffer.
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);

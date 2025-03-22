@@ -23,10 +23,10 @@ Application *Application::s_Instance = nullptr;
 
 FPSCounter::FPSCounter()
 {
-	memset(&m_Samples, 0, sizeof(uint16_t) * s_MaxSamples);
+	memset(&m_Samples, 0, sizeof(u16) * s_MaxSamples);
 }
 
-void FPSCounter::AddSample(uint16_t fps)
+void FPSCounter::AddSample(u16 fps)
 {
 	m_Samples[m_sampleIndex] = fps;
 	m_sampleIndex            = (m_sampleIndex + 1) % s_MaxSamples;
@@ -36,9 +36,9 @@ void FPSCounter::AddSample(uint16_t fps)
 void FPSCounter::RecalculateFPS()
 {
 	int fpsTotal = 0;
-	for (uint16_t m_Sample : m_Samples)
+	for (u16 m_Sample : m_Samples)
 		fpsTotal += m_Sample;
-	m_FPS   = static_cast<uint16_t>(fpsTotal / s_MaxSamples);
+	m_FPS   = static_cast<u16>(fpsTotal / s_MaxSamples);
 	m_Dirty = false;
 }
 
@@ -153,16 +153,16 @@ void Application::Run()
 
 	BindDelegates();
 
-	uint64_t time = SDL_GetPerformanceCounter();
+	u64 time = SDL_GetPerformanceCounter();
 	while (m_Running)
 	{
-		uint64_t last = time;
+		u64 last = time;
 		time          = SDL_GetPerformanceCounter();
-		m_DeltaTime   = (time - last) / static_cast<double>(SDL_GetPerformanceFrequency());
+		m_DeltaTime   = (time - last) / static_cast<f64>(SDL_GetPerformanceFrequency());
 
-		m_FPSCounter.AddSample(static_cast<uint16_t>(1.0 / m_DeltaTime));
+		m_FPSCounter.AddSample(static_cast<u16>(1.0 / m_DeltaTime));
 
-		static double timeSinceFPSPrinted = 0;
+		static f64 timeSinceFPSPrinted = 0;
 		if (timeSinceFPSPrinted >= 1)
 		{
 			SIBOX_INFO("FPS: {} (frame time: {:.2f}ms)", m_FPSCounter.GetFPS(), m_FPSCounter.GetAverageFrameTimeMS());
@@ -465,14 +465,14 @@ void Layer::OnDetach()
 {
 }
 
-void Layer::Update(double delta)
+void Layer::Update(f64 delta)
 {
 }
 
-void Layer::Render(double delta)
+void Layer::Render(f64 delta)
 {
 }
 
-void Layer::RenderImGUI(double delta)
+void Layer::RenderImGUI(f64 delta)
 {
 }

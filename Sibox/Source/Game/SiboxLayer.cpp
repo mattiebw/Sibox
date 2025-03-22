@@ -35,17 +35,17 @@ void SiboxLayer::OnDetach()
 	TileSets::Shutdown();
 }
 
-void SiboxLayer::Update(double delta)
+void SiboxLayer::Update(f64 delta)
 {
 }
 
-void SiboxLayer::Render(double delta)
+void SiboxLayer::Render(f64 delta)
 {
 	// Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(),
 	//                                           m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
 }
 
-void SiboxLayer::RenderImGUI(double delta)
+void SiboxLayer::RenderImGUI(f64 delta)
 {
 	ImGui::Begin("Player Info");
 	ImGui::InputText("Player Name", &m_Player->Name);

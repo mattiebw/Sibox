@@ -5,7 +5,7 @@ class Layer
 public:
 	virtual void OnAttach();
 	virtual void OnDetach();
-	virtual void Update(double delta);
-	virtual void Render(double delta);
-	virtual void RenderImGUI(double delta);
+	virtual void Update(f64 delta);
+	virtual void Render(f64 delta);
+	virtual void RenderImGUI(f64 delta);
 };

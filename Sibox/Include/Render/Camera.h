@@ -4,11 +4,11 @@ class Camera
 {
 public:
 	Transform Transformation = Transform();
-	float     FOV            = 90;
-	float     OrthoSize      = 24.0f;
-	float     NearPlane      = 0.1f;
-	float     FarPlane       = 1000.0f;
-	float     Aspect         = 0;
+	f32     FOV            = 90;
+	f32     OrthoSize      = 24.0f;
+	f32     NearPlane      = 0.1f;
+	f32     FarPlane       = 1000.0f;
+	f32     Aspect         = 0;
 
 	// MW @todo: Cache these matrices?
 
@@ -35,8 +35,8 @@ public:
 
 	NODISCARD FORCEINLINE RectF GetCameraRect() const
 	{
-		float height = OrthoSize;
-		float width  = height * Aspect;
+		f32 height = OrthoSize;
+		f32 width  = height * Aspect;
 		return RectF(Transformation.Position.X - width / 2, Transformation.Position.Y - height / 2, width, height);
 	}
 

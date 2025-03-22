@@ -5,8 +5,8 @@ class World;
 // This macro is used to define the TypeID of an entity class, and also to inherit constructors.
 // While "typeName::" is redundant, it will cause a compile error if the classname provided is not at least an Entity, so it can help if it was wrong.
 #define ENTITY_CLASS_BODY(typeName) public: using Entity::Entity;\
-    static constexpr uint16_t s_EntityTypeID = crc16(#typeName);\
-    NODISCARD virtual uint16_t GetTypeID() const override { return typeName::s_EntityTypeID; }
+    static constexpr u16 s_EntityTypeID = crc16(#typeName);\
+    NODISCARD virtual u16 GetTypeID() const override { return typeName::s_EntityTypeID; }
 
 class Entity
 {
@@ -22,8 +22,8 @@ public:
 	Entity& operator=(const Entity &other)     = delete;
 	Entity& operator=(Entity &&other) noexcept = delete;
 
-	static Ref<Entity> CreateEntity(uint16_t type, std::string name, const Transform &tf, UUID uuid);
-	static Ref<Entity> CreateEntity(uint16_t type, std::string name, UUID uuid);
+	static Ref<Entity> CreateEntity(u16 type, std::string name, const Transform &tf, UUID uuid);
+	static Ref<Entity> CreateEntity(u16 type, std::string name, UUID uuid);
 
 	NODISCARD FORCEINLINE const std::string& GetName() const { return m_Name; }
 	NODISCARD FORCEINLINE const Vector3F&   GetPosition() const { return EntityTransform.Position; }
@@ -41,12 +41,12 @@ public:
 
 	void SetUUID(UUID uuid);
 
-	virtual void SendEvent(uint16_t eventID, Buffer eventData);
-	virtual void ReceiveEntityEvent(uint16_t eventID, Buffer eventData);
+	virtual void SendEvent(u16 eventID, Buffer eventData);
+	virtual void ReceiveEntityEvent(u16 eventID, Buffer eventData);
 
 	virtual void Created();
 	virtual void AddedToWorld(World *world);
-	virtual void Tick(double delta);
+	virtual void Tick(f64 delta);
 	virtual void Render();
 	virtual void Destroyed();
 
@@ -56,8 +56,8 @@ public:
 
 	Transform EntityTransform;
 
-	static constexpr uint16_t  s_EntityTypeID = crc16("Entity");
-	NODISCARD virtual uint16_t GetTypeID() const { return s_EntityTypeID; };
+	static constexpr u16  s_EntityTypeID = crc16("Entity");
+	NODISCARD virtual u16 GetTypeID() const { return s_EntityTypeID; };
 
 protected:
 	UUID        m_UUID;

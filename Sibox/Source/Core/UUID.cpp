@@ -6,7 +6,7 @@ namespace
 {
 	std::random_device                      s_RandomDevice;
 	std::mt19937_64                         s_Engine(s_RandomDevice());
-	std::uniform_int_distribution<uint64_t> s_UniformDistribution;
+	std::uniform_int_distribution<u64> s_UniformDistribution;
 }
 
 UUID::UUID()
@@ -14,7 +14,7 @@ UUID::UUID()
 {
 }
 
-UUID::UUID(uint64_t uuid)
+UUID::UUID(u64 uuid)
 	: m_UUID(uuid)
 {
 }

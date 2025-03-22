@@ -3,7 +3,7 @@
 
 #include "Render/Renderer.h"
 
-uint32_t BufferUsageTypeToGL(BufferUsageType e)
+u32 BufferUsageTypeToGL(BufferUsageType e)
 {
 	switch (e)
 	{
@@ -36,14 +36,14 @@ void BufferLayout::CalculateOffsetsAndStride()
 	}
 }
 
-VertexBuffer::VertexBuffer(uint32_t size, BufferUsageType type)
+VertexBuffer::VertexBuffer(u32 size, BufferUsageType type)
 {
 	glCreateBuffers(1, &m_RendererID);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, size, nullptr, BufferUsageTypeToGL(type));
 }
 
-VertexBuffer::VertexBuffer(const void *data, uint32_t size, BufferUsageType type)
+VertexBuffer::VertexBuffer(const void *data, u32 size, BufferUsageType type)
 {
 	glCreateBuffers(1, &m_RendererID);
 	Bind();
@@ -51,7 +51,7 @@ VertexBuffer::VertexBuffer(const void *data, uint32_t size, BufferUsageType type
 }
 
 VertexBuffer::VertexBuffer(const Buffer &buffer, BufferUsageType type)
-	: VertexBuffer(buffer.Data, static_cast<uint32_t>(buffer.Size), type)
+	: VertexBuffer(buffer.Data, static_cast<u32>(buffer.Size), type)
 {
 }
 
@@ -70,7 +70,7 @@ void VertexBuffer::Unbind()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::SetData(const void *data, uint32_t size)
+void VertexBuffer::SetData(const void *data, u32 size)
 {
 	Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
@@ -78,21 +78,21 @@ void VertexBuffer::SetData(const void *data, uint32_t size)
 
 void VertexBuffer::SetData(const Buffer &buffer)
 {
-	SetData(buffer.Data, static_cast<uint32_t>(buffer.Size));
+	SetData(buffer.Data, static_cast<u32>(buffer.Size));
 }
 
-IndexBuffer::IndexBuffer(uint32_t *indices, uint32_t count, BufferUsageType type)
+IndexBuffer::IndexBuffer(u32 *indices, u32 count, BufferUsageType type)
 	: m_Count(count)
 {
 	glCreateBuffers(1, &m_RendererID);
 	// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
 	// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
 	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-	glBufferData(GL_ARRAY_BUFFER, m_Count * sizeof(uint32_t), indices, BufferUsageTypeToGL(type));
+	glBufferData(GL_ARRAY_BUFFER, m_Count * sizeof(u32), indices, BufferUsageTypeToGL(type));
 }
 
 IndexBuffer::IndexBuffer(const Buffer &buffer, BufferUsageType type)
-	: IndexBuffer(reinterpret_cast<uint32_t*>(buffer.Data), static_cast<uint32_t>(buffer.Size / 4), type)
+	: IndexBuffer(reinterpret_cast<u32*>(buffer.Data), static_cast<u32>(buffer.Size / 4), type)
 {
 }
 

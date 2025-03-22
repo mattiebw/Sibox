@@ -5,7 +5,7 @@ class SpriteSheet;
 
 struct TileData
 {
-	uint16_t SpriteIndex;
+	u16 SpriteIndex;
 	bool     IsSolid = false;
 };
 
@@ -19,12 +19,12 @@ public:
 	TileSet& operator=(const TileSet &other)     = delete;
 	TileSet& operator=(TileSet &&other) noexcept = delete;
 
-	uint16_t                        AddTile(const TileData &data);
-	NODISCARD FORCEINLINE TileData& GetTile(uint16_t tileIndex) { return tileIndex == 0 ? m_Empty : m_Tiles[tileIndex - 1]; }
+	u16                        AddTile(const TileData &data);
+	NODISCARD FORCEINLINE TileData& GetTile(u16 tileIndex) { return tileIndex == 0 ? m_Empty : m_Tiles[tileIndex - 1]; }
 
 	NODISCARD FORCEINLINE const Ref<SpriteSheet>& GetSpritesheet() const { return m_Spritesheet; }
 
-	NODISCARD SpriteSheetSprite GetSpriteForTile(uint16_t tile) const;
+	NODISCARD SpriteSheetSprite GetSpriteForTile(u16 tile) const;
 
 protected:
 	TileData m_Empty;

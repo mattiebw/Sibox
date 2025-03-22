@@ -5,12 +5,12 @@
 
 struct Buffer
 {
-	uint8_t *Data = nullptr;
-	size_t   Size = 0;
+	u8 *   Data = nullptr;
+	size_t Size = 0;
 
 	Buffer() = default;
 
-	Buffer(uint8_t *data, size_t size)
+	Buffer(u8 *data, size_t size)
 	{
 		this->Data = data;
 		this->Size = size;
@@ -47,7 +47,7 @@ struct Buffer
 	FORCEINLINE_DEBUGGABLE void Allocate(size_t size)
 	{
 		Release();
-		Data = new uint8_t[size];
+		Data = new u8[size];
 		Size = size;
 	}
 
@@ -106,8 +106,8 @@ struct ScopedBuffer
 		m_Buffer.Release();
 	}
 
-	NODISCARD FORCEINLINE uint8_t* Data() { return m_Buffer.Data; }
-	NODISCARD FORCEINLINE size_t   Size() { return m_Buffer.Size; }
+	NODISCARD FORCEINLINE u8*    Data() { return m_Buffer.Data; }
+	NODISCARD FORCEINLINE size_t Size() { return m_Buffer.Size; }
 
 	template <typename T>
 	NODISCARD FORCEINLINE T* As()

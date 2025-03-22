@@ -8,33 +8,33 @@ SpriteSheet::SpriteSheet(const Ref<Texture> &texture)
 	m_Texture = texture;
 }
 
-uint32_t SpriteSheet::CreateSprite(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+u32 SpriteSheet::CreateSprite(u32 x, u32 y, u32 width, u32 height)
 {
 	SIBOX_ASSERT(m_Texture != nullptr && "SpriteSheet has no texture!");
 
-	uint32_t  index = static_cast<uint32_t>(m_Sprites.size());
+	u32  index = static_cast<u32>(m_Sprites.size());
 	Vector2F coordsMin, coordsMax;
-	coordsMin.X = static_cast<float>(x) / static_cast<float>(m_Texture->GetWidth());
-	coordsMin.Y = static_cast<float>(y) / static_cast<float>(m_Texture->GetHeight());
-	coordsMax.X = static_cast<float>(x + width) / static_cast<float>(m_Texture->GetWidth());
-	coordsMax.Y = static_cast<float>(y + height) / static_cast<float>(m_Texture->GetHeight());
+	coordsMin.X = static_cast<f32>(x) / static_cast<f32>(m_Texture->GetWidth());
+	coordsMin.Y = static_cast<f32>(y) / static_cast<f32>(m_Texture->GetHeight());
+	coordsMax.X = static_cast<f32>(x + width) / static_cast<f32>(m_Texture->GetWidth());
+	coordsMax.Y = static_cast<f32>(y + height) / static_cast<f32>(m_Texture->GetHeight());
 	m_Sprites.push_back({coordsMin, coordsMax});
 
 	return index;
 }
 
-uint32_t SpriteSheet::CreateTilesFromTileSize(uint32_t tileWidth, uint32_t tileHeight)
+u32 SpriteSheet::CreateTilesFromTileSize(u32 tileWidth, u32 tileHeight)
 {
 	SIBOX_ASSERT(m_Texture != nullptr && "TileSet has no texture!");
 	SIBOX_ASSERT(
 		m_Texture->GetWidth() % tileWidth == 0 && m_Texture->GetHeight() % tileHeight == 0 &&
 		"Tile width and height of the texture must be a multiple of the tile width and height!");
 
-	int32_t tilesX = m_Texture->GetWidth() / tileWidth;
-	int32_t tilesY = m_Texture->GetHeight() / tileHeight;
-	for (int32_t y = 0; y < tilesY; y++)
-		for (int32_t x = 0; x < tilesX; x++)
+	s32 tilesX = m_Texture->GetWidth() / tileWidth;
+	s32 tilesY = m_Texture->GetHeight() / tileHeight;
+	for (s32 y = 0; y < tilesY; y++)
+		for (s32 x = 0; x < tilesX; x++)
 			CreateSprite(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
 
-	return static_cast<uint32_t>(m_Sprites.size());
+	return static_cast<u32>(m_Sprites.size());
 }

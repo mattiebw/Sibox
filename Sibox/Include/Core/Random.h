@@ -10,12 +10,12 @@ public:
 		s_RandomEngine.seed(std::random_device()());
 	}
 
-	NODISCARD FORCEINLINE static float Float()
+	NODISCARD FORCEINLINE static f32 Float()
 	{
 		return s_Distribution(s_RandomEngine);
 	}
 
-	NODISCARD FORCEINLINE static float Float(float min, float max)
+	NODISCARD FORCEINLINE static f32 Float(f32 min, f32 max)
 	{
 		return min + s_Distribution(s_RandomEngine) * (max - min);
 	}
@@ -32,6 +32,6 @@ public:
 
 private:
 	static std::mt19937                          s_RandomEngine;
-	static std::uniform_real_distribution<float> s_Distribution;
+	static std::uniform_real_distribution<f32> s_Distribution;
 	static std::uniform_int_distribution<int>    s_IntDistribution;
 };

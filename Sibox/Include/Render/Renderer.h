@@ -109,7 +109,7 @@ public:
 	void DrawQuad(const Vector3F &position, Vector2F size, const Vector4F &tintColor);
 
 	void DrawRectangle(const RectF &rect, const Vector4F &colour);
-	void DrawRectangleLines(const RectF &rect, const Vector4F &colour, float thickness);
+	void DrawRectangleLines(const RectF &rect, const Vector4F &colour, f32 thickness);
 
 	void Flush();
 	void Reset();

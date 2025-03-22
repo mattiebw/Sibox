@@ -7,32 +7,32 @@
 #include "Render/SpriteSheet.h"
 
 Ref<TileSet> TileSets::MainTileSet = nullptr;
-uint16_t     TileSets::Empty       = 0;
-uint16_t     TileSets::Grass       = 0;
-uint16_t     TileSets::Flowers     = 0;
-uint16_t     TileSets::Sunflowers  = 0;
-uint16_t     TileSets::Lilies      = 0;
-uint16_t     TileSets::Roses       = 0;
-uint16_t     TileSets::StoneWall   = 0;
-uint16_t     TileSets::MoutainStone= 0;
-uint16_t     TileSets::Snow        = 0;
-uint16_t     TileSets::Sand        = 0;
-uint16_t     TileSets::Mud1        = 0;
-uint16_t     TileSets::Mud2        = 0;
-uint16_t     TileSets::Mud3        = 0;
-uint16_t     TileSets::Mud4        = 0;
-uint16_t     TileSets::DWater1     = 0;
-uint16_t     TileSets::DWater2     = 0;
-uint16_t     TileSets::DWater3     = 0;
-uint16_t     TileSets::DWater4     = 0;
-uint16_t     TileSets::DWater5     = 0;
-uint16_t     TileSets::DWater6     = 0;
-uint16_t     TileSets::LWater1     = 0;
-uint16_t     TileSets::LWater2	   = 0;
-uint16_t     TileSets::LWater3     = 0;
-uint16_t     TileSets::LWater4     = 0;
-uint16_t     TileSets::LWater5     = 0;
-uint16_t     TileSets::LWater6     = 0;
+u16     TileSets::Empty       = 0;
+u16     TileSets::Grass       = 0;
+u16     TileSets::Flowers     = 0;
+u16     TileSets::Sunflowers  = 0;
+u16     TileSets::Lilies      = 0;
+u16     TileSets::Roses       = 0;
+u16     TileSets::StoneWall   = 0;
+u16     TileSets::MoutainStone= 0;
+u16     TileSets::Snow        = 0;
+u16     TileSets::Sand        = 0;
+u16     TileSets::Mud1        = 0;
+u16     TileSets::Mud2        = 0;
+u16     TileSets::Mud3        = 0;
+u16     TileSets::Mud4        = 0;
+u16     TileSets::DWater1     = 0;
+u16     TileSets::DWater2     = 0;
+u16     TileSets::DWater3     = 0;
+u16     TileSets::DWater4     = 0;
+u16     TileSets::DWater5     = 0;
+u16     TileSets::DWater6     = 0;
+u16     TileSets::LWater1     = 0;
+u16     TileSets::LWater2	   = 0;
+u16     TileSets::LWater3     = 0;
+u16     TileSets::LWater4     = 0;
+u16     TileSets::LWater5     = 0;
+u16     TileSets::LWater6     = 0;
 
 
 void TileSets::Init()

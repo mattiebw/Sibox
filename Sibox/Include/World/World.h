@@ -52,11 +52,11 @@ public:
 
 	void UpdateEntityUUID(UUID oldID, UUID newID);
 	void DestroyEntity(UUID id);
-	void DestroyEntity(const const Entity *entity);
+	void DestroyEntity(const Entity *entity);
 
 	Ref<TileMap> CreateTileMap(const Ref<class TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
-	void Tick(double delta);
+	void Tick(f64 delta);
 	void Render();
 
 	NODISCARD bool RectOverlapsAnySolidTile(const RectF &rect) const;
@@ -64,11 +64,11 @@ public:
 	void Clean();
 
 	NODISCARD FORCEINLINE NetworkType GetNetworkType() const { return m_NetworkType; }
-	NODISCARD FORCEINLINE double  GetDelta() const { return m_Delta; }
-	NODISCARD FORCEINLINE double  GetUnscaledDelta() const { return m_UnscaledDelta; }
-	NODISCARD FORCEINLINE double  GetTimeScale() const { return m_TimeScale; }
-	NODISCARD FORCEINLINE double* GetTimeScaleRef() { return &m_TimeScale; }
-	FORCEINLINE void              SetTimeScale(double timeScale)
+	NODISCARD FORCEINLINE f64  GetDelta() const { return m_Delta; }
+	NODISCARD FORCEINLINE f64  GetUnscaledDelta() const { return m_UnscaledDelta; }
+	NODISCARD FORCEINLINE f64  GetTimeScale() const { return m_TimeScale; }
+	NODISCARD FORCEINLINE f64* GetTimeScaleRef() { return &m_TimeScale; }
+	FORCEINLINE void              SetTimeScale(f64 timeScale)
 	{
 		m_TimeScale = timeScale;
 		m_Delta     = m_UnscaledDelta * m_TimeScale;
@@ -77,9 +77,9 @@ public:
 private:
 	std::unordered_map<UUID, Ref<Entity>> m_Entities;
 	std::vector<Ref<TileMap>>             m_TileMaps;
-	double                                m_TimeScale     = 1.0f;
-	double                                m_Delta         = 0;
-	double                                m_UnscaledDelta = 0;
+	f64                                m_TimeScale     = 1.0f;
+	f64                                m_Delta         = 0;
+	f64                                m_UnscaledDelta = 0;
 	NetworkType                           m_NetworkType = NetworkType::Standalone;
 
 	friend class Application;

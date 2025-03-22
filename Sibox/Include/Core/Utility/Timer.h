@@ -21,38 +21,38 @@ public:
 		m_End = SDL_GetPerformanceCounter();
 	}
 
-	NODISCARD FORCEINLINE double GetElapsedMilliseconds() const
+	NODISCARD FORCEINLINE f64 GetElapsedMilliseconds() const
 	{
-		uint64_t end = m_End;
+		u64 end = m_End;
 		if (end == 0)
 			end = SDL_GetPerformanceCounter();
-		return static_cast<double>((end - m_Begin) * 1000) / static_cast<double>(SDL_GetPerformanceFrequency());
+		return static_cast<f64>((end - m_Begin) * 1000) / static_cast<f64>(SDL_GetPerformanceFrequency());
 	}
 
-	NODISCARD FORCEINLINE double GetElapsedSeconds() const
+	NODISCARD FORCEINLINE f64 GetElapsedSeconds() const
 	{
-		uint64_t end = m_End;
+		u64 end = m_End;
 		if (end == 0)
 			end = SDL_GetPerformanceCounter();
-		return static_cast<double>(end - m_Begin) / static_cast<double>(SDL_GetPerformanceFrequency());
+		return static_cast<f64>(end - m_Begin) / static_cast<f64>(SDL_GetPerformanceFrequency());
 	}
 
-	NODISCARD FORCEINLINE uint64_t GetElapsedTicks() const
+	NODISCARD FORCEINLINE u64 GetElapsedTicks() const
 	{
-		uint64_t end = m_End;
+		u64 end = m_End;
 		if (end == 0)
 			end = SDL_GetPerformanceCounter();
 		return end - m_Begin;
 	}
 
-	NODISCARD FORCEINLINE uint64_t GetElapsedMicroseconds() const
+	NODISCARD FORCEINLINE u64 GetElapsedMicroseconds() const
 	{
-		uint64_t end = m_End;
+		u64 end = m_End;
 		if (end == 0)
 			end = SDL_GetPerformanceCounter();
-		return static_cast<uint64_t>((end - m_Begin) * 1000000) / SDL_GetPerformanceFrequency();
+		return static_cast<u64>((end - m_Begin) * 1000000) / SDL_GetPerformanceFrequency();
 	}
 
 private:
-	uint64_t m_Begin, m_End;
+	u64 m_Begin, m_End;
 };

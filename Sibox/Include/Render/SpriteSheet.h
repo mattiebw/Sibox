@@ -14,11 +14,11 @@ class SpriteSheet
 public:
 	SpriteSheet(const Ref<Texture> &texture);
 
-	uint32_t CreateSprite(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
-	uint32_t CreateTilesFromTileSize(uint32_t tileWidth, uint32_t tileHeight);
+	u32 CreateSprite(u32 x, u32 y, u32 width, u32 height);
+	u32 CreateTilesFromTileSize(u32 tileWidth, u32 tileHeight);
 
 	NODISCARD FORCEINLINE const Ref<Texture>&      GetTexture() const { return m_Texture; }
-	NODISCARD FORCEINLINE const SpriteSheetSprite& GetSprite(uint32_t id) const { return m_Sprites[id]; }
+	NODISCARD FORCEINLINE const SpriteSheetSprite& GetSprite(u32 id) const { return m_Sprites[id]; }
 
 private:
 	std::vector<SpriteSheetSprite> m_Sprites;

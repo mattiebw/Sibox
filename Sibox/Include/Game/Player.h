@@ -12,7 +12,7 @@ class Player : public Entity
 
 	void Created() override;
 	void AddedToWorld(World *world) override;
-	void Tick(double delta) override;
+	void Tick(f64 delta) override;
 	void Render() override;
 
 	NODISCARD FORCEINLINE Ref<Camera>& GetCamera() { return m_Camera; }
@@ -25,7 +25,7 @@ class Player : public Entity
 	STEAM_CALLBACK( Player, OnPersonaNameChange, PersonaStateChange_t );
 
 private:
-	float         m_Time = 0;
+	f32         m_Time = 0;
 	Ref<Texture>  m_Texture;
 	Ref<Viewport> m_Viewport;
 	Ref<Camera>   m_Camera;

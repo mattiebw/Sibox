@@ -15,9 +15,9 @@ public:
 		return CreateRef<Shader>(std::string(name));
 	}
 
-	int32_t AddStageFromSource(GLenum stage, std::string_view source);
-	int32_t AddStageFromFile(GLenum stage, std::string_view source);
-	int32_t LinkProgram();
+	s32 AddStageFromSource(GLenum stage, std::string_view source);
+	s32 AddStageFromFile(GLenum stage, std::string_view source);
+	s32 LinkProgram();
 
 	// Binding functions
 	void Bind() const;
@@ -34,16 +34,16 @@ public:
 
 	void SetUniform1b(std::string_view uniformName, bool value) const;
 	void SetUniform1i(std::string_view uniformName, int value) const;
-	void SetUniform1f(std::string_view uniformName, float value) const;
-	void SetUniform2f(std::string_view uniformName, float x, float y) const;
+	void SetUniform1f(std::string_view uniformName, f32 value) const;
+	void SetUniform2f(std::string_view uniformName, f32 x, f32 y) const;
 	void SetUniform2i(std::string_view uniformName, int x, int y) const;
 	void SetUniformVec2(std::string_view uniformName, const Vector2F &vec) const;
 	void SetUniformIVec2(std::string_view uniformName, const Vector2I &vec) const;
-	void SetUniform3f(std::string_view uniformName, float x, float y, float z) const;
+	void SetUniform3f(std::string_view uniformName, f32 x, f32 y, f32 z) const;
 	void SetUniform3i(std::string_view uniformName, int x, int y, int z) const;
 	void SetUniformVec3(std::string_view uniformName, const Vector3F &vec) const;
 	void SetUniformIVec3(std::string_view uniformName, const Vector3I &vec) const;
-	void SetUniform4f(std::string_view uniformName, float x, float y, float z, float w) const;
+	void SetUniform4f(std::string_view uniformName, f32 x, f32 y, f32 z, f32 w) const;
 	void SetUniformVec4(std::string_view uniformName, const Vector4F &vec) const;
 	void SetUniformMatrix3f(std::string_view uniformName, const Matrix3x3F &matrix) const;
 	void SetUniformMatrix4f(std::string_view uniformName, const Matrix4x4F &matrix) const;
@@ -70,12 +70,12 @@ public:
 	static const char* GetShaderTypeString(GLenum type);
 
 protected:
-	std::vector<int32_t>                     m_ShaderStages;
-	std::unordered_map<std::string, int32_t> m_UniformLocations;
-	uint32_t                                 m_UsedVertexAttributes = 0;
+	std::vector<s32>                     m_ShaderStages;
+	std::unordered_map<std::string, s32> m_UniformLocations;
+	u32                                 m_UsedVertexAttributes = 0;
 
 	std::string m_Name       = "Untitled Shader";
-	int32_t     m_ProgramID  = -1;
+	s32     m_ProgramID  = -1;
 	bool        m_IsComplete = false, m_HasError = false;
 
 	bool m_TwoSided = false;

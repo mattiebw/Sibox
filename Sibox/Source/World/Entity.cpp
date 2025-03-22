@@ -30,7 +30,7 @@ Entity::~Entity()
 {
 }
 
-Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, const Transform &tf, UUID uuid)
+Ref<Entity> Entity::CreateEntity(u16 type, std::string name, const Transform &tf, UUID uuid)
 {
 	// MW @copypaste: Every entity that can be created dynamically needs an entry here.
 	switch (type)
@@ -45,7 +45,7 @@ Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, const Transfor
 	return nullptr;
 }
 
-Ref<Entity> Entity::CreateEntity(uint16_t type, std::string name, UUID uuid)
+Ref<Entity> Entity::CreateEntity(u16 type, std::string name, UUID uuid)
 {
 	return CreateEntity(type, name, Transform(), uuid);
 }
@@ -57,7 +57,7 @@ void Entity::SetUUID(UUID uuid)
 	m_UUID = uuid;
 }
 
-void Entity::SendEvent(uint16_t eventID, Buffer eventData)
+void Entity::SendEvent(u16 eventID, Buffer eventData)
 {
 	// MW @todo: Implement this!
 	// We need tell the server that we're calling this, with our UUID.
@@ -66,7 +66,7 @@ void Entity::SendEvent(uint16_t eventID, Buffer eventData)
 	// if needed.
 }
 
-void Entity::ReceiveEntityEvent(uint16_t eventID, Buffer eventData)
+void Entity::ReceiveEntityEvent(u16 eventID, Buffer eventData)
 {
 }
 
@@ -78,7 +78,7 @@ void Entity::AddedToWorld(World *world)
 {
 }
 
-void Entity::Tick(double delta)
+void Entity::Tick(f64 delta)
 {
 }
 

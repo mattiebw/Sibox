@@ -179,6 +179,6 @@ public:
 	template <typename Context>
 	constexpr auto format(const UUID &uuid, Context &ctx) const
 	{
-		return fmt::format_to(ctx.out(), "({})", static_cast<uint32_t>(uuid));
+		return fmt::format_to(ctx.out(), "({})", static_cast<u32>(uuid));
 	}
 };

@@ -42,9 +42,9 @@ void Player::AddedToWorld(World *world)
 	// 	world->AddEntity<PulsatingRectangle>();
 }
 
-void Player::Tick(double delta)
+void Player::Tick(f64 delta)
 {
-	m_Time += static_cast<float>(delta);
+	m_Time += static_cast<f32>(delta);
 
 	switch (m_EntityNetworkType)
 	{
@@ -61,10 +61,10 @@ void Player::Tick(double delta)
 			{
 				input.Normalize();
 				RectF collision(EntityTransform.Position.X - 0.45f, EntityTransform.Position.Y - 0.45f, 0.9f, 0.9f);
-				collision.Position.X += input.X * static_cast<float>(delta) * 5.0f;
+				collision.Position.X += input.X * static_cast<f32>(delta) * 5.0f;
 				if (m_World->RectOverlapsAnySolidTile(collision))
 					collision.Position.X = EntityTransform.Position.X - 0.45f;
-				collision.Position.Y += input.Y * static_cast<float>(delta) * 5.0f;
+				collision.Position.Y += input.Y * static_cast<f32>(delta) * 5.0f;
 				if (m_World->RectOverlapsAnySolidTile(collision))
 					collision.Position.Y = EntityTransform.Position.Y - 0.45f;
 				EntityTransform.Position = Vector3F(collision.Position.X + 0.45f, collision.Position.Y + 0.45f,
@@ -78,15 +78,15 @@ void Player::Tick(double delta)
 
 	m_Camera->Transformation.Position.X = MathUtil::LerpSmooth(m_Camera->Transformation.Position.X,
 	                                                           EntityTransform.Position.X, 0.001f,
-	                                                           static_cast<float>(delta));
+	                                                           static_cast<f32>(delta));
 	m_Camera->Transformation.Position.Y = MathUtil::LerpSmooth(m_Camera->Transformation.Position.Y,
 	                                                           EntityTransform.Position.Y, 0.001f,
-	                                                           static_cast<float>(delta));
+	                                                           static_cast<f32>(delta));
 }
 
 void Player::Render()
 {
-	float sine = (sin(m_Time) + 1) / 2;
+	f32 sine = (sin(m_Time) + 1) / 2;
 	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, Vector2F(1.0f),
 	                                         Vector4F(sine, sine, sine, 1.0f), m_Texture);
 
