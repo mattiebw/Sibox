@@ -24,7 +24,7 @@ class FPSCounter
 public:
 	FPSCounter();
 
-	void                           AddSample(u16 fps);
+	void                      AddSample(u16 fps);
 	NODISCARD FORCEINLINE u16 GetFPS()
 	{
 		if (m_Dirty) RecalculateFPS();
@@ -37,10 +37,10 @@ private:
 
 	constexpr static u16 s_MaxSamples = 200;
 
-	u16 m_Samples[s_MaxSamples];
-	u8  m_sampleIndex = 0;
-	u16 m_FPS         = 0;
-	bool     m_Dirty       = true;
+	u16  m_Samples[s_MaxSamples];
+	u8   m_sampleIndex = 0;
+	u16  m_FPS         = 0;
+	bool m_Dirty       = true;
 };
 
 class Application
@@ -74,7 +74,7 @@ public:
 	bool CreateServer();
 	bool JoinServer();
 	void DisconnectFromServer();
-	
+
 	void ShowError(const char *message, const char *title = "Error");
 
 	NODISCARD static FORCEINLINE Application*          Get() { return s_Instance; }
@@ -104,7 +104,7 @@ public:
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }
 	NODISCARD FORCEINLINE std::string_view GetError() const { return m_Error; }
-	NODISCARD FORCEINLINE f64           GetDeltaTime() const { return m_DeltaTime; }
+	NODISCARD FORCEINLINE f64              GetDeltaTime() const { return m_DeltaTime; }
 	NODISCARD FORCEINLINE NetworkType      GetNetworkType() const { return m_NetworkType; }
 	NODISCARD FORCEINLINE bool             HasFrontend() const { return m_NetworkType != NetworkType::DedicatedServer; }
 
@@ -132,7 +132,7 @@ protected:
 	Ref<SteamManager>        m_SteamManager;
 	Ref<Client>              m_Client;
 	Ref<Server>              m_Server;
-	f64                   m_DeltaTime = 0;
+	f64                      m_DeltaTime   = 0;
 	bool                     m_Running     = false;
 	bool                     m_Initialised = false;
 	NetworkType              m_NetworkType = NetworkType::Standalone;

@@ -4,8 +4,8 @@
 
 namespace
 {
-	std::random_device                      s_RandomDevice;
-	std::mt19937_64                         s_Engine(s_RandomDevice());
+	std::random_device                 s_RandomDevice;
+	std::mt19937_64                    s_Engine(s_RandomDevice());
 	std::uniform_int_distribution<u64> s_UniformDistribution;
 }
 

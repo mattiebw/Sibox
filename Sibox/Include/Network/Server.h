@@ -3,9 +3,9 @@
 class Server
 {
 public:
-    Server();
-    ~Server();
+	Server();
+	~Server();
 
 private:
-    HSteamListenSocket m_Socket;
+	HSteamListenSocket m_Socket;
 };

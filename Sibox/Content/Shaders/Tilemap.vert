@@ -18,7 +18,7 @@ void main()
         gl_Position = vec4(2, 2, 2, 1); // Skip this vertex.
         return;
     }
-    
+
     vec2 coord = vec2(gl_InstanceID % uChunkSize.x, gl_InstanceID / uChunkSize.x);
     vec3 pos = uPos + vec3(coord, 0.0) + a_Position;
     gl_Position = uViewProjection * vec4(pos, 1.0);

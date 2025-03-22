@@ -8,11 +8,14 @@ namespace FMOD::Studio
 
 struct SoundHandle
 {
-public:
-	SoundHandle() : m_Instance(nullptr) {}
-	SoundHandle(FMOD::Studio::EventInstance* instance)
+	SoundHandle() : m_Instance(nullptr)
+	{
+	}
+
+	SoundHandle(FMOD::Studio::EventInstance *instance)
 		: m_Instance(instance)
-	{}
+	{
+	}
 
 	void Stop();
 	void Pause(bool pause);
@@ -20,7 +23,7 @@ public:
 	bool IsPlaying() const;
 
 private:
-	FMOD::Studio::EventInstance* m_Instance;
+	FMOD::Studio::EventInstance *m_Instance;
 };
 
 class AudioManager
@@ -29,6 +32,7 @@ public:
 	static bool Init();
 	static void Update();
 	static void Shutdown();
+
 private:
-	static FMOD::Studio::System* m_FMODSystem;
+	static FMOD::Studio::System *m_FMODSystem;
 };

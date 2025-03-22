@@ -178,7 +178,7 @@ private:
 
 	TextVertex *m_VertexPtr     = nullptr;
 	TextVertex *m_VertexPtrBase = nullptr;
-	s32        m_IndicesCount  = 0, m_MaxIndices = 0;
+	s32         m_IndicesCount  = 0, m_MaxIndices = 0;
 };
 
 class RendererData

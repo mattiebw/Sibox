@@ -72,10 +72,10 @@ public:
 protected:
 	std::vector<s32>                     m_ShaderStages;
 	std::unordered_map<std::string, s32> m_UniformLocations;
-	u32                                 m_UsedVertexAttributes = 0;
+	u32                                  m_UsedVertexAttributes = 0;
 
 	std::string m_Name       = "Untitled Shader";
-	s32     m_ProgramID  = -1;
+	s32         m_ProgramID  = -1;
 	bool        m_IsComplete = false, m_HasError = false;
 
 	bool m_TwoSided = false;

@@ -3,7 +3,7 @@
 
 #include "Core/Application.h"
 
-extern "C" void SteamWarningMessage(int level, const char * message)
+extern "C" void SteamWarningMessage(int level, const char *message)
 {
 	if (level == 0)
 		SIBOX_INFO("Steamworks message: {0}", message);
@@ -20,7 +20,8 @@ bool SteamManager::Init()
 	SteamErrMsg error; // SteamErrMsg is a char[1024]
 	if (SteamAPI_InitEx(&error) != k_ESteamAPIInitResult_OK)
 	{
-		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}", static_cast<const char*>(error));
+		std::string err = fmt::format("Failed to initialise Steamworks (make sure Steam is running): {}",
+		                              static_cast<const char*>(error));
 		SIBOX_ERROR("{0}", err);
 		Application::Get()->ShowError(err.c_str(), "Steamworks Initialisation Error");
 		return false;
@@ -39,7 +40,7 @@ bool SteamManager::Init()
 	// For networking:
 	// Lets initialise the Steam relay access.
 	SteamNetworkingUtils()->InitRelayNetworkAccess();
-	
+
 	m_SteamworksInitialised = true;
 	SIBOX_INFO("Successfully initialised Steamworks. App ID: {}", SteamUtils()->GetAppID());
 	return true;
@@ -55,7 +56,7 @@ void SteamManager::Shutdown()
 {
 	if (!m_SteamworksInitialised)
 		return;
-	
+
 	SIBOX_TRACE("Shutting down Steamworks");
 	SteamAPI_Shutdown();
 
@@ -64,7 +65,7 @@ void SteamManager::Shutdown()
 
 void SteamManager::SetRequestingLobbies()
 {
-	m_RequestingLobbies = true;	
+	m_RequestingLobbies = true;
 }
 
 void SteamManager::SetNotRequestingLobbies()
@@ -80,7 +81,7 @@ void SteamManager::OnScreenshot(ScreenshotReady_t *pParam)
 void SteamManager::OnRelayNetworkStatusChanged(SteamRelayNetworkStatus_t *pParam)
 {
 	// MW @todo: Why is this not being called?
-	
+
 	if (pParam->m_eAvail == k_ESteamNetworkingAvailability_Current)
 	{
 		m_HasRelayAccess = true;

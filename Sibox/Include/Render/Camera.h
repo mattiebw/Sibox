@@ -4,11 +4,11 @@ class Camera
 {
 public:
 	Transform Transformation = Transform();
-	f32     FOV            = 90;
-	f32     OrthoSize      = 24.0f;
-	f32     NearPlane      = 0.1f;
-	f32     FarPlane       = 1000.0f;
-	f32     Aspect         = 0;
+	f32       FOV            = 90;
+	f32       OrthoSize      = 24.0f;
+	f32       NearPlane      = 0.1f;
+	f32       FarPlane       = 1000.0f;
+	f32       Aspect         = 0;
 
 	// MW @todo: Cache these matrices?
 

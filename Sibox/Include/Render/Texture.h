@@ -58,8 +58,8 @@ struct TextureSpecification
 	WrapMode      Wrap            = WrapMode::Repeat;
 	FilterMode    MinFilter       = FilterMode::Linear;
 	FilterMode    MagFilter       = FilterMode::Linear;
-	s32       Width           = 0;
-	s32       Height          = 0;
+	s32           Width           = 0;
+	s32           Height          = 0;
 };
 
 class Texture
@@ -71,9 +71,9 @@ public:
 
 	// MW @todo: These should be implemented.
 	Texture(const Texture &)            = delete;
-	Texture &operator=(const Texture &) = delete;
+	Texture& operator=(const Texture &) = delete;
 	Texture(Texture &&)                 = delete;
-	Texture &operator=(Texture &&)      = delete;
+	Texture& operator=(Texture &&)      = delete;
 
 	void SetData(const u8 *data);
 	void SetData(const Buffer &data);
@@ -81,9 +81,9 @@ public:
 	void Activate(int slot = 0) const;
 	void CleanUp();
 
-	NODISCARD FORCEINLINE s32  GetWidth() const { return m_Spec.Width; }
-	NODISCARD FORCEINLINE s32  GetHeight() const { return m_Spec.Height; }
-	NODISCARD FORCEINLINE s32  GetChannels() const { return ChannelsFromFormat(m_Spec.Format); }
+	NODISCARD FORCEINLINE s32 GetWidth() const { return m_Spec.Width; }
+	NODISCARD FORCEINLINE s32 GetHeight() const { return m_Spec.Height; }
+	NODISCARD FORCEINLINE s32 GetChannels() const { return ChannelsFromFormat(m_Spec.Format); }
 	NODISCARD FORCEINLINE u32 GetOpenGLID() const { return m_TextureID; }
 	// MW @todo: This depends on format.
 	NODISCARD FORCEINLINE u32 GetDataSize() const { return m_Spec.Width * m_Spec.Height * GetChannels(); }
@@ -98,5 +98,5 @@ public:
 
 private:
 	TextureSpecification m_Spec;
-	u32             m_TextureID = -1;
+	u32                  m_TextureID = -1;
 };

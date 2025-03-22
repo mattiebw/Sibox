@@ -12,7 +12,7 @@ u32 SpriteSheet::CreateSprite(u32 x, u32 y, u32 width, u32 height)
 {
 	SIBOX_ASSERT(m_Texture != nullptr && "SpriteSheet has no texture!");
 
-	u32  index = static_cast<u32>(m_Sprites.size());
+	u32      index = static_cast<u32>(m_Sprites.size());
 	Vector2F coordsMin, coordsMax;
 	coordsMin.X = static_cast<f32>(x) / static_cast<f32>(m_Texture->GetWidth());
 	coordsMin.Y = static_cast<f32>(y) / static_cast<f32>(m_Texture->GetHeight());

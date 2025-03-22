@@ -4,7 +4,6 @@ template <typename T>
 	requires std::is_arithmetic_v<T>
 struct Quaternion
 {
-	
 };
 
 using QuaternionF = Quaternion<float>;

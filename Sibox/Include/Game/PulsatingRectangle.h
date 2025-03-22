@@ -12,5 +12,5 @@ public:
 
 private:
 	Vector3F m_Color;
-	f32    m_Time = 0;
+	f32      m_Time = 0;
 };

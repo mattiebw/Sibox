@@ -16,12 +16,12 @@ TileMapChunk::TileMapChunk()
 TileMapChunk::TileMapChunk(TileMap *tileMap, Vector2I position, Vector2I size)
 	: m_Position(position), m_Size(size), m_TileMap(tileMap)
 {
-	m_Tiles          = new u32[m_Size.X * m_Size.Y];
+	m_Tiles = new u32[m_Size.X * m_Size.Y];
 	memset(m_Tiles, 0, sizeof(u32) * m_Size.X * m_Size.Y);
 
 	if (!Application::Get()->HasFrontend())
 		return;
-	
+
 	m_TileShaderData = new TileShaderData[m_Size.X * m_Size.Y];
 	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.X * m_Size.Y);
 
@@ -52,18 +52,18 @@ TileData& TileMapChunk::GetTileDataForTile(int x, int y) const
 
 void TileMapChunk::SetTile(int x, int y, u32 tile)
 {
-	int index                   = y * m_Size.X + x;
-	m_Tiles[index]              = tile;
+	int index      = y * m_Size.X + x;
+	m_Tiles[index] = tile;
 	if (Application::Get()->HasFrontend())
 		m_TileShaderData[index].Rot = static_cast<f32>(Random::Int(0, 4));
-	m_DataDirty                 = true;
+	m_DataDirty = true;
 }
 
 void TileMapChunk::UpdateTileData()
 {
 	if (!Application::Get()->HasFrontend())
 		return;
-	
+
 	if (!m_DataDirty)
 		return;
 
@@ -74,7 +74,7 @@ void TileMapChunk::UpdateTileData()
 			m_TileShaderData[i].TopLeftTexCoord = Vector2F(-1.0f);
 			continue;
 		}
-		
+
 		SpriteSheetSprite tile              = m_TileMap->GetTileSet()->GetSpriteForTile(m_Tiles[i]);
 		m_TileShaderData[i].TopLeftTexCoord = tile.TexCoordsMin;
 	}

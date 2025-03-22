@@ -67,14 +67,14 @@ void World::Tick(f64 delta)
 			playerPositions.push_back(static_cast<Vector2I>(player->GetPosition()));
 		}
 	}
-	
-	for (const auto& tilemap : m_TileMaps)
+
+	for (const auto &tilemap : m_TileMaps)
 		tilemap->UpdateChunkLoading(playerPositions);
 }
 
 void World::Render()
 {
-	for (const auto& tilemap : m_TileMaps)
+	for (const auto &tilemap : m_TileMaps)
 		tilemap->Render();
 
 	for (const auto &entity : m_Entities | std::views::values)
@@ -83,7 +83,7 @@ void World::Render()
 
 bool World::RectOverlapsAnySolidTile(const RectF &rect) const
 {
-	return std::ranges::any_of(m_TileMaps, [&rect](const Ref<TileMap>& tilemap)
+	return std::ranges::any_of(m_TileMaps, [&rect](const Ref<TileMap> &tilemap)
 	{
 		return tilemap->RectOverlapsSolidTile(rect);
 	});

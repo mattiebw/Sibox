@@ -156,9 +156,9 @@ void Application::Run()
 	u64 time = SDL_GetPerformanceCounter();
 	while (m_Running)
 	{
-		u64 last = time;
-		time          = SDL_GetPerformanceCounter();
-		m_DeltaTime   = (time - last) / static_cast<f64>(SDL_GetPerformanceFrequency());
+		u64 last    = time;
+		time        = SDL_GetPerformanceCounter();
+		m_DeltaTime = (time - last) / static_cast<f64>(SDL_GetPerformanceFrequency());
 
 		m_FPSCounter.AddSample(static_cast<u16>(1.0 / m_DeltaTime));
 

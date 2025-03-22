@@ -78,7 +78,7 @@ s32 TextureSet::FindOrAddTexture(const Ref<Texture> &texture)
 		if (m_TextureSlotIndex >= m_TextureSlots.size())
 			OnFlush.Execute();
 
-		index                              = static_cast<s32>(m_TextureSlotIndex);
+		index                              = m_TextureSlotIndex;
 		m_TextureSlots[m_TextureSlotIndex] = texture;
 		m_TextureSlotIndex++;
 		return index;
@@ -141,8 +141,8 @@ QuadBatch::~QuadBatch()
 	delete[] m_VertexBufferBase;
 }
 
-void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &     tintColor, const Vector2F &texCoordMin,
-                         const Vector2F &texCoordMax, const Ref<Texture> &texture)
+void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &      tintColor, const Vector2F &texCoordMin,
+                         const Vector2F &  texCoordMax, const Ref<Texture> &texture)
 {
 	if (m_IndicesCount >= m_MaxIndices)
 		Flush();
@@ -170,7 +170,7 @@ void QuadBatch::DrawQuad(const Matrix4x4F &transform, const Vector4F &tintColor)
 	DrawQuad(transform, tintColor, {0.0f, 0.0f}, {1.0f, 1.0f}, m_Data->WhiteTexture);
 }
 
-void QuadBatch::DrawQuad(const Vector3F &centerPosition, const Vector2F &size, const Vector2F &        texCoordMin,
+void QuadBatch::DrawQuad(const Vector3F &centerPosition, const Vector2F &size, const Vector2F &         texCoordMin,
                          const Vector2F &texCoordMax, const Vector4F &   tintColor, const Ref<Texture> &texture)
 {
 	if (m_IndicesCount >= m_MaxIndices)
@@ -291,14 +291,14 @@ void TilemapRenderer::DrawTileMapChunk(const Vector3F bottomLeftPosition, TileMa
 }
 
 void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const Matrix4x4F &transformation,
-                              const Vector4F &  colour)
+                              const Vector4F &   colour)
 {
 	const msdf_atlas::FontGeometry &fontGeo      = font->GetData()->FontGeo;
 	const msdfgen::FontMetrics &    metrics      = fontGeo.getMetrics();
 	const Ref<Texture> &            atlasTexture = font->GetAtlasTexture();
 	const s32                       textureID    = m_Textures.FindOrAddTexture(atlasTexture);
 
-	f32     fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
+	f32      fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
 	Vector2F pen(0, 0);
 
 	for (s32 i = 0; i < string.size(); i++)
@@ -319,7 +319,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 			pen.X += static_cast<f32>(fontGeo.getGlyph(' ')->getAdvance()) * fsScale * 4;
 			continue;
 		}
-		
+
 		auto glyph = fontGeo.getGlyph(string[i]);
 		if (!glyph)
 			glyph = fontGeo.getGlyph('?');
@@ -333,7 +333,7 @@ void TextRenderer::DrawString(const std::string &string, Ref<Font> font, const M
 
 		f64 atlasLeft, atlasBottom, atlasRight, atlasTop;
 		glyph->getQuadAtlasBounds(atlasLeft, atlasBottom, atlasRight, atlasTop);
-		f32    texelWidth  = 1.0f / static_cast<float>(atlasTexture->GetWidth());
+		f32      texelWidth  = 1.0f / static_cast<float>(atlasTexture->GetWidth());
 		float    texelHeight = 1.0f / static_cast<float>(atlasTexture->GetHeight());
 		Vector2F uvMin(static_cast<float>(atlasLeft) * texelWidth, static_cast<float>(atlasBottom) * texelHeight);
 		Vector2F uvMax(static_cast<float>(atlasRight) * texelWidth, static_cast<float>(atlasTop) * texelHeight);
@@ -399,7 +399,7 @@ void TextRenderer::Init(RendererData *data, u32 maxQuads)
 	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-	m_MaxIndices          = maxQuads * 6;
+	m_MaxIndices     = maxQuads * 6;
 	u32 *quadIndices = new u32[m_MaxIndices];
 	for (u32 i = 0; i < maxQuads; i++)
 	{
@@ -501,8 +501,8 @@ bool Renderer::Init(Ref<Window> window)
 		{"a_Position", ShaderDataType::Float3},
 	}));
 
-	u32 quadIndices[6] = {0, 1, 2, 2, 3, 0};
-	m_TileQuadIndexBuffer   = CreateRef<IndexBuffer>(quadIndices, 6);
+	u32 quadIndices[6]    = {0, 1, 2, 2, 3, 0};
+	m_TileQuadIndexBuffer = CreateRef<IndexBuffer>(quadIndices, 6);
 
 	m_TilemapRenderer.Init(m_Data);
 	m_TextRenderer.Init(m_Data);
@@ -554,9 +554,9 @@ bool Renderer::InitOpenGL()
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(GLErrorCallback, nullptr);
 	#endif
-	
+
 	// Create our white texture
-	u32             whiteTextureData = 0xffffffff;
+	u32                  whiteTextureData = 0xffffffff;
 	TextureSpecification spec;
 	spec.Width           = 1;
 	spec.Height          = 1;
@@ -855,6 +855,6 @@ void Renderer::GLErrorCallback(GLenum        source, GLenum       type, GLuint i
 	}
 
 	SIBOX_ERROR("OpenGL Error ({0} severity, id: {4}): from {1}, {2}: {3}", severityText, sourceText, typeText, message,
-	           id);
+	            id);
 	SIBOX_ASSERT(severity == GL_DEBUG_SEVERITY_NOTIFICATION);
 }

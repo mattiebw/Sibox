@@ -14,7 +14,7 @@ TileMap::TileMap(const Ref<TileSet> &tileSet, int chunkWidth, int chunkHeight)
 void TileMap::SetTile(int x, int y, u32 tile, bool canCreateChunk)
 {
 	Vector2I tileCoords = Vector2I(std::floor(x / m_ChunkSize.X), std::floor(y / m_ChunkSize.Y));
-	auto       chunk      = m_Chunks.find(tileCoords);
+	auto     chunk      = m_Chunks.find(tileCoords);
 	if (chunk == m_Chunks.end())
 	{
 		if (canCreateChunk)
@@ -30,7 +30,7 @@ void TileMap::SetTile(int x, int y, u32 tile, bool canCreateChunk)
 u32 TileMap::GetTile(int x, int y, bool canCreateChunk)
 {
 	Vector2I tileCoords = Vector2I(std::floor(x / m_ChunkSize.X), std::floor(y / m_ChunkSize.Y));
-	auto       chunk      = m_Chunks.find(tileCoords);
+	auto     chunk      = m_Chunks.find(tileCoords);
 	if (chunk == m_Chunks.end())
 	{
 		if (canCreateChunk)
@@ -47,7 +47,7 @@ u32 TileMap::GetTile(int x, int y, bool canCreateChunk)
 u32 TileMap::GetTile(int x, int y) const
 {
 	Vector2I tileCoords = Vector2I(std::floor(x / m_ChunkSize.X), std::floor(y / m_ChunkSize.Y));
-	auto       chunk      = m_Chunks.find(tileCoords);
+	auto     chunk      = m_Chunks.find(tileCoords);
 	return chunk == m_Chunks.end()
 		       ? static_cast<u32>(-1)
 		       : chunk->second->GetTile(x % m_ChunkSize.X, y % m_ChunkSize.Y);
@@ -91,7 +91,7 @@ void TileMap::Render()
 TileMapChunk* TileMap::GetChunkFromTileCoordinate(int x, int y, bool canCreateChunk)
 {
 	Vector2I tileCoords = Vector2I(std::floor(static_cast<f32>(x) / m_ChunkSize.X),
-	                                   std::floor(static_cast<f32>(y) / m_ChunkSize.Y));
+	                               std::floor(static_cast<f32>(y) / m_ChunkSize.Y));
 	auto chunk = m_Chunks.find(tileCoords);
 	if (chunk == m_Chunks.end())
 	{
@@ -108,7 +108,7 @@ TileMapChunk* TileMap::GetChunkFromTileCoordinate(int x, int y, bool canCreateCh
 TileMapChunk* TileMap::GetChunkFromTileCoordinate(int x, int y) const
 {
 	Vector2I tileCoords = Vector2I(std::floor(static_cast<f32>(x) / m_ChunkSize.X),
-	                                   std::floor(static_cast<f32>(y) / m_ChunkSize.Y));
+	                               std::floor(static_cast<f32>(y) / m_ChunkSize.Y));
 	auto chunk = m_Chunks.find(tileCoords);
 	return chunk == m_Chunks.end() ? nullptr : chunk->second.get();
 }

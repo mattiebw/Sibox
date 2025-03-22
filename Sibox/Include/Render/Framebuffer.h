@@ -22,13 +22,13 @@ struct FramebufferTexture
 	}
 
 	FramebufferTextureFormat Format     = FramebufferTextureFormat::None;
-	u32                 RendererID = 0;
+	u32                      RendererID = 0;
 };
 
 struct FramebufferSpecification
 {
 	Vector2I Size;
-	u32 Samples         = 1;
+	u32      Samples         = 1;
 	bool     SwapChainTarget = false;
 
 	std::vector<FramebufferTexture> Attachments;
@@ -46,7 +46,7 @@ public:
 	void Resize(Vector2I size);
 
 	NODISCARD s32 ReadPixel(u32 attachmentIndex, int x, int y);
-	void              ClearColorAttachment(u32 attachmentIndex, int value);
+	void          ClearColorAttachment(u32 attachmentIndex, int value);
 
 	NODISCARD FORCEINLINE const FramebufferTexture& GetColorAttachment(u32 attachmentIndex) const
 	{
@@ -60,7 +60,7 @@ public:
 	NODISCARD FORCEINLINE const FramebufferSpecification& GetSpecification() const { return m_Spec; }
 
 private:
-	u32                        m_RendererID;
+	u32                             m_RendererID;
 	std::vector<FramebufferTexture> m_Attachments;
 	FramebufferTexture              m_DepthAttachment;
 	FramebufferSpecification        m_Spec;

@@ -9,12 +9,12 @@ class TileMap
 public:
 	TileMap(const Ref<TileSet> &tileSet, int chunkWidth = 32, int chunkHeight = 32);
 
-	void               SetTile(int x, int y, u32 tile, bool canCreateChunk = false);
+	void          SetTile(int x, int y, u32 tile, bool canCreateChunk = false);
 	NODISCARD u32 GetTile(int x, int y, bool canCreateChunk = true);
 	NODISCARD u32 GetTile(int x, int y) const;
 
-	NODISCARD FORCEINLINE u32            GetChunkWidth() const { return m_ChunkSize.X; }
-	NODISCARD FORCEINLINE u32            GetChunkHeight() const { return m_ChunkSize.Y; }
+	NODISCARD FORCEINLINE u32                 GetChunkWidth() const { return m_ChunkSize.X; }
+	NODISCARD FORCEINLINE u32                 GetChunkHeight() const { return m_ChunkSize.Y; }
 	NODISCARD FORCEINLINE const Ref<TileSet>& GetTileSet() const { return m_TileSet; }
 
 	NODISCARD FORCEINLINE size_t GetLoadedChunkCount() const { return m_Chunks.size(); }

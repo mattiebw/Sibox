@@ -135,10 +135,10 @@ Font::Font(const std::filesystem::path &fontPath)
 	emSize = packer.getScale();
 
 	// And our edge colouring, for MSDF
-	constexpr u64 lcgMultiplier      = 6364136223846793005ull;
-	constexpr u64 lcgIncrement       = 1442695040888963407ull;
-	constexpr u64 colouringSeed      = 0;
-	constexpr bool     expensiveColouring = true;
+	constexpr u64  lcgMultiplier      = 6364136223846793005ull;
+	constexpr u64  lcgIncrement       = 1442695040888963407ull;
+	constexpr u64  colouringSeed      = 0;
+	constexpr bool expensiveColouring = true;
 
 	if (expensiveColouring)
 	{
@@ -200,7 +200,7 @@ void Font::ShutdownFontSystem()
 FontMeasurement Font::MeasureString(const std::string &string, const Vector3F &scale)
 {
 	msdfgen::FontMetrics metrics = m_Data->FontGeo.getMetrics();
-	f32                fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
+	f32                  fsScale = 1.0f / static_cast<f32>(metrics.ascenderY - metrics.descenderY);
 	Vector2F             pen(0, 0);
 
 	f32 minX = 0, maxX = 0;

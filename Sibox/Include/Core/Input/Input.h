@@ -65,11 +65,11 @@ public:
 protected:
 	// Remember to update UpdateKeyArrays() and Init() if changing the size of these arrays from SIBOX_KEY_COUNT
 	// These arrays have to be the same size!
-	static bool      s_Keys[SIBOX_KEY_COUNT];
-	static bool      s_PreviousKeys[SIBOX_KEY_COUNT];
-	static bool      s_MouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
-	static bool      s_PreviousMouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
-	static Vector2F  s_MousePosition, s_MouseDelta;
+	static bool     s_Keys[SIBOX_KEY_COUNT];
+	static bool     s_PreviousKeys[SIBOX_KEY_COUNT];
+	static bool     s_MouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
+	static bool     s_PreviousMouseButtons[SIBOX_MOUSE_BUTTON_COUNT];
+	static Vector2F s_MousePosition, s_MouseDelta;
 
 	static bool s_ImGuiHasKeyboardFocus;
 	static bool s_ImGuiHasMouseFocus;

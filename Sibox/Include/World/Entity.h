@@ -26,9 +26,9 @@ public:
 	static Ref<Entity> CreateEntity(u16 type, std::string name, UUID uuid);
 
 	NODISCARD FORCEINLINE const std::string& GetName() const { return m_Name; }
-	NODISCARD FORCEINLINE const Vector3F&   GetPosition() const { return EntityTransform.Position; }
-	NODISCARD FORCEINLINE const Vector3F&   GetRotation() const { return EntityTransform.Rotation; }
-	NODISCARD FORCEINLINE const Vector3F&   GetScale() const { return EntityTransform.Scale; }
+	NODISCARD FORCEINLINE const Vector3F&    GetPosition() const { return EntityTransform.Position; }
+	NODISCARD FORCEINLINE const Vector3F&    GetRotation() const { return EntityTransform.Rotation; }
+	NODISCARD FORCEINLINE const Vector3F&    GetScale() const { return EntityTransform.Scale; }
 	NODISCARD FORCEINLINE World*             GetWorld() const { return m_World; }
 	NODISCARD FORCEINLINE UUID               GetUUID() const { return m_UUID; }
 	NODISCARD FORCEINLINE EntityNetworkType  GetEntityNetworkType() const { return m_EntityNetworkType; }
@@ -51,7 +51,7 @@ public:
 	virtual void Destroyed();
 
 	NODISCARD FORCEINLINE bool HasAuthority() { return m_EntityNetworkType != EntityNetworkType::RemoteProxy; }
-	
+
 	void Destroy();
 
 	Transform EntityTransform;

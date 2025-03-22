@@ -24,7 +24,7 @@ void SiboxLayer::OnAttach()
 	m_Player           = world->AddEntity<Player>("Player");
 
 	auto tilemap = world->CreateTileMap(TileSets::MainTileSet);
-	tilemap->Z = -10;
+	tilemap->Z   = -10;
 	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
 
 	m_TextTransform.Position.Z = -0.05f;

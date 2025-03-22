@@ -23,16 +23,16 @@ s32 Shader::AddStageFromSource(GLenum stage, std::string_view source)
 	if (!IsValidShaderStage(stage))
 	{
 		SIBOX_ERROR("Shader::AddStage of shader \"{0}\" called with invalid stage enum: {1}.\nShould be one of: "
-		           "GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_TESS_EVALUATION_SHADER, GL_TESS_CONTROL_SHADER, GL_COMPUTE_SHADER",
-		           m_Name, stage);
+		            "GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_TESS_EVALUATION_SHADER, GL_TESS_CONTROL_SHADER, GL_COMPUTE_SHADER",
+		            m_Name, stage);
 		return -1;
 	}
 
 	for (u32 i = 0; i < m_UsedVertexAttributes; i++)
 		glEnableVertexAttribArray(i);
 
-	s32     shaderID = glCreateShader(stage);
-	s32     length   = static_cast<s32>(source.length());
+	s32         shaderID = glCreateShader(stage);
+	s32         length   = static_cast<s32>(source.length());
 	const char *data     = source.data();
 
 	// Check for version, and remove any BOM that can break the shader on Linux.
@@ -61,7 +61,7 @@ s32 Shader::AddStageFromSource(GLenum stage, std::string_view source)
 		static GLchar message[1024];
 		glGetShaderInfoLog(shaderID, 1024, &logLength, message);
 		SIBOX_ERROR_NO_NEWLINE("In shader {0}, failed to compile {1}: {2}", m_Name, GetShaderTypeString(stage),
-		                      std::string_view(&message[0], logLength));
+		                       std::string_view(&message[0], logLength));
 		glDeleteShader(shaderID);
 		return -1;
 	}

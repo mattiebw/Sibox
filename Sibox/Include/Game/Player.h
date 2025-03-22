@@ -21,11 +21,11 @@ class Player : public Entity
 	RPC(Multicast, OnDeath);
 
 	std::string Name = "Qerma";
-	
-	STEAM_CALLBACK( Player, OnPersonaNameChange, PersonaStateChange_t );
+
+	STEAM_CALLBACK(Player, OnPersonaNameChange, PersonaStateChange_t);
 
 private:
-	f32         m_Time = 0;
+	f32           m_Time = 0;
 	Ref<Texture>  m_Texture;
 	Ref<Viewport> m_Viewport;
 	Ref<Camera>   m_Camera;

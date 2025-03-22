@@ -8,7 +8,7 @@
 
 #include <random>
 
-FMOD::Studio::System* AudioManager::m_FMODSystem = nullptr;
+FMOD::Studio::System *AudioManager::m_FMODSystem = nullptr;
 
 bool AudioManager::Init()
 {
@@ -47,7 +47,7 @@ void AudioManager::Update()
 		return;
 
 	f32 deltaTime = Application::Get()->GetDeltaTime();
-	
+
 	if (m_FMODSystem)
 	{
 		FMOD_RESULT result = m_FMODSystem->update();

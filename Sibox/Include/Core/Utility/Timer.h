@@ -50,7 +50,7 @@ public:
 		u64 end = m_End;
 		if (end == 0)
 			end = SDL_GetPerformanceCounter();
-		return static_cast<u64>((end - m_Begin) * 1000000) / SDL_GetPerformanceFrequency();
+		return (end - m_Begin) * 1000000 / SDL_GetPerformanceFrequency();
 	}
 
 private:

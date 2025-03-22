@@ -161,8 +161,8 @@ struct BufferElement
 	std::string    Name;
 	ShaderDataType Type;
 	size_t         Offset;
-	u32       Size;
-	u32       InstancingDivisor;
+	u32            Size;
+	u32            InstancingDivisor;
 	bool           Normalized;
 
 	BufferElement() = default;
@@ -194,7 +194,7 @@ public:
 		CalculateOffsetsAndStride();
 	}
 
-	NODISCARD FORCEINLINE u32                          GetStride() const { return m_Stride; }
+	NODISCARD FORCEINLINE u32                               GetStride() const { return m_Stride; }
 	NODISCARD FORCEINLINE const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 	NODISCARD FORCEINLINE bool                              HasElements() const { return m_Elements.size() > 0; }
 
@@ -207,7 +207,7 @@ private:
 	void CalculateOffsetsAndStride();
 
 	std::vector<BufferElement> m_Elements;
-	u32                   m_Stride = 0;
+	u32                        m_Stride = 0;
 };
 
 class VertexBuffer
@@ -233,7 +233,7 @@ public:
 	void                                      SetLayout(const BufferLayout &layout) { m_Layout = layout; }
 
 private:
-	u32     m_RendererID;
+	u32          m_RendererID;
 	BufferLayout m_Layout;
 };
 

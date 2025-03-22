@@ -58,21 +58,21 @@ using RectI = TRect<int>;
 class MathUtil
 {
 public:
-	template<typename T>
+	template <typename T>
 	NODISCARD FORCEINLINE static T DegreesToRadians(T degrees)
 	{
 		return degrees * static_cast<T>(0.017453292519943295769236907684886);
 	}
 
-	template<typename T>
+	template <typename T>
 	NODISCARD FORCEINLINE static T RadiansToDegrees(T radians)
 	{
 		return radians * static_cast<T>(57.295779513082320876798154814105);
 	}
-	
-	template<typename T>
+
+	template <typename T>
 	NODISCARD static Matrix<T, 4> CreateTransformationMatrix(const Vector3<T> &translation, const Vector3<T> &rotation,
-	                                                      const Vector3<T> &scale)
+	                                                         const Vector3<T> &scale)
 	{
 		Matrix<T, 4> mat; // Identity matrix
 		// mat = translate(mat, translation);
