@@ -14,23 +14,21 @@ public:
 
 	NODISCARD FORCEINLINE Matrix4x4F GetViewMatrix() const
 	{
-		// return
-		// 	MathUtil::CreateTransformationMatrix(Transformation.Position, Transformation.Rotation,
-		// 	                                     Transformation.Scale).Inverse();
-		return Matrix4x4F(1);
+		return
+			MathUtil::CreateTransformationMatrix(Transformation.Position, Transformation.Rotation,
+			                                     Transformation.Scale).Inverse();
 	}
 
 	NODISCARD FORCEINLINE Matrix4x4F GetPerspectiveViewProjMatrix() const
 	{
-		// return Matrix4x4F::MakePerspective(FOV, Aspect, NearPlane, FarPlane) * GetViewMatrix();
-		return Matrix4x4F(1);
+		return Matrix4x4F::MakePerspective(FOV, Aspect, NearPlane, FarPlane) * GetViewMatrix();
 	}
 
 	NODISCARD FORCEINLINE Matrix4x4F GetOrthographicViewProjMatrix() const
 	{
-		// return Matrix4x4F::MakeOrthographic(OrthoSize * Aspect / -2, OrthoSize * Aspect / 2, OrthoSize / -2, OrthoSize / 2, NearPlane,
-		//                   FarPlane) * GetViewMatrix();
-		return Matrix4x4F(1);
+		return Matrix4x4F::MakeOrthographic(OrthoSize * Aspect / -2, OrthoSize * Aspect / 2, OrthoSize / -2,
+		                                    OrthoSize / 2, NearPlane,
+		                                    FarPlane) * GetViewMatrix();
 	}
 
 	NODISCARD FORCEINLINE RectF GetCameraRect() const

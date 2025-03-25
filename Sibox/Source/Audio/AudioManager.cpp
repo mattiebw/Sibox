@@ -46,7 +46,7 @@ void AudioManager::Update()
 	if (!Application::Get()->HasFrontend())
 		return;
 
-	f32 deltaTime = Application::Get()->GetDeltaTime();
+	f64 deltaTime = Application::Get()->GetDeltaTime();
 
 	if (m_FMODSystem)
 	{

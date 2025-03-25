@@ -13,7 +13,7 @@ TileMap::TileMap(const Ref<TileSet> &tileSet, int chunkWidth, int chunkHeight)
 
 void TileMap::SetTile(int x, int y, u32 tile, bool canCreateChunk)
 {
-	Vector2I tileCoords = Vector2I(std::floor(x / m_ChunkSize.X), std::floor(y / m_ChunkSize.Y));
+	Vector2I tileCoords = Vector2I(static_cast<s32>(std::floor(x / m_ChunkSize.X)), static_cast<s32>(std::floor(y / m_ChunkSize.Y)));
 	auto     chunk      = m_Chunks.find(tileCoords);
 	if (chunk == m_Chunks.end())
 	{

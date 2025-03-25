@@ -6,6 +6,6 @@ struct Quaternion
 {
 };
 
-using QuaternionF = Quaternion<float>;
+using QuaternionF = Quaternion<f32>;
 using QuaternionD = Quaternion<f64>;
-using QuaternionI = Quaternion<int>;
+using QuaternionI = Quaternion<s32>;

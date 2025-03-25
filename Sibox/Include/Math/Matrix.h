@@ -5,6 +5,7 @@ template <typename T, int Size>
 	requires std::is_arithmetic_v<T>
 struct Matrix
 {
+public:
 	// ---- Constructors ----
 	// Create an identity matrix.
 	Matrix()
@@ -20,6 +21,28 @@ struct Matrix
 		{
 			m_Data[i][i] = diagonal;
 		}
+	}
+
+	static Matrix<T, 4> MakePerspective(T fov, T aspect, T near, T far)
+	{
+		Matrix<T, 4> result;
+		return result;
+	}
+
+	static Matrix<T, 4> MakeOrthographic(T left, T right, T bottom, T top, T near, T far)
+	{
+		Matrix<T, 4> result;
+		return result;
+	}
+
+	template<typename OT>
+	explicit operator Matrix<OT, Size>() const
+	{
+		Matrix<OT, Size> result;
+		for (int i = 0; i < Size; i++)
+			for (int j = 0; j < Size; j++)
+				result[i][j] = static_cast<OT>(m_Data[i][j]);
+		return result;
 	}
 
 	// ------- Arithmetic ------
@@ -63,7 +86,43 @@ struct Matrix
 			}
 		}
 
+		// 2x2 matrix unwrap
+		// result.m_Data[0][0] = m_Data[0][0] * other.m_Data[0][0] + m_Data[0][1] * other.m_Data[1][0];
+		// result.m_Data[0][1] = m_Data[0][0] * other.m_Data[0][1] + m_Data[0][1] * other.m_Data[1][1];
+		// result.m_Data[1][0] = m_Data[1][0] * other.m_Data[0][0] + m_Data[1][1] * other.m_Data[1][0];
+		// result.m_Data[1][1] = m_Data[1][0] * other.m_Data[0][1] + m_Data[1][1] * other.m_Data[1][1];
+
+		// 3x3 matrix unwrap
+		// result.m_Data[0][0] = m_Data[0][0] * other.m_Data[0][0] + m_Data[0][1] * other.m_Data[1][0] + m_Data[0][2] * other.m_Data[2][0];
+		// result.m_Data[0][1] = m_Data[0][0] * other.m_Data[0][1] + m_Data[0][1] * other.m_Data[1][1] + m_Data[0][2] * other.m_Data[2][1];
+		// result.m_Data[0][2] = m_Data[0][0] * other.m_Data[0][2] + m_Data[0][1] * other.m_Data[1][2] + m_Data[0][2] * other.m_Data[2][2];
+		// result.m_Data[1][0] = m_Data[1][0] * other.m_Data[0][0] + m_Data[1][1] * other.m_Data[1][0] + m_Data[1][2] * other.m_Data[2][0];
+		// result.m_Data[1][1] = m_Data[1][0] * other.m_Data[0][1] + m_Data[1][1] * other.m_Data[1][1] + m_Data[1][2] * other.m_Data[2][1];
+		// result.m_Data[1][2] = m_Data[1][0] * other.m_Data[0][2] + m_Data[1][1] * other.m_Data[1][2] + m_Data[1][2] * other.m_Data[2][2];
+		// result.m_Data[2][0] = m_Data[2][0] * other.m_Data[0][0] + m_Data[2][1] * other.m_Data[1][0] + m_Data[2][2] * other.m_Data[2][0];
+		// result.m_Data[2][1] = m_Data[2][0] * other.m_Data[0][1] + m_Data[2][1] * other.m_Data[1][1] + m_Data[2][2] * other.m_Data[2][1];
+		// result.m_Data[2][2] = m_Data[2][0] * other.m_Data[0][2] + m_Data[2][1] * other.m_Data[1][2] + m_Data[2][2] * other.m_Data[2][2];
+
 		return result;
+	}
+
+	void operator+=(const Matrix<T, Size> &other)
+	{
+		for (int i = 0; i < Size; i++)
+			for (int j = 0; j < Size; j++)
+				m_Data[i][j] += other.m_Data[i][j];
+	}
+
+	void operator-=(const Matrix<T, Size> &other)
+	{
+		for (int i = 0; i < Size; i++)
+			for (int j = 0; j < Size; j++)
+				m_Data[i][j] -= other.m_Data[i][j];
+	}
+
+	void operator*=(const Matrix<T, Size> &other)
+	{
+		*this = *this * other;
 	}
 
 	// Multiply a matrix by a 2-element vector. Only works when the matrix is 2x2.
@@ -154,9 +213,35 @@ struct Matrix
 		return result;
 	}
 
+	void Invert()
+	{
+		
+	}
+
+	NODISCARD FORCEINLINE Matrix Inverse() const
+	{
+		Matrix result = *this;
+		result.Invert();
+		return std::move(result);
+	}
+
 	// ---- 2D Transformations ----
 
 	// ---- 3D Transformations ----
+	void Translate(Vector3<T> translation)
+	{
+		static_assert(Size == 4, "Matrix must be 4x4 to translate by a 3-element vector.");
+	}
+
+	void Rotate(Vector3<T> rotation)
+	{
+		static_assert(Size == 4, "Matrix must be 4x4 to rotate by a 3-element vector.");
+	}
+
+	void Scale(Vector3<T> scale)
+	{
+		static_assert(Size == 4, "Matrix must be 4x4 to scale by a 3-element vector.");
+	}
 
 private:
 	T m_Data[Size][Size];

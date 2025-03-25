@@ -71,6 +71,34 @@ public:
 	}
 
 	template <typename T>
+		requires std::is_floating_point_v<T>
+	NODISCARD static T AngleRadiansFromVector(Vector2<T> vector)
+	{
+		return std::atan2(vector.Y, vector.X);
+	}
+
+	template <typename T>
+		requires std::is_floating_point_v<T>
+	NODISCARD static T AngleDegreesFromVector(Vector2<T> vector)
+	{
+		return RadiansToDegrees(AngleRadiansFromVector(vector));
+	}
+
+	template <typename T>
+		requires std::is_floating_point_v<T>
+	NODISCARD static Vector2<T> VectorFromAngleRadians(T angle)
+	{
+		return {std::cos(angle), std::sin(angle)};
+	}
+	
+	template <typename T>
+		requires std::is_floating_point_v<T>
+	NODISCARD static Vector2<T> VectorFromAngleDegrees(T angle)
+	{
+		return VectorFromAngleRadians(DegreesToRadians(angle));
+	}
+
+	template <typename T>
 	NODISCARD static Matrix<T, 4> CreateTransformationMatrix(const Vector3<T> &translation, const Vector3<T> &rotation,
 	                                                         const Vector3<T> &scale)
 	{
@@ -83,18 +111,31 @@ public:
 		return mat;
 	}
 
-	NODISCARD FORCEINLINE static f32 LerpSmooth(f32 a, f32 b, f32 r, f32 delta)
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static T LerpSmooth(const T a, const T b, const T r, const T delta)
 	{
 		return (a - b) * pow(r, delta) + b;
 	}
 
-	NODISCARD FORCEINLINE static Vector2F LerpSmooth(Vector2F a, Vector2F b, f32 r, f32 delta)
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static Vector2<T> LerpSmooth(const Vector2<T> a, const Vector2<T> b, const T r, const T delta)
 	{
 		return {LerpSmooth(a.X, b.X, r, delta), LerpSmooth(a.Y, b.Y, r, delta)};
 	}
 
-	NODISCARD FORCEINLINE static Vector3F LerpSmooth(const Vector3F &a, const Vector3F &b, f32 r, f32 delta)
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static Vector2<T> LerpSmooth(const Vector2<T> &a, const Vector2<T> &b, const T r,
+	                                                   const T           delta)
 	{
 		return {LerpSmooth(a.X, b.X, r, delta), LerpSmooth(a.Y, b.Y, r, delta), LerpSmooth(a.Z, b.Z, r, delta)};
 	}
+
+	const f64 PI = 3.14159265358979323846264338327950288419716939937510582097494459;
+	// Fun fact: 38 digits of pi is enough to calculate the circumference of the observable universe to within the
+	// width of a hydrogen atom, and 62 digits can calculate the circumference of the observable universe to within the
+	// planck length (1.6162x10e-35 meters), the shortest unit of length expected to be measurable.
+	// So we'll use 62 digits.
 };

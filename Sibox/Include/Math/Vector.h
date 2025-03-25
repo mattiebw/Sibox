@@ -14,6 +14,11 @@
 //     };
 // };
 
+// Forward declare Rotator so we can use it in Vector3.
+template <typename T>
+	requires std::is_arithmetic_v<T>
+struct Rotator;
+
 // Forward declare Vector3 and Vector4 so we can use them in Vector2.
 template <typename T>
 	requires std::is_arithmetic_v<T>
@@ -407,17 +412,17 @@ struct Vector3
 			+ (Z * other.Z);
 	}
 
-	FORCEINLINE T DistanceSquared(const Vector3 &other) const
+	NODISCARD FORCEINLINE T DistanceSquared(const Vector3 &other) const
 	{
 		return (*this - other).LengthSquared();
 	}
 
-	FORCEINLINE T Distance(const Vector3 &other) const
+	NODISCARD FORCEINLINE T Distance(const Vector3 &other) const
 	{
 		return (*this - other).Length();
 	}
 
-	FORCEINLINE Vector3 Cross(const Vector3 &other) const
+	NODISCARD FORCEINLINE Vector3 Cross(const Vector3 &other) const
 	{
 		return
 		{
@@ -426,6 +431,8 @@ struct Vector3
 			(X * other.Y) - (Y * other.X)
 		};
 	}
+
+	NODISCARD Rotator<T> GetDirectionRotator(bool normalise = true) const;
 
 	FORCEINLINE void Zero()
 	{
