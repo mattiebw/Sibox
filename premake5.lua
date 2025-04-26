@@ -33,7 +33,7 @@ project "Sibox"
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
 
 	usestandardpreprocessor 'On'
-	pchheader("Sibox/Include/siboxpch.h")
+	pchheader("siboxpch.h")
 	pchsource "Sibox/Source/siboxpch.cpp"
 
 	vpaths {

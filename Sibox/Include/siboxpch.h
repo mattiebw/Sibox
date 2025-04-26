@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SIBOX_PCH // Header guard for PCH. Linux build is weird about PCHs and throws redef errors.
+#define SIBOX_PCH
 
 #define SPDLOG_EOL ""
 #define FMT_UNICODE 0
@@ -50,3 +51,5 @@
 #ifdef SIBOX_PLATFORM_WINDOWS
 #include "Windows.h"
 #endif
+
+#endif // SIBOX_PCH.
