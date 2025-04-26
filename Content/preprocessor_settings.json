@@ -1,0 +1,122 @@
+{
+  "IgnoredFilePatterns": [],
+  "ManualCopies": {
+    "*": [
+        {
+            "RelativePath": "../Sibox/steam_appid.txt",
+            "OutputRelativePath": "./../"
+        }
+    ],
+    "Windows": [
+        {
+            "RelativePath": "../Sibox/Vendor/SDL/Lib/Win64/SDL3.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/Steamworks/Lib/Win64/steam_api64.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Win64/fmod.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Win64/fmodstudio.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Win64/fsbank.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Win64/libfsbvorbis64.dll",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Win64/opus.dll",
+            "OutputRelativePath": "./../"
+        }
+    ],
+    "Linux": [
+        {
+            "RelativePath": "../Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so.0",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/SDL/Lib/Linux64/libSDL3.so.0.1.5",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/Steamworks/Lib/Linux64/libsteam_api.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so.13",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmod.so.13.25",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so.13",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfmodstudio.so.13.25",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so.13",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfsbank.so.13.25",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libfsbvorbis.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/Vendor/FMOD/Lib/Linux64/libopus.so",
+            "OutputRelativePath": "./../"
+        },
+        {
+            "RelativePath": "../Sibox/RunSibox.sh",
+            "OutputRelativePath": "./../"
+        }
+    ]
+  },
+  "ProcessorSettings": {
+    "MeshExtension": ".mesh"
+  },
+  "SpeculativePathAdditions": [
+    "C:/Temp/VulkanSDK/Bin"
+  ],
+  "ExtraContentDirectories": [
+    {
+        "RelativeSourcePath": "../Audio/FMOD/Sibox/Build/Desktop/",
+        "RelativeOutputPath": "./Audio/"
+    }
+  ],
+  "DisabledProcessors": [
+    "VulkanShaderProcessor"
+  ]
+}
