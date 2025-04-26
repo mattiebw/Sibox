@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL_events.h>
 
-#include "Core/SiboxCore.h"
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
