@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Core/SiboxCore.h"
-
 enum class WrapMode : u16
 {
 	Repeat         = 0x2901, // GL_REPEAT
