@@ -235,7 +235,7 @@ void QuadBatch::Flush()
 	m_Shader->Bind();
 	Viewport *viewport = Renderer::GetCurrentViewport();
 	m_Shader->SetUniformMatrix4f("u_ViewProjection",
-	                             viewport ? viewport->GetCamera()->GetOrthographicViewProjMatrix() : Matrix4x4F(1.0f));
+	                             viewport ? viewport->GetCamera()->GetViewProjectionMatrix() : Matrix4x4F(1.0f));
 
 	// Now let's bind our array and textures.
 	m_Textures.BindTextures();
@@ -270,7 +270,7 @@ void TilemapRenderer::DrawTileMapChunk(const Vector3F bottomLeftPosition, TileMa
 	// Set up our shader uniforms
 	m_TilemapShader->Bind();
 	if (Viewport *viewport = Renderer::GetCurrentViewport())
-		m_TilemapShader->SetUniformMatrix4f("uViewProjection", viewport->GetCamera()->GetOrthographicViewProjMatrix());
+		m_TilemapShader->SetUniformMatrix4f("uViewProjection", viewport->GetCamera()->GetViewProjectionMatrix());
 	else
 		m_TilemapShader->SetUniformMatrix4f("uViewProjection", Matrix4x4F(1.0f));
 	m_TilemapShader->SetUniformVec3("uPos", bottomLeftPosition);
@@ -441,7 +441,7 @@ void TextRenderer::Flush()
 	Viewport *viewport = Renderer::GetCurrentViewport();
 	m_TextShader->SetUniformMatrix4f("u_ViewProjection",
 	                                 viewport
-		                                 ? viewport->GetCamera()->GetOrthographicViewProjMatrix()
+		                                 ? viewport->GetCamera()->GetViewProjectionMatrix()
 		                                 : Matrix4x4F(1.0f));
 
 	// Now let's bind our array and textures.

@@ -1,14 +1,31 @@
 ﻿#pragma once
 
+enum class CameraMode : u8
+{
+	Perspective,
+	Orthographic
+};
+
+inline const char* CameraModeToString(CameraMode mode)
+{
+	switch (mode)
+	{
+	case CameraMode::Perspective: return "Perspective";
+	case CameraMode::Orthographic: return "Orthographic";
+	default: return "Unknown";
+	}
+}
+
 class Camera
 {
 public:
-	Transform Transformation = Transform();
-	f32       FOV            = 90;
-	f32       OrthoSize      = 24.0f;
-	f32       NearPlane      = 0.1f;
-	f32       FarPlane       = 1000.0f;
-	f32       Aspect         = 0;
+	Transform  Transformation = Transform();
+	f32        FOV            = 90;
+	f32        OrthoSize      = 24.0f;
+	f32        NearPlane      = 0.1f;
+	f32        FarPlane       = 1000.0f;
+	f32        Aspect         = 0;
+	CameraMode Mode           = CameraMode::Orthographic;
 
 	// MW @todo: Cache these matrices?
 
@@ -32,6 +49,20 @@ public:
 		                                          FarPlane);
 		auto view = GetViewMatrix();
 		return ortho * view;
+	}
+
+	NODISCARD FORCEINLINE Matrix4x4F GetViewProjectionMatrix() const
+	{
+		switch (Mode)
+		{
+		case CameraMode::Perspective:
+			return GetPerspectiveViewProjMatrix();
+		case CameraMode::Orthographic:
+			return GetOrthographicViewProjMatrix();
+		}
+
+		SIBOX_ASSERT(false && "Invalid camera mode");
+		return Matrix4x4F(-1);
 	}
 
 	NODISCARD FORCEINLINE RectF GetCameraRect() const

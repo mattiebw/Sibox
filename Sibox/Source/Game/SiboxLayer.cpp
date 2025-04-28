@@ -54,7 +54,7 @@ void SiboxLayer::Render(f64 delta)
 
 void SiboxLayer::RenderImGUI(f64 delta)
 {
-	ImGui::Begin("Player Info");
+	ImGui::Begin("Toybox");
 	f32 ts = Application::Get()->GetTimeScale();
 	ImGui::DragFloat("Timescale", &ts, 0.01f, 0.0f, 10.0f);
 	if (ImGui::Button("Reset Time Scale"))
@@ -63,6 +63,14 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::InputText("Player Name", &m_Player->Name);
 	ImGui::InputFloat2("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
+	if (ImGui::BeginCombo("Camera Type", CameraModeToString(m_Player->GetCamera()->Mode)))
+	{
+		if (ImGui::Selectable("Perspective", m_Player->GetCamera()->Mode == CameraMode::Perspective))
+			m_Player->GetCamera()->Mode = CameraMode::Perspective;
+		if (ImGui::Selectable("Orthographic", m_Player->GetCamera()->Mode == CameraMode::Orthographic))
+			m_Player->GetCamera()->Mode = CameraMode::Orthographic;
+		ImGui::EndCombo();
+	}
 	ImGui::DragFloat("Camera Zoom", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.0f, 100.0f);
 	ImGui::End();
 }
