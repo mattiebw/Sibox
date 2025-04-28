@@ -27,7 +27,7 @@ public:
 
 	NODISCARD FORCEINLINE const std::string& GetName() const { return m_Name; }
 	NODISCARD FORCEINLINE const Vector3F&    GetPosition() const { return EntityTransform.Position; }
-	NODISCARD FORCEINLINE const Vector3F&    GetRotation() const { return EntityTransform.Rotation; }
+	NODISCARD FORCEINLINE const RotatorF&    GetRotation() const { return EntityTransform.Rotation; }
 	NODISCARD FORCEINLINE const Vector3F&    GetScale() const { return EntityTransform.Scale; }
 	NODISCARD FORCEINLINE World*             GetWorld() const { return m_World; }
 	NODISCARD FORCEINLINE UUID               GetUUID() const { return m_UUID; }
@@ -36,6 +36,7 @@ public:
 	FORCEINLINE void SetName(const std::string &name) { m_Name = name; }
 	FORCEINLINE void SetPosition(Vector3F newPos) { EntityTransform.Position = newPos; }
 	FORCEINLINE void SetRotation(Vector3F newRot) { EntityTransform.Rotation = newRot; }
+	FORCEINLINE void SetRotation(RotatorF newRot) { EntityTransform.Rotation = newRot; }
 	FORCEINLINE void SetScale(Vector3F newScale) { EntityTransform.Scale = newScale; }
 	FORCEINLINE void SetWorld(World *world) { m_World = world; }
 

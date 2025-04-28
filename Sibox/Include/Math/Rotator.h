@@ -77,6 +77,106 @@ struct Rotator
 	{
 		return {cos(Yaw) * cos(Pitch), sin(Pitch), sin(Yaw) * cos(Pitch)};
 	}
+
+	// Operator overloads
+	bool operator==(const Rotator &other) const
+	{
+		return Pitch == other.Pitch && Yaw == other.Yaw && Roll == other.Roll;
+	}
+
+	bool operator!=(const Rotator &other) const
+	{
+		return !(*this == other);
+	}
+
+	Rotator operator+(const Rotator &other) const
+	{
+		return {Pitch + other.Pitch, Yaw + other.Yaw, Roll + other.Roll};
+	}
+
+	Rotator operator-(const Rotator &other) const
+	{
+		return {Pitch - other.Pitch, Yaw - other.Yaw, Roll - other.Roll};
+	}
+
+	Rotator operator*(const Rotator &other) const
+	{
+		return {Pitch * other.Pitch, Yaw * other.Yaw, Roll * other.Roll};
+	}
+
+	Rotator operator*(T scalar) const
+	{
+		return {Pitch * scalar, Yaw * scalar, Roll * scalar};
+	}
+
+	Rotator operator/(const Rotator &other) const
+	{
+		return {Pitch / other.Pitch, Yaw / other.Yaw, Roll / other.Roll};
+	}
+
+	Rotator operator/(T scalar) const
+	{
+		return {Pitch / scalar, Yaw / scalar, Roll / scalar};
+	}
+
+	void operator+=(const Rotator &other)
+	{
+		Pitch += other.Pitch;
+		Yaw += other.Yaw;
+		Roll += other.Roll;
+	}
+
+	void operator-=(const Rotator &other)
+	{
+		Pitch -= other.Pitch;
+		Yaw -= other.Yaw;
+		Roll -= other.Roll;
+	}
+
+	void operator*=(const Rotator &other)
+	{
+		Pitch *= other.Pitch;
+		Yaw *= other.Yaw;
+		Roll *= other.Roll;
+	}
+
+	void operator*=(T scalar)
+	{
+		Pitch *= scalar;
+		Yaw *= scalar;
+		Roll *= scalar;
+	}
+
+	void operator/=(const Rotator &other)
+	{
+		Pitch /= other.Pitch;
+		Yaw /= other.Yaw;
+		Roll /= other.Roll;
+	}
+
+	void operator/=(T scalar)
+	{
+		Pitch /= scalar;
+		Yaw /= scalar;
+		Roll /= scalar;
+	}
+
+	Rotator operator-() const
+	{
+		return {-Pitch, -Yaw, -Roll};
+	}
+
+	T operator[](int indePitch) const
+	{
+		return (&Pitch)[indePitch];
+	}
+
+	T& operator[](int indePitch)
+	{
+		return (&Pitch)[indePitch];
+	}
+
+	NODISCARD FORCEINLINE T* Data() { return &Pitch; }
 };
 
 using RotatorF = Rotator<f32>;

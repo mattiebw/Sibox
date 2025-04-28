@@ -9,6 +9,7 @@
 
 #include <misc/cpp/imgui_stdlib.h>
 
+#include "Game/PulsatingRectangle.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
 #include "World/TileMap.h"
@@ -23,6 +24,12 @@ void SiboxLayer::OnAttach()
 	Ref<World>   world = app->AddWorld();
 	m_Player           = world->AddEntity<Player>("Player");
 
+	for (s32 i = 0; i < 0; i++)
+	{
+		auto rect = world->AddEntity<PulsatingRectangle>();
+		rect->EntityTransform.Position = Vector3F(Random::Float(-10, 10), Random::Float(-10, 10), Random::Float(-10, 10));
+	}
+	
 	auto tilemap = world->CreateTileMap(TileSets::MainTileSet);
 	tilemap->Z   = -10;
 	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
@@ -50,6 +57,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::Begin("Player Info");
 	ImGui::InputText("Player Name", &m_Player->Name);
 	ImGui::InputFloat2("Player Position", m_Player->EntityTransform.Position.Data());
+	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
 	ImGui::DragFloat("Camera Zoom", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.0f, 100.0f);
 	ImGui::End();
 }

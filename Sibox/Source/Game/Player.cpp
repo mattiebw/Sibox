@@ -87,7 +87,8 @@ void Player::Tick(f64 delta)
 void Player::Render()
 {
 	f32 sine = (sin(m_Time) + 1) / 2;
-	Application::GetQuadRenderer()->DrawQuad(EntityTransform.Position, Vector2F(1.0f),
+	auto mat = EntityTransform.GetTransformationMatrix();
+	Application::GetQuadRenderer()->DrawQuad(mat,
 	                                         Vector4F(sine, sine, sine, 1.0f), m_Texture);
 
 	// MW @todo: optimise, create a struct to wrap drawing a string allowing us to cache the measurement

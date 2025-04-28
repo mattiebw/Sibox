@@ -1,11 +1,12 @@
 ﻿#pragma once
 
 #include "Core/Utility/MathUtil.h"
+#include "Math/Rotator.h"
 
 struct Transform
 {
 	FORCEINLINE void Translate(Vector3F translation) { Position += translation; }
-	FORCEINLINE void Rotate(Vector3F rotation) { Rotation += rotation; }
+	FORCEINLINE void Rotate(RotatorF rotation) { Rotation += rotation; }
 	FORCEINLINE void AddScale(Vector3F scale) { Scale += scale; }
 	FORCEINLINE void ScaleBy(Vector3F scale) { Scale *= scale; }
 
@@ -34,6 +35,6 @@ struct Transform
 	FORCEINLINE Transform& operator=(Transform &&other) noexcept = default;
 
 	Vector3F Position = Vector3F(0.0f);
-	Vector3F Rotation = Vector3F(0.0f);
+	RotatorF Rotation = Vector3F(0.0f);
 	Vector3F Scale    = Vector3F(1.0f);
 };

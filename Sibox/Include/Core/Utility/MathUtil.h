@@ -101,15 +101,14 @@ public:
 	}
 
 	template <typename T>
-	NODISCARD static Matrix<T, 4> CreateTransformationMatrix(const Vector3<T> &translation, const Vector3<T> &rotation,
+	NODISCARD static Matrix<T, 4> CreateTransformationMatrix(const Vector3<T> &translation, const Rotator<T> &rotation,
 	                                                         const Vector3<T> &scale)
 	{
 		Matrix<T, 4> mat; // Identity matrix
-		// mat = translate(mat, translation);
-		// mat = rotate(mat, glm::radians(rotation.X), glm::vec3(1, 0, 0));
-		// mat = rotate(mat, glm::radians(rotation.Y), glm::vec3(0, 1, 0));
-		// mat = rotate(mat, glm::radians(rotation.Z), glm::vec3(0, 0, 1));
-		// mat = glm::scale(mat, scale);
+		// TRS:
+		mat.Scale(scale);
+		mat.Rotate(rotation);
+		mat.Translate(translation);
 		return mat;
 	}
 

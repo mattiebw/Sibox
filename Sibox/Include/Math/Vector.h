@@ -432,6 +432,16 @@ struct Vector3
 		};
 	}
 
+	NODISCARD FORCEINLINE static Vector3 Cross(const Vector3& a, const Vector3& b)
+	{
+		return
+		{
+			(a.Y * b.Z) - (a.Z * b.Y),
+			(a.Z * b.X) - (a.X * b.Z),
+			(a.X * b.Y) - (a.Y * b.X)
+		};
+	}
+
 	NODISCARD Rotator<T> GetDirectionRotator(bool normalise = true) const;
 
 	FORCEINLINE void Zero()
@@ -464,6 +474,37 @@ struct Vector3
 	FORCEINLINE explicit operator Vector4<OT>() const
 	{
 		return {static_cast<OT>(X), static_cast<OT>(Y), static_cast<OT>(Z), 0};
+	}
+
+	// Statics
+	NODISCARD FORCEINLINE static Vector3 Right()
+	{
+		return {static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)};
+	}
+
+	NODISCARD FORCEINLINE static Vector3 Left()
+	{
+		return {static_cast<T>(0), static_cast<T>(0), static_cast<T>(-1)};
+	}
+
+	NODISCARD FORCEINLINE static Vector3 Up()
+	{
+		return {static_cast<T>(0), static_cast<T>(1), static_cast<T>(0)};
+	}
+
+	NODISCARD FORCEINLINE static Vector3 Down()
+	{
+		return {static_cast<T>(0), static_cast<T>(-1), static_cast<T>(0)};
+	}
+
+	NODISCARD FORCEINLINE static Vector3 Forward()
+	{
+		return {static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)};
+	}
+
+	NODISCARD FORCEINLINE static Vector3 Backward()
+	{
+		return {static_cast<T>(-1), static_cast<T>(0), static_cast<T>(0)};
 	}
 };
 

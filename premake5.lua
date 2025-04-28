@@ -31,6 +31,7 @@ project "Sibox"
 	location "Sibox"
 	targetdir ("Build/%{prj.name}/" .. outputdir)
 	objdir ("Build/%{prj.name}/Intermediates/" .. outputdir)
+	debugdir ("Build/%{prj.name}/" .. outputdir)
 
 	usestandardpreprocessor 'On'
 	pchheader("siboxpch.h")

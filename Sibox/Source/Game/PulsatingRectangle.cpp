@@ -15,11 +15,13 @@ void PulsatingRectangle::Created()
 void PulsatingRectangle::Tick(f64 delta)
 {
 	m_Time += static_cast<f32>(delta);
+	f32 sine = sin(m_Time * 5);
+	EntityTransform.Scale = Vector3F(sine, sine / 2, 1);
+	// EntityTransform.Rotation = Rotator(0.f, 0.f, sine * 360.f);
 }
 
 void PulsatingRectangle::Render()
 {
-	f32 sine = sin(m_Time * 5);
-	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(GetPosition(), Vector2F(1.0f + sine, 1.0f),
+	Application::GetRenderer()->GetQuadRenderer()->DrawQuad(EntityTransform.GetTransformationMatrix(),
 	                                                        Vector4F(m_Color, 1.0f));
 }
