@@ -24,7 +24,7 @@ void SiboxLayer::OnAttach()
 	Ref<World>   world = app->AddWorld();
 	m_Player           = world->AddEntity<Player>("Player");
 
-	for (s32 i = 0; i < 0; i++)
+	for (s32 i = 0; i < 100; i++)
 	{
 		auto rect = world->AddEntity<PulsatingRectangle>();
 		rect->EntityTransform.Position = Vector3F(Random::Float(-10, 10), Random::Float(-10, 10), Random::Float(-10, 10));
@@ -55,6 +55,11 @@ void SiboxLayer::Render(f64 delta)
 void SiboxLayer::RenderImGUI(f64 delta)
 {
 	ImGui::Begin("Player Info");
+	f32 ts = Application::Get()->GetTimeScale();
+	ImGui::DragFloat("Timescale", &ts, 0.01f, 0.0f, 10.0f);
+	if (ImGui::Button("Reset Time Scale"))
+		ts = 1.0f;
+	Application::Get()->SetTimeScale(ts);
 	ImGui::InputText("Player Name", &m_Player->Name);
 	ImGui::InputFloat2("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());

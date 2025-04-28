@@ -158,9 +158,10 @@ void Application::Run()
 	{
 		u64 last    = time;
 		time        = SDL_GetPerformanceCounter();
-		m_DeltaTime = (time - last) / static_cast<f64>(SDL_GetPerformanceFrequency());
+		m_DeltaTimeUnscaled = (time - last) / static_cast<f64>(SDL_GetPerformanceFrequency());
+		m_DeltaTime = m_DeltaTimeUnscaled * m_TimeScale;
 
-		m_FPSCounter.AddSample(static_cast<u16>(1.0 / m_DeltaTime));
+		m_FPSCounter.AddSample(static_cast<u16>(1.0 / m_DeltaTimeUnscaled));
 
 		static f64 timeSinceFPSPrinted = 0;
 		if (timeSinceFPSPrinted >= 1)
@@ -170,7 +171,7 @@ void Application::Run()
 		}
 		else
 		{
-			timeSinceFPSPrinted += m_DeltaTime;
+			timeSinceFPSPrinted += m_DeltaTimeUnscaled;
 		}
 
 		PreUpdate();

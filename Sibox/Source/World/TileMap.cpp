@@ -84,7 +84,7 @@ void TileMap::Render()
 		Application::GetRenderer()->GetTilemapRenderer().DrawTileMapChunk(
 			Vector3F(chunk.second->GetPosition(), Z), chunk.second.get());
 
-		Application::GetQuadRenderer()->DrawRectangleLines(chunk.second->GetBounds(), {1.0f, 0.0f, 0.0f, 1.0f}, 0.1f);
+		// Application::GetQuadRenderer()->DrawRectangleLines(chunk.second->GetBounds(), {1.0f, 0.0f, 0.0f, 1.0f}, 0.1f);
 	}
 }
 
