@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <SDL3/SDL_timer.h>
+
 // I usually go for PascalCase for types, but I want lowercase for the number typedefs, so we'll just disable this inspection in this file.
 // ReSharper disable CppInconsistentNaming
 

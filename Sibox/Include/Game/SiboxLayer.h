@@ -16,5 +16,4 @@ public:
 
 protected:
 	Ref<Player> m_Player;
-	Transform   m_TextTransform;
 };

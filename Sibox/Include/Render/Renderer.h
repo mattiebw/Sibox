@@ -2,6 +2,7 @@
 
 #include <SDL3/SDL_events.h>
 
+#include "Mesh.h"
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
@@ -213,6 +214,8 @@ public:
 
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
+
+	void DrawMesh(Mesh* mesh, const Matrix4x4F &transform);
 
 	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetTileQuadVertexBuffer() { return m_TileQuadVertexBuffer; }
 	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }

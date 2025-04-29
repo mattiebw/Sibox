@@ -26,8 +26,9 @@ TileMapChunk::TileMapChunk(TileMap *tileMap, Vector2I position, Vector2I size)
 	memset(m_TileShaderData, 0, sizeof(TileShaderData) * m_Size.X * m_Size.Y);
 
 	// Our tile data buffer is just a contiguous buffer of vec2s, representing the top left texture coordinates of the tiles.
-	m_TileDataBuffer = CreateRef<VertexBuffer>(static_cast<u32>(sizeof(TileShaderData) * m_Size.X * m_Size.Y),
-	                                           BufferUsageType::DynamicDraw);
+	m_TileDataBuffer = CreateRef<VertexBuffer>();
+	m_TileDataBuffer->Create(static_cast<u32>(sizeof(TileShaderData) * m_Size.X * m_Size.Y),
+	                         BufferUsageType::DynamicDraw);
 	m_TileDataBuffer->SetLayout(BufferLayout({
 		{"a_TexCoordTopLeft", ShaderDataType::Float2, 0, 1},
 		{"a_Rot", ShaderDataType::Float, 0, 1},

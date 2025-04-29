@@ -42,6 +42,7 @@
 #include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
 #include "Core/Utility/MathUtil.h"
+#include "Core/Utility/FileUtil.h"
 #include "Core/Utility/Timer.h"
 #include "Core/Transform.h"
 #include "Core/UUID.h"

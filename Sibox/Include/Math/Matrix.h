@@ -29,9 +29,15 @@ public:
 		static_assert(Size == 4);
 	}
 
-	static Matrix<T, 4> MakePerspective(T fov, T aspect, T near, T far)
+	static Matrix<T, 4> MakePerspective(T verticalFov, T aspect, T near, T far)
 	{
 		Matrix<T, 4> result;
+		T const tanOfHalfVerticalFov = tan(verticalFov / static_cast<T>(2));
+		result[0][0] = static_cast<T>(1) / (aspect * tanOfHalfVerticalFov);
+		result[1][1] = static_cast<T>(1) / (tanOfHalfVerticalFov);
+		result[2][2] = far / (far - near);
+		result[2][3] = static_cast<T>(1);
+		result[3][2] = -(far * near) / (far - near);
 		return result;
 	}
 

@@ -36,23 +36,29 @@ void BufferLayout::CalculateOffsetsAndStride()
 	}
 }
 
-VertexBuffer::VertexBuffer(u32 size, BufferUsageType type)
+VertexBuffer::VertexBuffer() = default;
+
+bool VertexBuffer::Create(u32 size, BufferUsageType type)
 {
 	glCreateBuffers(1, &m_RendererID);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, size, nullptr, BufferUsageTypeToGL(type));
+
+	return true;
 }
 
-VertexBuffer::VertexBuffer(const void *data, u32 size, BufferUsageType type)
+bool VertexBuffer::Create(const void *data, u32 size, BufferUsageType type)
 {
 	glCreateBuffers(1, &m_RendererID);
 	Bind();
 	glBufferData(GL_ARRAY_BUFFER, size, data, BufferUsageTypeToGL(type));
+
+	return true;
 }
 
-VertexBuffer::VertexBuffer(const Buffer &buffer, BufferUsageType type)
-	: VertexBuffer(buffer.Data, static_cast<u32>(buffer.Size), type)
+bool VertexBuffer::Create(const Buffer &buffer, BufferUsageType type)
 {
+	return Create(buffer.Data, static_cast<u32>(buffer.Size), type);
 }
 
 VertexBuffer::~VertexBuffer()
@@ -81,24 +87,26 @@ void VertexBuffer::SetData(const Buffer &buffer)
 	SetData(buffer.Data, static_cast<u32>(buffer.Size));
 }
 
-IndexBuffer::IndexBuffer(u32 *indices, u32 count, BufferUsageType type)
-	: m_Count(count)
+IndexBuffer::~IndexBuffer()
 {
+	Destroy();
+}
+
+bool IndexBuffer::Create(const void *indices, u32 count, IndexType indexType, const BufferUsageType type)
+{
+	m_Count = count;
 	glCreateBuffers(1, &m_RendererID);
 	// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
 	// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
 	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	glBufferData(GL_ARRAY_BUFFER, m_Count * sizeof(u32), indices, BufferUsageTypeToGL(type));
+	m_IndexType = indexType;
+	return true;
 }
 
-IndexBuffer::IndexBuffer(const Buffer &buffer, BufferUsageType type)
-	: IndexBuffer(reinterpret_cast<u32*>(buffer.Data), static_cast<u32>(buffer.Size / 4), type)
+bool IndexBuffer::Create(const Buffer &buffer, IndexType indexType, BufferUsageType type)
 {
-}
-
-IndexBuffer::~IndexBuffer()
-{
-	glDeleteBuffers(1, &m_RendererID);
+	return Create(reinterpret_cast<u32*>(buffer.Data), static_cast<u32>(buffer.Size / 4), indexType, type);
 }
 
 void IndexBuffer::Bind()
@@ -109,4 +117,12 @@ void IndexBuffer::Bind()
 void IndexBuffer::Unbind()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void IndexBuffer::Destroy()
+{
+	if (m_RendererID != 0)
+		glDeleteBuffers(1, &m_RendererID);
+	m_RendererID = 0;
+	m_Count      = 0;
 }

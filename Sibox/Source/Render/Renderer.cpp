@@ -105,8 +105,9 @@ QuadBatch::QuadBatch(RendererData *data, u32 MaxQuads)
 
 	m_VertexArray = CreateRef<VertexArray>();
 
-	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<u32>(m_MaxVertices * sizeof(QuadVertex)),
-	                                         BufferUsageType::StreamDraw);
+	m_VertexBuffer = CreateRef<VertexBuffer>();
+	m_VertexBuffer->Create(static_cast<u32>(m_MaxVertices * sizeof(QuadVertex)),
+	                       BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(QuadVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
@@ -120,7 +121,8 @@ QuadBatch::QuadBatch(RendererData *data, u32 MaxQuads)
 		quadIndices[i * 6 + 4] = i * 4 + 3;
 		quadIndices[i * 6 + 5] = i * 4 + 0;
 	}
-	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>(quadIndices, m_MaxIndices);
+	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>();
+	indexBuffer->Create(quadIndices, m_MaxIndices, IndexType::U32);
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 	delete[] quadIndices;
 
@@ -242,7 +244,8 @@ void QuadBatch::Flush()
 	m_VertexArray->Bind();
 
 	// Now we can render our quads.
-	glDrawElements(GL_TRIANGLES, static_cast<int>(m_IndicesCount), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, static_cast<int>(m_IndicesCount), m_VertexArray->GetIndexBuffer()->GetElementType(),
+	               nullptr);
 	m_Data->Stats.DrawCalls++;
 
 	// Now we can reset our state.
@@ -284,7 +287,8 @@ void TilemapRenderer::DrawTileMapChunk(const Vector3F bottomLeftPosition, TileMa
 
 	chunk->UpdateTileData();
 	chunk->GetVertexArray()->Bind();
-	glDrawElementsInstanced(GL_TRIANGLES, chunk->GetVertexArray()->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT,
+	glDrawElementsInstanced(GL_TRIANGLES, chunk->GetVertexArray()->GetIndexBuffer()->GetCount(),
+	                        chunk->GetVertexArray()->GetIndexBuffer()->GetElementType(),
 	                        nullptr, chunk->GetSize().X * chunk->GetSize().Y);
 	m_Data->Stats.DrawCalls++;
 	m_Data->Stats.TileCount += chunk->GetSize().X * chunk->GetSize().Y;
@@ -394,8 +398,9 @@ void TextRenderer::Init(RendererData *data, u32 maxQuads)
 	m_Data = data;
 
 	m_VertexArray  = CreateRef<VertexArray>();
-	m_VertexBuffer = CreateRef<VertexBuffer>(static_cast<u32>((maxQuads * 4) * sizeof(TextVertex)),
-	                                         BufferUsageType::StreamDraw);
+	m_VertexBuffer = CreateRef<VertexBuffer>();
+	m_VertexBuffer->Create(static_cast<u32>((maxQuads * 4) * sizeof(TextVertex)),
+	                       BufferUsageType::StreamDraw);
 	m_VertexBuffer->SetLayout(TextVertex::GetLayout());
 	m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
@@ -410,7 +415,8 @@ void TextRenderer::Init(RendererData *data, u32 maxQuads)
 		quadIndices[i * 6 + 4] = i * 4 + 3;
 		quadIndices[i * 6 + 5] = i * 4 + 0;
 	}
-	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>(quadIndices, m_MaxIndices);
+	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>();
+	indexBuffer->Create(quadIndices, m_MaxIndices, IndexType::U32);
 	m_VertexArray->SetIndexBuffer(indexBuffer);
 	delete[] quadIndices;
 
@@ -449,7 +455,7 @@ void TextRenderer::Flush()
 	m_VertexArray->Bind();
 
 	// Now we can render our text.
-	glDrawElements(GL_TRIANGLES, m_IndicesCount, GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, m_IndicesCount, m_VertexArray->GetIndexBuffer()->GetElementType(), nullptr);
 	m_Data->Stats.DrawCalls++;
 
 	// Now we can reset our state.
@@ -496,13 +502,15 @@ bool Renderer::Init(Ref<Window> window)
 	quadPositions[1]       = {1.0001f, 0.0f, 0.0f};
 	quadPositions[2]       = {1.0001f, 1.0001f, 0.0f};
 	quadPositions[3]       = {0.0f, 1.0001f, 0.0f};
-	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>(quadPositions, static_cast<u32>(sizeof(Vector3F) * 4));
+	m_TileQuadVertexBuffer = CreateRef<VertexBuffer>();
+	m_TileQuadVertexBuffer->Create(quadPositions, static_cast<u32>(sizeof(Vector3F) * 4));
 	m_TileQuadVertexBuffer->SetLayout(BufferLayout({
 		{"a_Position", ShaderDataType::Float3},
 	}));
 
 	u32 quadIndices[6]    = {0, 1, 2, 2, 3, 0};
-	m_TileQuadIndexBuffer = CreateRef<IndexBuffer>(quadIndices, 6);
+	m_TileQuadIndexBuffer = CreateRef<IndexBuffer>();
+	m_TileQuadIndexBuffer->Create(quadIndices, 6, IndexType::U32);
 
 	m_TilemapRenderer.Init(m_Data);
 	m_TextRenderer.Init(m_Data);
@@ -738,6 +746,11 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 		m_Viewports.erase(it);
 	else
 		SIBOX_WARN("Attempted to remove a viewport that has not been added!");
+}
+
+void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform)
+{
+	
 }
 
 void Renderer::SetVSync(bool enabled)

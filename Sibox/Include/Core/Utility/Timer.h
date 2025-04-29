@@ -56,3 +56,30 @@ public:
 private:
 	u64 m_Begin, m_End;
 };
+
+struct LoggingScopedTimer
+{
+	LoggingScopedTimer(std::string_view name)
+		: m_Name(name), m_Start(SDL_GetPerformanceCounter())
+	{
+		m_TimerDepth++;
+	}
+
+	~LoggingScopedTimer()
+	{
+		u64 diff = SDL_GetPerformanceCounter() - m_Start;
+		SIBOX_INFO("{: >{}}{}: {:.3f}ms", "", m_TimerDepth, m_Name, (static_cast<double>(diff) / SDL_GetPerformanceFrequency()) * 1000);
+		m_TimerDepth--;
+	}
+
+private:
+	static s32 m_TimerDepth;
+
+	std::string_view m_Name;
+	u64 m_Start;
+};
+
+// Basic macro to create a logging scoped timer without having to manually declare a unique variable name.
+#define TOKEN_PASTE(x, y) x##y
+#define CAT(x,y) TOKEN_PASTE(x,y)
+#define LOG_SCOPE_TIMER(x) auto CAT(timer, __LINE__) = LoggingScopedTimer(x)

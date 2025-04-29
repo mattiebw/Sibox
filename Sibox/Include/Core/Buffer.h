@@ -18,7 +18,7 @@ struct Buffer
 
 	Buffer(size_t size)
 	{
-		Allocate(Size);
+		Allocate(size);
 	}
 
 	Buffer(const Buffer &other) = default;
@@ -119,4 +119,64 @@ struct ScopedBuffer
 
 private:
 	Buffer m_Buffer;
+};
+
+class BufferReader
+{
+public:
+	BufferReader(u8* buffer, u32 bufferSize)
+		: m_BufferBegin(buffer), m_BufferSize(bufferSize), m_ReadOffset(0)
+	{
+	}
+
+	explicit BufferReader(const Buffer& buffer)
+		: m_BufferBegin(buffer.Data), m_BufferSize(static_cast<u32>(buffer.Size)), m_ReadOffset(0)
+	{
+	}
+
+	FORCEINLINE u32 GetReadOffset() const { return m_ReadOffset; }
+	FORCEINLINE u8* GetBufferAtOffset() const { return m_BufferBegin + m_ReadOffset; }
+	FORCEINLINE u8* GetBuffer() const { return m_BufferBegin; }
+	FORCEINLINE u32 GetBufferSize() const { return m_BufferSize; }
+	FORCEINLINE u32 GetRemainingSize() const { return m_BufferSize - m_ReadOffset; }
+
+	void Reset()
+	{
+		m_ReadOffset = 0;
+	}
+
+	void Seek(u32 offset)
+	{
+		m_ReadOffset = offset;
+	}
+
+	void Skip(u32 offset)
+	{
+		m_ReadOffset += offset;
+	}
+
+	template<typename T>
+	T Read()
+	{
+		if (m_ReadOffset + sizeof(T) > m_BufferSize)
+			return T();
+
+		T value = *reinterpret_cast<T*>(m_BufferBegin + m_ReadOffset);
+		m_ReadOffset += sizeof(T);
+		return value;
+	}
+
+	void CopyTo(u8* dest, u32 size)
+	{
+		if (m_ReadOffset + size > m_BufferSize)
+			return;
+
+		memcpy(dest, m_BufferBegin + m_ReadOffset, size);
+		m_ReadOffset += size;
+	}
+
+private:
+	u8* m_BufferBegin;
+	u32 m_BufferSize;
+	u32 m_ReadOffset;
 };

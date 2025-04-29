@@ -213,15 +213,17 @@ private:
 class VertexBuffer
 {
 public:
-	VertexBuffer(u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
-	VertexBuffer(const void *data, u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
-	VertexBuffer(const Buffer &buffer, BufferUsageType type = BufferUsageType::StaticDraw);
+	VertexBuffer();
 	~VertexBuffer();
 
 	VertexBuffer(VertexBuffer &&other)                 = delete; // MW @todo: Add other constructors
 	VertexBuffer(const VertexBuffer &other)            = delete;
 	VertexBuffer& operator=(const VertexBuffer &other) = delete;
 	VertexBuffer& operator=(VertexBuffer &&other)      = delete;
+
+	bool Create(u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
+	bool Create(const void *data, u32 size, BufferUsageType type = BufferUsageType::StaticDraw);
+	bool Create(const Buffer &buffer, BufferUsageType type = BufferUsageType::StaticDraw);
 
 	void        Bind() const;
 	static void Unbind();
@@ -237,11 +239,16 @@ private:
 	BufferLayout m_Layout;
 };
 
+enum class IndexType : u8
+{
+	U16,
+	U32
+};
+
 class IndexBuffer
 {
 public:
-	IndexBuffer(u32 *indices, u32 count, BufferUsageType type = BufferUsageType::StaticDraw);
-	IndexBuffer(const Buffer &buffer, BufferUsageType type = BufferUsageType::StaticDraw);
+	IndexBuffer() = default;
 	~IndexBuffer();
 
 	IndexBuffer(IndexBuffer &&other)                 = delete; // MW @todo: Create other constructors
@@ -249,12 +256,29 @@ public:
 	IndexBuffer& operator=(const IndexBuffer &other) = delete;
 	IndexBuffer& operator=(IndexBuffer &&other)      = delete;
 
+	bool Create(const void *    indices, u32 count, IndexType indexType,
+	            BufferUsageType type = BufferUsageType::StaticDraw);
+	bool Create(const Buffer &buffer, IndexType indexType, BufferUsageType type = BufferUsageType::StaticDraw);
+
 	void        Bind();
 	static void Unbind();
 
-	NODISCARD FORCEINLINE u32 GetCount() const { return m_Count; }
+	void Destroy();
+
+	NODISCARD FORCEINLINE u32    GetCount() const { return m_Count; }
+	NODISCARD FORCEINLINE GLenum GetElementType() const
+	{
+		switch (m_IndexType)
+		{
+		case IndexType::U16: return GL_UNSIGNED_SHORT;
+		case IndexType::U32: return GL_UNSIGNED_INT;
+		}
+		SIBOX_ASSERT(false && "Unknown index type.");
+		return GL_UNSIGNED_SHORT;
+	}
 
 private:
-	u32 m_RendererID;
-	u32 m_Count;
+	u32       m_RendererID;
+	u32       m_Count;
+	IndexType m_IndexType = IndexType::U16;
 };

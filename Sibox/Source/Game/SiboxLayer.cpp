@@ -12,7 +12,6 @@
 #include "Game/PulsatingRectangle.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
-#include "World/TileMap.h"
 
 void SiboxLayer::OnAttach()
 {
@@ -29,12 +28,12 @@ void SiboxLayer::OnAttach()
 		auto rect = world->AddEntity<PulsatingRectangle>();
 		rect->EntityTransform.Position = Vector3F(Random::Float(-10, 10), Random::Float(-10, 10), Random::Float(-10, 10));
 	}
-	
-	auto tilemap = world->CreateTileMap(TileSets::MainTileSet);
-	tilemap->Z   = -10;
-	tilemap->SetChunkProvider(CreateRef<DefaultChunkProvider>());
 
-	m_TextTransform.Position.Z = -0.05f;
+	{
+		LOG_SCOPE_TIMER("Loading mesh");
+		Mesh myMesh({});
+		myMesh.LoadFromFile("Content/Meshes/Test.mesh");
+	}
 }
 
 void SiboxLayer::OnDetach()
@@ -48,8 +47,6 @@ void SiboxLayer::Update(f64 delta)
 
 void SiboxLayer::Render(f64 delta)
 {
-	// Application::GetTextRenderer().DrawString("Hello", Font::GetDefaultFont(),
-	//                                           m_TextTransform.GetTransformationMatrix(), glm::vec4(1.0f));
 }
 
 void SiboxLayer::RenderImGUI(f64 delta)

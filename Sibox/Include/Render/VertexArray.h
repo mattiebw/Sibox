@@ -7,6 +7,9 @@ public:
 	VertexArray();
 	~VertexArray();
 
+	VertexArray(const VertexArray& other) noexcept = delete;
+	VertexArray(VertexArray&& other) noexcept;
+
 	void        Bind();
 	static void Unbind();
 

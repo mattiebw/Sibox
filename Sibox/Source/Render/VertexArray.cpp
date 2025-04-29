@@ -11,6 +11,19 @@ VertexArray::~VertexArray()
 	glDeleteVertexArrays(1, &m_RendererID);
 }
 
+VertexArray::VertexArray(VertexArray &&other) noexcept
+{
+	m_RendererID = other.m_RendererID;
+	m_VertexBufferIndex = other.m_VertexBufferIndex;
+	m_VertexBuffers      = std::move(other.m_VertexBuffers);
+	m_IndexBuffer        = std::move(other.m_IndexBuffer);
+	
+	other.m_RendererID = 0;
+	other.m_VertexBufferIndex = 0;
+	other.m_VertexBuffers.clear();
+	other.m_IndexBuffer = nullptr;
+}
+
 void VertexArray::Bind()
 {
 	glBindVertexArray(m_RendererID);
