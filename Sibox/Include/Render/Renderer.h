@@ -257,6 +257,8 @@ private:
 	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
 	Ref<IndexBuffer>  m_TileQuadIndexBuffer  = nullptr;
 
+	Ref<Shader> m_MeshShader;
+
 	bool m_Initialised      = false;
 	bool m_ImGUIInitialised = false;
 

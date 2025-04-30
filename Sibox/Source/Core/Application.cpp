@@ -36,8 +36,17 @@ void FPSCounter::AddSample(u16 fps)
 void FPSCounter::RecalculateFPS()
 {
 	int fpsTotal = 0;
+	u16 last = 0;
 	for (u16 m_Sample : m_Samples)
-		fpsTotal += m_Sample;
+	{
+		if (m_Sample != 0)
+		{
+			fpsTotal += m_Sample;
+			last = m_Sample;
+		}
+		else
+			fpsTotal += last;
+	}
 	m_FPS   = static_cast<u16>(fpsTotal / s_MaxSamples);
 	m_Dirty = false;
 }

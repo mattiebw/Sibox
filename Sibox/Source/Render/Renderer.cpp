@@ -515,6 +515,11 @@ bool Renderer::Init(Ref<Window> window)
 	m_TilemapRenderer.Init(m_Data);
 	m_TextRenderer.Init(m_Data);
 
+	m_MeshShader = ShaderLibrary::CreateShader("Mesh");
+	m_MeshShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Mesh.vert");
+	m_MeshShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Mesh.frag");
+	m_MeshShader->LinkProgram(); 
+
 	return true;
 }
 

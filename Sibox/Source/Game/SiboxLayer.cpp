@@ -23,12 +23,6 @@ void SiboxLayer::OnAttach()
 	Ref<World>   world = app->AddWorld();
 	m_Player           = world->AddEntity<Player>("Player");
 
-	for (s32 i = 0; i < 100; i++)
-	{
-		auto rect = world->AddEntity<PulsatingRectangle>();
-		rect->EntityTransform.Position = Vector3F(Random::Float(-10, 10), Random::Float(-10, 10), Random::Float(-10, 10));
-	}
-
 	{
 		LOG_SCOPE_TIMER("Loading mesh");
 		Mesh myMesh({});
@@ -58,7 +52,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 		ts = 1.0f;
 	Application::Get()->SetTimeScale(ts);
 	ImGui::InputText("Player Name", &m_Player->Name);
-	ImGui::InputFloat2("Player Position", m_Player->EntityTransform.Position.Data());
+	ImGui::DragFloat3("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
 	if (ImGui::BeginCombo("Camera Type", CameraModeToString(m_Player->GetCamera()->Mode)))
 	{

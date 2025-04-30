@@ -45,7 +45,7 @@ project "Sibox"
 	files { 
 		"Sibox/Include/**.h", "Sibox/Include/**.hpp", 
 		"Sibox/Source/**.cpp", "Sibox/Source/**.c",
-		"Sibox/Content/**",
+		"Content/**",
 		"TODO.md", "README.md",
 	}
 

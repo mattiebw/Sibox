@@ -104,7 +104,7 @@ void Player::Render()
 	tf.Position += Vector3F(measurement.Offset, 0);
 	tf.Scale = Vector3F(measurement.Size + Vector2F(0.1f, 0.1f), 1);
 	tf.Position.Z -= 0.05f;
-	Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), Vector4F(1, 1, 1, .25));
+	// Application::GetQuadRenderer()->DrawQuad(tf.GetTransformationMatrix(), Vector4F(1, 1, 1, .25));
 	// sw.End();
 	// SIBOX_TRACE("DrawString took {0}us ({1} ms)", sw.GetElapsedMicroseconds(), sw.GetElapsedMilliseconds());
 
