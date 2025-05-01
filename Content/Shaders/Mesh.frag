@@ -2,6 +2,7 @@
 
 struct VertexOutput
 {
+    vec3 WorldPos;
     vec3 Normal;
     vec2 TexCoord;
 };
@@ -16,6 +17,7 @@ void main()
 {
     vec4 texColor = vec4(1.0, 1.0, 1.0, 1.0); // Maybe add a tint?
 
+    int v_TexIndex = 0; // Temp hack while I consider how to do this.
     switch (int(v_TexIndex))
     {
         case 0: texColor *= texture(u_Textures[0], Input.TexCoord); break;

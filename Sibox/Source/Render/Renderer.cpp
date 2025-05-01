@@ -755,7 +755,14 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 
 void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform)
 {
+	m_MeshShader->Bind();
+	m_MeshShader->SetUniformMatrix4f("u_ViewProjection", GetCurrentViewport()->GetCamera()->GetViewProjectionMatrix());
+	m_MeshShader->SetUniformMatrix4f("u_Transform", transform);
 	
+	for (const SubMesh& submesh : mesh->GetSubMeshes())
+	{
+		
+	}
 }
 
 void Renderer::SetVSync(bool enabled)

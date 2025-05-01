@@ -124,7 +124,10 @@ s32 Shader::LinkProgram()
 		glGetProgramiv(m_ProgramID, GL_INFO_LOG_LENGTH, &logLength);
 		std::vector<char> infoLog(logLength);
 		glGetProgramInfoLog(m_ProgramID, logLength, &logLength, infoLog.data());
-		SIBOX_ERROR("Failed to link shader {0}: {1}", m_Name, infoLog.data());
+		if (logLength != 0)
+			SIBOX_ERROR("Failed to link shader {0}: {1}", m_Name, infoLog.data());
+		else
+			SIBOX_ERROR("Shader \"{}\" failed to compile, but OpenGL didn't provide an error.", m_Name);
 
 		// Clean up
 		for (const s32 shaderID : m_ShaderStages)

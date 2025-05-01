@@ -65,6 +65,8 @@ public:
 
 	bool LoadFromFile(const std::filesystem::path &path);
 
+	NODISCARD FORCEINLINE const std::vector<SubMesh>& GetSubMeshes() { return m_Meshes; } 
+
 protected:
 	std::vector<SubMesh> m_Meshes;
 	MeshSpecification    m_Spec;
