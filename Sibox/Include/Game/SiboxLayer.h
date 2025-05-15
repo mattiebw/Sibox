@@ -1,11 +1,9 @@
 ﻿#pragma once
+
 #include "Core/Layer.h"
 
+class Player;
 class MeshEntity;
-class Mesh;
-class OldPlayer;
-class World;
-class Camera;
 
 class SiboxLayer : public Layer
 {
@@ -18,5 +16,5 @@ public:
 
 protected:
 	Ref<MeshEntity> m_Mesh;
-	Ref<OldPlayer> m_Player;
+	Ref<Player> m_Player;
 };

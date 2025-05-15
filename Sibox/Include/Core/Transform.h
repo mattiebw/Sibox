@@ -15,6 +15,24 @@ struct Transform
 		return MathUtil::CreateTransformationMatrix(Position, Rotation, Scale);
 	}
 
+	FORCEINLINE Vector3F GetForwardVector() const
+	{
+		return Matrix4x4F::MakeRotationMatrix(
+			MathUtil::DegreesToRadians(Rotation.Yaw),
+			MathUtil::DegreesToRadians(Rotation.Pitch),
+			MathUtil::DegreesToRadians(Rotation.Roll)
+			) * Vector3F::Forward();
+	}
+	
+	FORCEINLINE Vector3F GetRightVector() const
+	{
+		return Matrix4x4F::MakeRotationMatrix(
+			MathUtil::DegreesToRadians(Rotation.Yaw),
+			MathUtil::DegreesToRadians(Rotation.Pitch),
+			MathUtil::DegreesToRadians(Rotation.Roll)
+			) * Vector3F::Right();
+	}
+
 	Transform() = default;
 
 	Transform(const Vector3F &position)

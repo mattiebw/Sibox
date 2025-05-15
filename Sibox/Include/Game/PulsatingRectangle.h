@@ -4,7 +4,7 @@
 class PulsatingRectangle : public Entity
 {
 public:
-	ENTITY_CLASS_BODY(PulsatingRectangle)
+	ENTITY_CLASS_BODY(PulsatingRectangle);
 
 	void Created() override;
 	void Tick(f64 delta) override;

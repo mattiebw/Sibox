@@ -3,7 +3,7 @@
 
 #include "Core/Application.h"
 #include "Core/Input/Input.h"
-#include "Game/OldPlayer.h"
+#include "Game/Player.h"
 #include "Game/MeshEntity.h"
 #include "World/TileSets.h"
 #include "World/World.h"
@@ -21,7 +21,7 @@ void SiboxLayer::OnAttach()
 	TileSets::Init();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
-	m_Player           = world->AddEntity<OldPlayer>("Player");
+	m_Player           = world->AddEntity<Player>("Player");
 
 	{
 		LOG_SCOPE_TIMER("Loading mesh");
@@ -30,6 +30,7 @@ void SiboxLayer::OnAttach()
 
 		m_Mesh = world->AddEntity<MeshEntity>();
 		m_Mesh->SetMesh(testMesh);
+		m_Mesh->EntityTransform.Position.Z = 10;
 	}
 }
 
@@ -59,7 +60,6 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::Dummy(ImVec2(0, 20));
 
 	ImGui::Text("Player");
-	ImGui::InputText("Player Name", &m_Player->Name);
 	ImGui::DragFloat3("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
 	ImGui::Dummy(ImVec2(0, 20));

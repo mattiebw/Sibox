@@ -134,6 +134,27 @@ public:
 		return {LerpSmooth(a.X, b.X, r, delta), LerpSmooth(a.Y, b.Y, r, delta), LerpSmooth(a.Z, b.Z, r, delta)};
 	}
 
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static T Min(T a, T b)
+	{
+		return a < b ? a : b;
+	}
+
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static T Max(T a, T b)
+	{
+		return a > b ? a : b;
+	}
+	
+	template <typename T>
+		requires std::is_arithmetic_v<T>
+	NODISCARD FORCEINLINE static T Clamp(const T value, const T min, const T max)
+	{
+		return Max(min, Min(max, value));
+	}
+
 	// Fun fact: 38 digits of pi is enough to calculate the circumference of the observable universe to within the
 	// width of a hydrogen atom, and 62 digits can calculate the circumference of the observable universe to within the
 	// planck length (1.6162x10e-35 meters), the shortest unit of length expected to be measurable.

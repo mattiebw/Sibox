@@ -32,12 +32,12 @@ public:
 	static Matrix<T, 4> MakePerspective(T verticalFov, T aspect, T near, T far)
 	{
 		Matrix<T, 4> result;
-		T const tanOfHalfVerticalFov = tan(verticalFov / static_cast<T>(2));
-		result[0][0] = static_cast<T>(1) / (aspect * tanOfHalfVerticalFov);
-		result[1][1] = static_cast<T>(1) / (tanOfHalfVerticalFov);
-		result[2][2] = far / (far - near);
-		result[2][3] = static_cast<T>(1);
-		result[3][2] = -(far * near) / (far - near);
+		T const      tanOfHalfVerticalFov = tan(verticalFov / static_cast<T>(2));
+		result[0][0]                      = static_cast<T>(1) / (aspect * tanOfHalfVerticalFov);
+		result[1][1]                      = static_cast<T>(1) / (tanOfHalfVerticalFov);
+		result[2][2]                      = far / (far - near);
+		result[2][3]                      = static_cast<T>(1);
+		result[3][2]                      = -(far * near) / (far - near);
 		return result;
 	}
 
@@ -107,10 +107,10 @@ public:
 
 			float b10 = other.m_Data[1][0];
 			float b11 = other.m_Data[1][1];
-			
+
 			result[0][0] = (a00 * b00) + (a10 * b01);
 			result[0][1] = (a01 * b00) + (a11 * b01);
-			
+
 			result[1][0] = (a00 * b10) + (a10 * b11);
 			result[1][1] = (a01 * b10) + (a11 * b11);
 		}
@@ -127,7 +127,7 @@ public:
 			float a20 = m_Data[2][0];
 			float a21 = m_Data[2][1];
 			float a22 = m_Data[2][2];
-			
+
 			float b00 = other.m_Data[0][0];
 			float b01 = other.m_Data[0][1];
 			float b02 = other.m_Data[0][2];
@@ -139,15 +139,15 @@ public:
 			float b20 = other.m_Data[2][0];
 			float b21 = other.m_Data[2][1];
 			float b22 = other.m_Data[2][2];
-			
+
 			result[0][0] = (a00 * b00) + (a10 * b01) + (a20 * b02);
 			result[0][1] = (a01 * b00) + (a11 * b01) + (a21 * b02);
 			result[0][2] = (a02 * b00) + (a12 * b01) + (a22 * b02);
-			
+
 			result[1][0] = (a00 * b10) + (a10 * b11) + (a20 * b12);
 			result[1][1] = (a01 * b10) + (a11 * b11) + (a21 * b12);
 			result[1][2] = (a02 * b10) + (a12 * b11) + (a22 * b12);
-			
+
 			result[2][0] = (a00 * b20) + (a10 * b21) + (a20 * b22);
 			result[2][1] = (a01 * b20) + (a11 * b21) + (a21 * b22);
 			result[2][2] = (a02 * b20) + (a12 * b21) + (a22 * b22);
@@ -253,13 +253,21 @@ public:
 	// Multiply a matrix by a 3-element vector. Only works when the matrix is 3x3.
 	Vector3<T> operator*(const Vector3<T> &vector) const
 	{
-		static_assert(Size == 3, "Matrix must be 3x3 to multiply with a Vector3.");
-		
-		return {
-			m_Data[0][0] * vector.X + m_Data[1][0] * vector.Y + m_Data[2][0] * vector.Z,
-			m_Data[0][1] * vector.X + m_Data[1][1] * vector.Y + m_Data[2][1] * vector.Z,
-			m_Data[0][2] * vector.X + m_Data[1][2] * vector.Y + m_Data[2][2] * vector.Z,
-		};
+		static_assert(Size == 3 || Size == 4, "Matrix must be 3x3 or 4x4 to multiply with a Vector3.");
+
+		if constexpr (Size == 4)
+		{
+			return static_cast<Vector3<T>>(*this * Vector4<T>(vector.X, vector.Y, vector.Z, 1));
+		}
+		else
+		{
+			return
+			{
+				m_Data[0][0] * vector.X + m_Data[1][0] * vector.Y + m_Data[2][0] * vector.Z,
+				m_Data[0][1] * vector.X + m_Data[1][1] * vector.Y + m_Data[2][1] * vector.Z,
+				m_Data[0][2] * vector.X + m_Data[1][2] * vector.Y + m_Data[2][2] * vector.Z,
+			};
+		}
 	}
 
 	// Multiply a matrix by a 4-element vector. Only works when the matrix is 4x4.
