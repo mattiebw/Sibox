@@ -10,7 +10,7 @@ public:
 	VertexArray(const VertexArray& other) noexcept = delete;
 	VertexArray(VertexArray&& other) noexcept;
 
-	void        Bind();
+	void        Bind() const;
 	static void Unbind();
 
 	void AddVertexBuffer(const Ref<VertexBuffer> &vertexBuffer);

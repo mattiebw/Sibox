@@ -1,5 +1,5 @@
 ﻿#include "siboxpch.h"
-#include "Game/Player.h"
+#include "Game/OldPlayer.h"
 
 #include "Core/Application.h"
 #include "Core/Input/Input.h"
@@ -10,12 +10,12 @@
 #include "Render/Renderer.h"
 #include "Render/Viewport.h"
 
-void Player::OnPersonaNameChange(PersonaStateChange_t *parameter)
+void OldPlayer::OnPersonaNameChange(PersonaStateChange_t *parameter)
 {
 	Name = SteamFriends()->GetPersonaName();
 }
 
-void Player::Created()
+void OldPlayer::Created()
 {
 	m_Camera                            = CreateRef<Camera>();
 	m_Camera->Transformation.Position.Z = 3;
@@ -31,7 +31,7 @@ void Player::Created()
 	Name = SteamFriends()->GetPersonaName();
 }
 
-void Player::AddedToWorld(World *world)
+void OldPlayer::AddedToWorld(World *world)
 {
 	if (Application::Get()->HasFrontend())
 	{
@@ -42,7 +42,7 @@ void Player::AddedToWorld(World *world)
 	// 	world->AddEntity<PulsatingRectangle>();
 }
 
-void Player::Tick(f64 delta)
+void OldPlayer::Tick(f64 delta)
 {
 	m_Time += static_cast<f32>(delta);
 
@@ -84,7 +84,7 @@ void Player::Tick(f64 delta)
 	                                                           static_cast<f32>(delta));
 }
 
-void Player::Render()
+void OldPlayer::Render()
 {
 	f32 sine = (sin(m_Time) + 1) / 2;
 	auto mat = EntityTransform.GetTransformationMatrix();

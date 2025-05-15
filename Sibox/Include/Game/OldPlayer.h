@@ -6,9 +6,9 @@
 class Viewport;
 class Camera;
 
-class Player : public Entity
+class OldPlayer : public Entity
 {
-	ENTITY_CLASS_BODY(Player);
+	ENTITY_CLASS_BODY(OldPlayer);
 
 	void Created() override;
 	void AddedToWorld(World *world) override;
@@ -22,7 +22,7 @@ class Player : public Entity
 
 	std::string Name = "Qerma";
 
-	STEAM_CALLBACK(Player, OnPersonaNameChange, PersonaStateChange_t);
+	STEAM_CALLBACK(OldPlayer, OnPersonaNameChange, PersonaStateChange_t);
 
 private:
 	f32           m_Time = 0;

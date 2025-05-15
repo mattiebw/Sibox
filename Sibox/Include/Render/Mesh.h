@@ -35,6 +35,7 @@ public:
 	NODISCARD FORCEINLINE u32 GetNumVerts() const { return m_NumVerts; }
 	NODISCARD FORCEINLINE u32 GetNumIndices() const { return m_NumIndices; }
 	NODISCARD FORCEINLINE u32 GetMaterialIndex() const { return m_MaterialIndex; }
+	NODISCARD FORCEINLINE const VertexArray& GetVertexArray() const { return m_VertexArray; }
 
 	// Setters
 	void SetMaterialIndex(u32 index) { m_MaterialIndex = index; }

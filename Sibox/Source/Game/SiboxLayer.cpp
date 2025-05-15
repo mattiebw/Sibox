@@ -3,13 +3,13 @@
 
 #include "Core/Application.h"
 #include "Core/Input/Input.h"
-#include "Game/Player.h"
+#include "Game/OldPlayer.h"
+#include "Game/MeshEntity.h"
 #include "World/TileSets.h"
 #include "World/World.h"
 
 #include <misc/cpp/imgui_stdlib.h>
 
-#include "Game/PulsatingRectangle.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
 
@@ -21,12 +21,15 @@ void SiboxLayer::OnAttach()
 	TileSets::Init();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
-	m_Player           = world->AddEntity<Player>("Player");
+	m_Player           = world->AddEntity<OldPlayer>("Player");
 
 	{
 		LOG_SCOPE_TIMER("Loading mesh");
-		Mesh myMesh({});
-		myMesh.LoadFromFile("Content/Meshes/Test.mesh");
+		Ref<Mesh> testMesh = CreateRef<Mesh>(MeshSpecification());
+		testMesh->LoadFromFile("Content/Meshes/Test.mesh");
+
+		m_Mesh = world->AddEntity<MeshEntity>();
+		m_Mesh->SetMesh(testMesh);
 	}
 }
 
@@ -46,14 +49,22 @@ void SiboxLayer::Render(f64 delta)
 void SiboxLayer::RenderImGUI(f64 delta)
 {
 	ImGui::Begin("Toybox");
+
+	ImGui::Text("Timescale");
 	f32 ts = Application::Get()->GetTimeScale();
 	ImGui::DragFloat("Timescale", &ts, 0.01f, 0.0f, 10.0f);
 	if (ImGui::Button("Reset Time Scale"))
 		ts = 1.0f;
 	Application::Get()->SetTimeScale(ts);
+	ImGui::Dummy(ImVec2(0, 20));
+
+	ImGui::Text("Player");
 	ImGui::InputText("Player Name", &m_Player->Name);
 	ImGui::DragFloat3("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
+	ImGui::Dummy(ImVec2(0, 20));
+	
+	ImGui::Text("Camera");
 	if (ImGui::BeginCombo("Camera Type", CameraModeToString(m_Player->GetCamera()->Mode)))
 	{
 		if (ImGui::Selectable("Perspective", m_Player->GetCamera()->Mode == CameraMode::Perspective))
@@ -62,6 +73,20 @@ void SiboxLayer::RenderImGUI(f64 delta)
 			m_Player->GetCamera()->Mode = CameraMode::Orthographic;
 		ImGui::EndCombo();
 	}
-	ImGui::DragFloat("Camera Zoom", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.0f, 100.0f);
+	if (m_Player->GetCamera()->Mode == CameraMode::Perspective)
+	{
+		ImGui::DragFloat("FOV", &m_Player->GetCamera()->FOVDegrees, 0.1f, 0.1f, 179.9f);
+	}
+	else
+	{
+		ImGui::DragFloat("Ortho Size", &m_Player->GetCamera()->OrthoSize, 0.1f, 0.1f, 1000.0f);
+	}
+	ImGui::Dummy(ImVec2(0, 20));
+
+	ImGui::Text("Mesh");
+	ImGui::DragFloat3("Mesh Position", m_Mesh->EntityTransform.Position.Data());
+	ImGui::DragFloat3("Mesh Rotation", m_Mesh->EntityTransform.Rotation.Data());
+	ImGui::DragFloat3("Mesh Scale", m_Mesh->EntityTransform.Scale.Data());
+	
 	ImGui::End();
 }

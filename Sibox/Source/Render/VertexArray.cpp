@@ -24,7 +24,7 @@ VertexArray::VertexArray(VertexArray &&other) noexcept
 	other.m_IndexBuffer = nullptr;
 }
 
-void VertexArray::Bind()
+void VertexArray::Bind() const
 {
 	glBindVertexArray(m_RendererID);
 }

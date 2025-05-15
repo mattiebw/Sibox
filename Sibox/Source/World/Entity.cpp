@@ -1,7 +1,7 @@
 ﻿#include "siboxpch.h"
 #include "World/Entity.h"
 
-#include "Game/Player.h"
+#include "Game/OldPlayer.h"
 #include "Game/PulsatingRectangle.h"
 #include "World/World.h"
 
@@ -36,7 +36,7 @@ Ref<Entity> Entity::CreateEntity(u16 type, std::string name, const Transform &tf
 	switch (type)
 	{
 	ENTITY_TYPE_CASE(Entity)
-	ENTITY_TYPE_CASE(Player)
+	ENTITY_TYPE_CASE(OldPlayer)
 	ENTITY_TYPE_CASE(PulsatingRectangle)
 	default: break;
 	}

@@ -4,7 +4,7 @@
 #include <ranges>
 
 #include "Core/Random.h"
-#include "Game/Player.h"
+#include "Game/OldPlayer.h"
 #include "World/TileMap.h"
 #include "World/Entity.h"
 
@@ -61,9 +61,9 @@ void World::Tick(f64 delta)
 	{
 		entity->Tick(m_Delta);
 
-		if (entity->GetTypeID() == Player::s_EntityTypeID)
+		if (entity->GetTypeID() == OldPlayer::s_EntityTypeID)
 		{
-			Player *player = dynamic_cast<Player*>(entity.get());
+			OldPlayer *player = dynamic_cast<OldPlayer*>(entity.get());
 			playerPositions.push_back(static_cast<Vector2I>(player->GetPosition()));
 		}
 	}

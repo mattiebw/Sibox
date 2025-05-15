@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "Core/Layer.h"
 
-class Player;
+class MeshEntity;
+class Mesh;
+class OldPlayer;
 class World;
 class Camera;
 
@@ -15,5 +17,6 @@ public:
 	void RenderImGUI(f64 delta) override;
 
 protected:
-	Ref<Player> m_Player;
+	Ref<MeshEntity> m_Mesh;
+	Ref<OldPlayer> m_Player;
 };

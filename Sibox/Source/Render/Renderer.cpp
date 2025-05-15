@@ -114,12 +114,12 @@ QuadBatch::QuadBatch(RendererData *data, u32 MaxQuads)
 	u32 *quadIndices = new u32[m_MaxIndices];
 	for (u32 i = 0; i < m_MaxQuads; i++)
 	{
-		quadIndices[i * 6 + 0] = i * 4 + 0;
+		quadIndices[i * 6 + 0] = i * 4 + 2;
 		quadIndices[i * 6 + 1] = i * 4 + 1;
-		quadIndices[i * 6 + 2] = i * 4 + 2;
-		quadIndices[i * 6 + 3] = i * 4 + 2;
+		quadIndices[i * 6 + 2] = i * 4 + 0;
+		quadIndices[i * 6 + 3] = i * 4 + 0;
 		quadIndices[i * 6 + 4] = i * 4 + 3;
-		quadIndices[i * 6 + 5] = i * 4 + 0;
+		quadIndices[i * 6 + 5] = i * 4 + 2;
 	}
 	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>();
 	indexBuffer->Create(quadIndices, m_MaxIndices, IndexType::U32);
@@ -408,12 +408,12 @@ void TextRenderer::Init(RendererData *data, u32 maxQuads)
 	u32 *quadIndices = new u32[m_MaxIndices];
 	for (u32 i = 0; i < maxQuads; i++)
 	{
-		quadIndices[i * 6 + 0] = i * 4 + 0;
+		quadIndices[i * 6 + 0] = i * 4 + 2;
 		quadIndices[i * 6 + 1] = i * 4 + 1;
-		quadIndices[i * 6 + 2] = i * 4 + 2;
-		quadIndices[i * 6 + 3] = i * 4 + 2;
+		quadIndices[i * 6 + 2] = i * 4 + 0;
+		quadIndices[i * 6 + 3] = i * 4 + 0;
 		quadIndices[i * 6 + 4] = i * 4 + 3;
-		quadIndices[i * 6 + 5] = i * 4 + 0;
+		quadIndices[i * 6 + 5] = i * 4 + 2;
 	}
 	Ref<IndexBuffer> indexBuffer = CreateRef<IndexBuffer>();
 	indexBuffer->Create(quadIndices, m_MaxIndices, IndexType::U32);
@@ -682,6 +682,7 @@ void Renderer::BeginFrame()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LINE_SMOOTH);
+	glFrontFace(GL_CW);
 }
 
 void Renderer::Render()
@@ -716,6 +717,8 @@ void Renderer::RenderImGUI()
 	{
 		ImGui::Begin("Renderer Info", &m_DebugUIVisible);
 		ImGui::Text("FPS: %d", Application::GetFPS());
+		ImGui::Text("Meshes: %d", m_Data->Stats.MeshCount);
+		ImGui::Text("Mesh Vertices: %d", m_Data->Stats.MeshVertexCount);
 		ImGui::Text("Draw Calls: %d", m_Data->Stats.DrawCalls);
 		ImGui::Text("Quad Count: %d", m_Data->Stats.QuadCount);
 		ImGui::Text("Tile Count: %d", m_Data->Stats.TileCount);
@@ -753,15 +756,25 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 		SIBOX_WARN("Attempted to remove a viewport that has not been added!");
 }
 
-void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform)
+void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform) const
 {
 	m_MeshShader->Bind();
-	m_MeshShader->SetUniformMatrix4f("u_ViewProjection", GetCurrentViewport()->GetCamera()->GetViewProjectionMatrix());
-	m_MeshShader->SetUniformMatrix4f("u_Transform", transform);
+	if (Viewport *viewport = GetCurrentViewport())
+		m_MeshShader->SetUniformMatrix4f("u_ViewProjection", viewport->GetCamera()->GetViewProjectionMatrix());
+	else
+		m_MeshShader->SetUniformMatrix4f("u_ViewProjection", Matrix4x4F(1.0f));
+	m_MeshShader->SetUniformMatrix4f("u_ModelTransform", transform);
 	
 	for (const SubMesh& submesh : mesh->GetSubMeshes())
 	{
-		
+		const auto& vao = submesh.GetVertexArray();
+		vao.Bind();
+		glDrawElements(GL_TRIANGLES, static_cast<s32>(vao.GetIndexBuffer()->GetCount()),
+		               vao.GetIndexBuffer()->GetElementType(), nullptr);
+
+		m_Data->Stats.DrawCalls++;
+		m_Data->Stats.MeshCount++;
+		m_Data->Stats.MeshVertexCount += vao.GetIndexBuffer()->GetCount();
 	}
 }
 

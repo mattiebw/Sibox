@@ -143,10 +143,12 @@ private:
 
 struct RenderStats
 {
-	u32 DrawCalls = 0;
-	u32 QuadCount = 0;
-	u32 TileCount = 0;
-	u32 CharCount = 0;
+	u32 DrawCalls       = 0;
+	u32 QuadCount       = 0;
+	u32 TileCount       = 0;
+	u32 CharCount       = 0;
+	u32 MeshCount       = 0;
+	u32 MeshVertexCount = 0;
 
 	void Reset();
 };
@@ -215,7 +217,7 @@ public:
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
 
-	void DrawMesh(Mesh* mesh, const Matrix4x4F &transform);
+	void DrawMesh(Mesh *mesh, const Matrix4x4F &transform) const;
 
 	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetTileQuadVertexBuffer() { return m_TileQuadVertexBuffer; }
 	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }
