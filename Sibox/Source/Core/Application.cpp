@@ -277,6 +277,25 @@ void Application::ShowError(const char *message, const char *title)
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, title, message, nullptr);
 }
 
+void Application::LockCursor() const
+{
+	if (m_MainWindow)
+		m_MainWindow->LockCursor();
+}
+
+void Application::UnlockCursor() const
+{
+	if (m_MainWindow)
+		m_MainWindow->UnlockCursor();
+}
+
+bool Application::IsCursorLocked() const
+{
+	if (m_MainWindow)
+		return m_MainWindow->IsCursorLocked();
+	return false;
+}
+
 bool Application::InitSDL()
 {
 	if (!SDL_Init(SDL_INIT_VIDEO))

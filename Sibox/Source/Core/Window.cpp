@@ -2,6 +2,7 @@
 #include "Core/Window.h"
 
 #include <SDL3/SDL_messagebox.h>
+#include <SDL3/SDL_mouse.h>
 #include <SDL3/SDL_video.h>
 
 Window::Window(const WindowSpecification &spec)
@@ -129,4 +130,21 @@ bool Window::ToggleFullscreen()
 {
 	SetFullscreen(!m_Specification.Fullscreen);
 	return m_Specification.Fullscreen;
+}
+
+void Window::LockCursor() const
+{
+	SDL_SetWindowRelativeMouseMode(m_Window, true);
+}
+
+void Window::UnlockCursor() const
+{
+	SDL_WarpMouseInWindow(m_Window, static_cast<float>(m_Specification.Size.X) / 2,
+	                      static_cast<float>(m_Specification.Size.Y) / 2);
+	SDL_SetWindowRelativeMouseMode(m_Window, false);
+}
+
+bool Window::IsCursorLocked() const
+{
+	return SDL_GetWindowRelativeMouseMode(m_Window);
 }

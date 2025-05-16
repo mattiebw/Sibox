@@ -1,4 +1,5 @@
 ﻿#pragma once
+#pragma once
 
 #include "Layer.h"
 #include "SavedDataManager.h"
@@ -100,6 +101,10 @@ public:
 	{
 		return s_Instance->m_SavedData;
 	}
+
+	void LockCursor() const;
+	void UnlockCursor() const;
+	bool IsCursorLocked() const;
 
 	NODISCARD FORCEINLINE bool             IsRunning() const { return m_Running; }
 	NODISCARD FORCEINLINE bool             IsInitialised() const { return m_Initialised; }

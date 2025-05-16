@@ -11,7 +11,7 @@ struct WindowSpecification
 
 	// (0, 0) for default position. Ignored if Centered is true.
 	Vector2I Position     = {0, 0};
-	Vector2I Size         = {800, 600}, MinSize = {0, 0}, MaxSize = {0, 0};
+	Vector2I Size         = {1366, 768}, MinSize = {0, 0}, MaxSize = {0, 0};
 	Vector2I OriginalSize = Size;
 	bool     Centered     = true;
 	bool     Fullscreen   = false;
@@ -46,6 +46,10 @@ public:
 	void                       SetFullscreen(bool fullscreen);
 	bool                       ToggleFullscreen();
 	NODISCARD FORCEINLINE bool IsFullscreen() { return m_Specification.Fullscreen; };
+
+	void           LockCursor() const;
+	void           UnlockCursor() const;
+	NODISCARD bool IsCursorLocked() const;
 
 	CascadingMulticastDelegate<false, Window*, Vector2I>           OnResize;
 	CascadingMulticastDelegate<false, Window*>                     OnCloseRequested;

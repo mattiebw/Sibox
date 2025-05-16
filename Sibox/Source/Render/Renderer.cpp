@@ -705,6 +705,11 @@ void Renderer::RenderImGUI()
 	#ifndef SIBOX_NO_IMGUI
 	ImGuiIO &io = ImGui::GetIO();
 
+	if (m_Window->IsCursorLocked())
+		io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+	else
+		io.ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
+	
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL3_NewFrame();
 	ImGui::NewFrame();
