@@ -52,7 +52,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::Begin("Toybox");
 
 	ImGui::Text("Timescale");
-	f32 ts = Application::Get()->GetTimeScale();
+	f32 ts = static_cast<f32>(Application::Get()->GetTimeScale());
 	ImGui::DragFloat("Timescale", &ts, 0.01f, 0.0f, 10.0f);
 	if (ImGui::Button("Reset Time Scale"))
 		ts = 1.0f;

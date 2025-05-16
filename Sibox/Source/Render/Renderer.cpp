@@ -518,7 +518,9 @@ bool Renderer::Init(Ref<Window> window)
 	m_MeshShader = ShaderLibrary::CreateShader("Mesh");
 	m_MeshShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Mesh.vert");
 	m_MeshShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Mesh.frag");
-	m_MeshShader->LinkProgram(); 
+	m_MeshShader->LinkProgram();
+
+	m_DefaultMaterial.Texture = CreateRef<Texture>("Content/Textures/jeremy.jpeg");
 
 	return true;
 }
@@ -761,7 +763,7 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 		SIBOX_WARN("Attempted to remove a viewport that has not been added!");
 }
 
-void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform) const
+void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material* materials, u32 materialCount) const
 {
 	m_MeshShader->Bind();
 	if (Viewport *viewport = GetCurrentViewport())
@@ -769,9 +771,16 @@ void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform) const
 	else
 		m_MeshShader->SetUniformMatrix4f("u_ViewProjection", Matrix4x4F(1.0f));
 	m_MeshShader->SetUniformMatrix4f("u_ModelTransform", transform);
-	
+
 	for (const SubMesh& submesh : mesh->GetSubMeshes())
 	{
+		const Material* mat = nullptr;
+		if (!materials || submesh.GetMaterialIndex() >= materialCount)
+			mat = &m_DefaultMaterial;
+		else
+			mat += submesh.GetMaterialIndex();
+		mat->Texture->Activate(0);
+		
 		const auto& vao = submesh.GetVertexArray();
 		vao.Bind();
 		glDrawElements(GL_TRIANGLES, static_cast<s32>(vao.GetIndexBuffer()->GetCount()),

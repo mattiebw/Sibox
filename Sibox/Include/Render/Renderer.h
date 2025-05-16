@@ -2,11 +2,13 @@
 
 #include <SDL3/SDL_events.h>
 
+#include "Material.h"
 #include "Mesh.h"
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexArray.h"
 
+struct Material;
 class Font;
 class TileMapChunk;
 class Texture;
@@ -217,7 +219,7 @@ public:
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
 
-	void DrawMesh(Mesh *mesh, const Matrix4x4F &transform) const;
+	void DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material *materials = nullptr, u32 materialCount = 0) const;
 
 	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetTileQuadVertexBuffer() { return m_TileQuadVertexBuffer; }
 	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }
@@ -247,6 +249,7 @@ private:
 
 	void ShutdownImGUI();
 
+	Material                   m_DefaultMaterial;
 	TilemapRenderer            m_TilemapRenderer;
 	TextRenderer               m_TextRenderer;
 	RendererSpecification      m_Specification;
