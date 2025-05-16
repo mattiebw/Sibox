@@ -4,7 +4,7 @@ struct VertexOutput
 {
     vec3 WorldPos;
     vec3 Normal;
-    vec2 TexCoord;
+    highp vec2 TexCoord;
 };
 
 layout (location = 0) in VertexOutput Input;

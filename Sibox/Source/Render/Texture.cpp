@@ -10,14 +10,14 @@ Texture::Texture(const TextureSpecification &spec)
 	glGenTextures(1, &m_TextureID);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-	// Setup texture storage parameters
-	glTextureStorage2D(m_TextureID, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
-
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(m_Spec.MinFilter));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_Spec.MagFilter));
+	
+	// Setup texture storage parameters
+	glTextureStorage2D(m_TextureID, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
 }
 
 Texture::Texture(std::string_view filename, const TextureSpecification &spec)
@@ -39,14 +39,14 @@ Texture::Texture(std::string_view filename, const TextureSpecification &spec)
 	glGenTextures(1, &m_TextureID);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 
-	// Setup texture storage parameters
-	glTexStorage2D(GL_TEXTURE_2D, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
-
 	// Set texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_Spec.Wrap));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(m_Spec.MinFilter));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_Spec.MagFilter));
+
+	// Setup texture storage parameters
+	glTexStorage2D(GL_TEXTURE_2D, 1, static_cast<GLenum>(m_Spec.Format), m_Spec.Width, m_Spec.Height);
 
 	// Set data
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Spec.Width, m_Spec.Height, FormatToGLFormat(m_Spec.Format),

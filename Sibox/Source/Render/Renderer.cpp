@@ -596,7 +596,9 @@ bool Renderer::InitOpenGL()
 
 void Renderer::InitSkybox()
 {
-	m_SkyboxTexture = CreateRef<Texture>("Content/Textures/skybox.png", TextureSpecification());
+	TextureSpecification spec = {};
+	spec.Wrap = WrapMode::ClampToEdge;
+	m_SkyboxTexture = CreateRef<Texture>("Content/Textures/skybox.png", spec);
 	
 	m_SkyboxShader = ShaderLibrary::CreateShader("Skybox");
 	m_SkyboxShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Mesh.vert");
@@ -714,10 +716,11 @@ void Renderer::Render()
 	for (const auto &viewport : m_Viewports)
 	{
 		s_CurrentViewport = viewport.get();
+		viewport->Clear();
+		DrawSkybox();
 		viewport->Render();
 		m_QuadBatch->Flush();
 		m_TextRenderer.Flush();
-		DrawSkybox();
 	}
 	s_CurrentViewport = nullptr;
 
@@ -812,7 +815,7 @@ void Renderer::DrawSkybox()
 	}
 	
 	glCullFace(GL_BACK);
-	glDepthMask(GL_FALSE);
+	glDepthMask(GL_TRUE);
 }
 
 void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material* materials, u32 materialCount) const

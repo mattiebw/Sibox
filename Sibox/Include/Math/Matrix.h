@@ -31,7 +31,7 @@ public:
 
 	static Matrix<T, 4> MakePerspective(T verticalFov, T aspect, T near, T far)
 	{
-		Matrix<T, 4> result;
+		Matrix<T, 4> result(0);
 		T const      tanOfHalfVerticalFov = tan(verticalFov / static_cast<T>(2));
 		result[0][0]                      = static_cast<T>(1) / (aspect * tanOfHalfVerticalFov);
 		result[1][1]                      = static_cast<T>(1) / (tanOfHalfVerticalFov);
@@ -44,7 +44,7 @@ public:
 	static Matrix<T, 4> MakeOrthographic(T left, T right, T bottom, T top, T near, T far)
 	{
 		// Thanks to https://en.wikipedia.org/wiki/Orthographic_projection
-		Matrix<T, 4> result;
+		Matrix<T, 4> result(0);
 		result[0][0] = 2 / (right - left);
 		result[1][1] = 2 / (top - bottom);
 		result[2][2] = -2 / (far - near);

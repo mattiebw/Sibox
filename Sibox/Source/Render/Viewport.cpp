@@ -4,7 +4,7 @@
 #include "Render/Camera.h"
 #include "World/World.h"
 
-void Viewport::Render()
+void Viewport::Clear() const
 {
 	glViewport(m_Offset.X, m_Offset.Y, m_Size.X, m_Size.Y);
 	if (ShouldClear)
@@ -12,7 +12,11 @@ void Viewport::Render()
 		glClearColor(ClearColor.R, ClearColor.G, ClearColor.B, ClearColor.A);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
+}
 
+void Viewport::Render() const
+{
+	glViewport(m_Offset.X, m_Offset.Y, m_Size.X, m_Size.Y);
 	if (m_World)
 		m_World->Render();
 }

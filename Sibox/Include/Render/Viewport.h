@@ -12,7 +12,8 @@ class Viewport
 public:
 	Viewport() = default;
 
-	void Render();
+	void Clear() const;
+	void Render() const;
 
 	NODISCARD FORCEINLINE const Ref<Camera>& GetCamera() const { return m_Camera; }
 	NODISCARD FORCEINLINE const Ref<World>&  GetWorld() const { return m_World; }
