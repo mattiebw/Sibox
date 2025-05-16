@@ -596,82 +596,15 @@ bool Renderer::InitOpenGL()
 
 void Renderer::InitSkybox()
 {
-	TextureSpecification spec = {};
-	spec.FlipVertically = false;
-	m_SkyboxTexture = CreateRef<CubeTexture>(std::vector<std::string_view>{
-		"Content/Textures/skybox/right.bmp",
-		"Content/Textures/skybox/left.bmp",
-		"Content/Textures/skybox/top.bmp",
-		"Content/Textures/skybox/bottom.bmp",
-		"Content/Textures/skybox/front.bmp",
-		"Content/Textures/skybox/back.bmp"
-	}, spec);
+	m_SkyboxTexture = CreateRef<Texture>("Content/Textures/skybox.png", TextureSpecification());
 	
 	m_SkyboxShader = ShaderLibrary::CreateShader("Skybox");
-	m_SkyboxShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Skybox.vert");
+	m_SkyboxShader->AddStageFromFile(GL_VERTEX_SHADER, "Content/Shaders/Mesh.vert");
 	m_SkyboxShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Skybox.frag");
 	m_SkyboxShader->LinkProgram();
 
-	// Thanks to https://learnopengl.com/code_viewer.php?code=advanced/cubemaps_skybox_data
-	float skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-
-	u16 skyboxIndices[36];
-	for (u16 i = 0; i < 36; i++)
-		skyboxIndices[i] = i;
-	
-	Ref<VertexBuffer> skyboxVBO = CreateRef<VertexBuffer>();
-	skyboxVBO->Create(&skyboxVertices, sizeof(skyboxVertices));
-	skyboxVBO->SetLayout(BufferLayout({ BufferElement("a_Position", ShaderDataType::Float3) }));
-
-	Ref<IndexBuffer> skyboxIBO = CreateRef<IndexBuffer>();
-	skyboxIBO->Create(&skyboxIndices, 36, IndexType::U16);
-	
-	m_SkyboxVAO = CreateRef<VertexArray>();
-	m_SkyboxVAO->AddVertexBuffer(skyboxVBO);
-	m_SkyboxVAO->SetIndexBuffer(skyboxIBO);
+	m_SkyboxMesh = CreateRef<Mesh>(MeshSpecification());
+	m_SkyboxMesh->LoadFromFile("Content/Meshes/SkyboxCube.mesh");
 }
 
 bool Renderer::InitImGUI()
@@ -856,18 +789,30 @@ void Renderer::RemoveViewport(const Ref<Viewport> &viewport)
 void Renderer::DrawSkybox()
 {
 	glDepthMask(GL_FALSE);
-	glDisable(GL_DEPTH_TEST);
+	glCullFace(GL_FRONT);
+	
 	m_SkyboxShader->Bind();
 	if (Viewport *viewport = GetCurrentViewport())
 		m_SkyboxShader->SetUniformMatrix4f("u_ViewProjection", viewport->GetCamera()->GetViewProjectionMatrixNoTranslation());
 	else
 		m_SkyboxShader->SetUniformMatrix4f("u_ViewProjection", Matrix4x4F(1.0f));
-	m_SkyboxVAO->Bind();
+	m_SkyboxShader->SetUniformMatrix4f("u_ModelTransform", Matrix4x4F(1.0f));
 	m_SkyboxTexture->Activate(0);
+
+	for (const SubMesh& submesh : m_SkyboxMesh->GetSubMeshes())
+	{
+		const auto& vao = submesh.GetVertexArray();
+		vao.Bind();
+		glDrawElements(GL_TRIANGLES, static_cast<s32>(vao.GetIndexBuffer()->GetCount()),
+					   vao.GetIndexBuffer()->GetElementType(), nullptr);
+
+		m_Data->Stats.DrawCalls++;
+		m_Data->Stats.MeshCount++;
+		m_Data->Stats.MeshVertexCount += vao.GetIndexBuffer()->GetCount();
+	}
 	
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+	glCullFace(GL_BACK);
+	glDepthMask(GL_FALSE);
 }
 
 void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material* materials, u32 materialCount) const

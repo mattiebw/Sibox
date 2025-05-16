@@ -432,3 +432,4 @@ Sibox/imgui.ini
 *.vcxproj.filters
 Makefile
 Sibox/lastWriteTimes.json
+*.blend1

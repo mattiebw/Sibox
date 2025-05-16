@@ -267,8 +267,8 @@ private:
 	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
 	Ref<IndexBuffer>  m_TileQuadIndexBuffer  = nullptr;
 
-	Ref<VertexArray> m_SkyboxVAO;
-	Ref<CubeTexture> m_SkyboxTexture;
+	Ref<Mesh> m_SkyboxMesh;
+	Ref<Texture> m_SkyboxTexture;
 	Ref<Shader> m_SkyboxShader, m_MeshShader, m_MeshWireframeShader;
 
 	bool m_Initialised      = false;
