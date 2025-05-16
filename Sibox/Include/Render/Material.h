@@ -4,5 +4,5 @@
 
 struct Material
 {
-	Ref<Texture> Texture;
+	Ref<Texture> Texture0;
 };

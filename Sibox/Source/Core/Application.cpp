@@ -91,12 +91,12 @@ bool Application::Init()
 	// running before we initialise OpenGL, so that it can hook into device creation
 	// to create the overlay.
 	// @See: https://partner.steamgames.com/doc/features/overlay
-	m_SteamManager = CreateRef<SteamManager>();
-	if (!m_SteamManager->Init())
-	{
-		Shutdown();
-		return false;
-	}
+	// m_SteamManager = CreateRef<SteamManager>();
+	// if (!m_SteamManager->Init())
+	// {
+	// 	Shutdown();
+	// 	return false;
+	// }
 
 	Input::Init();
 	Random::Init();

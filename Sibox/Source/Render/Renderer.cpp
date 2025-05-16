@@ -520,7 +520,7 @@ bool Renderer::Init(Ref<Window> window)
 	m_MeshShader->AddStageFromFile(GL_FRAGMENT_SHADER, "Content/Shaders/Mesh.frag");
 	m_MeshShader->LinkProgram();
 
-	m_DefaultMaterial.Texture = CreateRef<Texture>("Content/Textures/jeremy.jpeg");
+	m_DefaultMaterial.Texture0 = CreateRef<Texture>("Content/Textures/jeremy.jpeg");
 
 	return true;
 }
@@ -779,7 +779,7 @@ void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material*
 			mat = &m_DefaultMaterial;
 		else
 			mat += submesh.GetMaterialIndex();
-		mat->Texture->Activate(0);
+		mat->Texture0->Activate(0);
 		
 		const auto& vao = submesh.GetVertexArray();
 		vao.Bind();
