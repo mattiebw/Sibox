@@ -5,5 +5,5 @@
 
 void MeshEntity::Render()
 {
-	Application::GetRenderer()->DrawMesh(m_Mesh.get(), EntityTransform.GetTransformationMatrix());
+	Application::GetRenderer()->DrawMeshWireframe(m_Mesh.get(), EntityTransform.GetTransformationMatrix());
 }

@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 
+class CubeTexture;
 struct Material;
 class Font;
 class TileMapChunk;
@@ -219,7 +220,10 @@ public:
 	Ref<Viewport> CreateViewport();
 	void          RemoveViewport(const Ref<Viewport> &viewport);
 
+	void DrawSkybox();
+	
 	void DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material *materials = nullptr, u32 materialCount = 0) const;
+	void DrawMeshWireframe(Mesh *mesh, const Matrix4x4F &transform, Vector3F color = Vector3F(0.0f, 1.0f, 0.0f));
 
 	NODISCARD FORCEINLINE const Ref<VertexBuffer>& GetTileQuadVertexBuffer() { return m_TileQuadVertexBuffer; }
 	NODISCARD FORCEINLINE const Ref<IndexBuffer>&  GetTileQuadIndexBuffer() { return m_TileQuadIndexBuffer; }
@@ -242,6 +246,7 @@ public:
 
 private:
 	bool InitOpenGL();
+	void InitSkybox();
 	bool InitImGUI();
 	bool OnWindowResize(Window *window, Vector2I size);
 
@@ -262,7 +267,9 @@ private:
 	Ref<VertexBuffer> m_TileQuadVertexBuffer = nullptr;
 	Ref<IndexBuffer>  m_TileQuadIndexBuffer  = nullptr;
 
-	Ref<Shader> m_MeshShader;
+	Ref<VertexArray> m_SkyboxVAO;
+	Ref<CubeTexture> m_SkyboxTexture;
+	Ref<Shader> m_SkyboxShader, m_MeshShader, m_MeshWireframeShader;
 
 	bool m_Initialised      = false;
 	bool m_ImGUIInitialised = false;

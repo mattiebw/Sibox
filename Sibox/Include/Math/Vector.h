@@ -370,6 +370,7 @@ struct Vector3
 	}
 
 	NODISCARD FORCEINLINE T* Data() { return &X; }
+	NODISCARD FORCEINLINE const T* Data() const { return &X; }
 
 	NODISCARD FORCEINLINE T LengthSquared() const
 	{

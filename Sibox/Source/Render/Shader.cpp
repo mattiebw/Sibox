@@ -278,6 +278,11 @@ void Shader::SetUniform3f(std::string_view uniformName, f32 x, f32 y, float z) c
 	glUniform3f(GetUniformLocation(uniformName), x, y, z);
 }
 
+void Shader::SetUniform3f(std::string_view uniformName, const Vector3F &vec) const
+{
+	glUniform3fv(GetUniformLocation(uniformName), 1, vec.Data());
+}
+
 void Shader::SetUniform3i(std::string_view uniformName, int x, int y, int z) const
 {
 	glUniform3i(GetUniformLocation(uniformName), x, y, z);

@@ -40,6 +40,7 @@ public:
 	void SetUniformVec2(std::string_view uniformName, const Vector2F &vec) const;
 	void SetUniformIVec2(std::string_view uniformName, const Vector2I &vec) const;
 	void SetUniform3f(std::string_view uniformName, f32 x, f32 y, f32 z) const;
+	void SetUniform3f(std::string_view uniformName, const Vector3F& vec) const;
 	void SetUniform3i(std::string_view uniformName, int x, int y, int z) const;
 	void SetUniformVec3(std::string_view uniformName, const Vector3F &vec) const;
 	void SetUniformIVec3(std::string_view uniformName, const Vector3I &vec) const;

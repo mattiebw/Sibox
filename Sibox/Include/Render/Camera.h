@@ -20,7 +20,7 @@ class Camera
 {
 public:
 	Transform  Transformation = Transform();
-	f32        FOVDegrees            = 90;
+	f32        FOVDegrees     = 90;
 	f32        OrthoSize      = 24.0f;
 	f32        NearPlane      = 0.1f;
 	f32        FarPlane       = 1000.0f;
@@ -35,6 +35,22 @@ public:
 		                                               Transformation.Scale);
 		auto inv = tf.Inverse();
 		return inv;
+	}
+
+	NODISCARD FORCEINLINE Matrix4x4F GetProjectionMatrix() const
+	{
+		switch (Mode)
+		{
+		case CameraMode::Perspective:
+			return Matrix4x4F::MakePerspective(MathUtil::DegreesToRadians(FOVDegrees), Aspect, NearPlane, FarPlane);
+		case CameraMode::Orthographic:
+			return Matrix4x4F::MakeOrthographic(OrthoSize * Aspect / -2, OrthoSize * Aspect / 2, OrthoSize / -2,
+												  OrthoSize / 2, NearPlane,
+												  FarPlane);
+		}
+
+		SIBOX_ASSERT(false && "Invalid camera mode");
+		return Matrix4x4F(-1);
 	}
 
 	NODISCARD FORCEINLINE Matrix4x4F GetPerspectiveViewProjMatrix() const
@@ -53,16 +69,15 @@ public:
 
 	NODISCARD FORCEINLINE Matrix4x4F GetViewProjectionMatrix() const
 	{
-		switch (Mode)
-		{
-		case CameraMode::Perspective:
-			return GetPerspectiveViewProjMatrix();
-		case CameraMode::Orthographic:
-			return GetOrthographicViewProjMatrix();
-		}
-
-		SIBOX_ASSERT(false && "Invalid camera mode");
-		return Matrix4x4F(-1);
+		return GetProjectionMatrix() * GetViewMatrix();
+	}
+	
+	NODISCARD FORCEINLINE Matrix4x4F GetViewProjectionMatrixNoTranslation() const
+	{
+		auto tf = MathUtil::CreateTransformationMatrix(Vector3F(), Transformation.Rotation,
+													   Transformation.Scale);
+		auto inv = tf.Inverse();
+		return GetProjectionMatrix() * inv;
 	}
 
 	NODISCARD FORCEINLINE RectF GetCameraRect() const
