@@ -20,6 +20,6 @@ void main()
 {
     v_Out.WorldPos = (u_ModelTransform * vec4(a_Position, 1.0)).xyz;
     gl_Position = u_ViewProjection * vec4(v_Out.WorldPos, 1.0);
-    v_Out.Normal = a_Normal;
+    v_Out.Normal = mat3(transpose(inverse(u_ModelTransform))) * a_Normal; // MW @todo: Awful, calculate this on the CPU.
     v_Out.TexCoord = a_TexCoord;
 }

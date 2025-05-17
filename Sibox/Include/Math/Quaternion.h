@@ -6,26 +6,28 @@ struct Quaternion
 {
 	Quaternion()
 		: X(0), Y(0), Z(0), W(1)
-	{ }
+	{
+	}
 
 	Quaternion(T x, T y, T z, T w)
-		: X(x), Y(y, z), Z(z), W(w)
-	{ }
+		: X(x), Y(y), Z(z), W(w)
+	{
+	}
 
 	Quaternion(const Vector3<T> &axis, const float angleRadians)
 	{
 		const float halfAngleRadians = angleRadians / 2;
-		
+
 		W = cosf(halfAngleRadians);
 
 		const float halfAngleSine = sinf(halfAngleRadians);
-		auto normalized = axis.Normalized();
-		X = normalized.X * halfAngleSine;
-		Y = normalized.Y * halfAngleSine;
-		Z = normalized.Z * halfAngleSine;
+		auto        normalized    = axis.Normalized();
+		X                         = normalized.X * halfAngleSine;
+		Y                         = normalized.Y * halfAngleSine;
+		Z                         = normalized.Z * halfAngleSine;
 	}
 
-	inline Quaternion& operator=(const Quaternion& other)
+	inline Quaternion& operator=(const Quaternion &other)
 	{
 		X = other.X;
 		Y = other.Y;
@@ -34,7 +36,7 @@ struct Quaternion
 		return *this;
 	}
 
-	inline Quaternion& operator *=(const Quaternion& other)
+	inline Quaternion& operator *=(const Quaternion &other)
 	{
 		X *= other.X;
 		Y *= other.Y;
@@ -52,7 +54,7 @@ struct Quaternion
 		return *this;
 	}
 
-	inline Quaternion operator *(const Quaternion& other) const
+	inline Quaternion operator *(const Quaternion &other) const
 	{
 		Quaternion result;
 		result.W = (W * other.W) - (X * other.X) - (Y * other.Y) - (Z * other.Z);
@@ -71,7 +73,7 @@ struct Quaternion
 	{
 		return sqrtf(MagnitudeSquared());
 	}
-	
+
 	inline void Normalize()
 	{
 		T invMag = 1.0f / Magnitude();
@@ -102,7 +104,7 @@ struct Quaternion
 		return result;
 	}
 
-	inline Vector3<T> RotatePoint(const Vector3<T>& rhs)
+	inline Vector3<T> RotatePoint(const Vector3<T> &rhs)
 	{
 		Quaternion vector(rhs.x, rhs.y, rhs.z, 0);
 		Quaternion final = *this * vector * Inverted();
@@ -124,7 +126,7 @@ struct Quaternion
 		return true;
 	}
 
-	inline Matrix<T, 3> RotateMatrix(const Matrix<T, 3>& other) const
+	inline Matrix<T, 3> RotateMatrix(const Matrix<T, 3> &other) const
 	{
 		Matrix<T, 3> result;
 		// MW @todo
@@ -137,7 +139,32 @@ struct Quaternion
 		// MW @todo
 		return result;
 	}
-	
+
+	// Based on glm
+	inline Rotator<T> EulerAngles() const
+	{
+		Rotator<T> result;
+
+		T const pitchY = static_cast<T>(2) * (Y * Z + W * X);
+		T const pitchX = W * W - X * X - Y * Y + Z * Z;
+		if (abs(pitchX) < 0.0001f && abs(pitchY) < 0.0001f) // avoid singularities
+			result.Pitch = static_cast<T>(2) * atan2f(X, W);
+		else
+			result.Pitch = atan2f(pitchY, pitchX);
+		
+		result.Yaw   = MathUtil::RadiansToDegrees(
+			asin(MathUtil::Clamp(static_cast<T>(-2) * (X * Z - W * Y), static_cast<T>(-1), static_cast<T>(1))));
+		
+		T const rollY = static_cast<T>(2) * (X * Y + W * Z);
+		T const rollX = W * W + X * X - Y * Y - Z * Z;
+		if (abs(rollX) < 0.0001f && abs(rollY) < 0.0001f) // avoid singularities
+			result.Roll = 0;
+		else
+			result.Roll = atan2f(rollY, rollX);
+		
+		return result;
+	}
+
 	T X, Y, Z, W;
 };
 

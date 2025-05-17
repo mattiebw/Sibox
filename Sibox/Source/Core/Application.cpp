@@ -185,7 +185,8 @@ void Application::Run()
 
 		PreUpdate();
 		PollEvents();
-		m_SteamManager->Update();
+		if (m_SteamManager)
+			m_SteamManager->Update();
 		Update();
 		AudioManager::Update();
 		Render();

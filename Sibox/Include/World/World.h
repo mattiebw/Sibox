@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include "Entity.h"
+#include "Physics/PhysicsScene.h"
 
+class PhysicsScene;
 class TileMap;
 class Entity;
 
@@ -63,18 +65,20 @@ public:
 
 	void Clean();
 
-	NODISCARD FORCEINLINE NetworkType GetNetworkType() const { return m_NetworkType; }
-	NODISCARD FORCEINLINE f64         GetDelta() const { return m_Delta; }
-	NODISCARD FORCEINLINE f64         GetUnscaledDelta() const { return m_UnscaledDelta; }
-	NODISCARD FORCEINLINE f64         GetTimeScale() const { return m_TimeScale; }
-	NODISCARD FORCEINLINE f64*        GetTimeScaleRef() { return &m_TimeScale; }
-	FORCEINLINE void                  SetTimeScale(f64 timeScale)
+	NODISCARD FORCEINLINE PhysicsScene& GetPhysicsScene() { return m_PhysicsScene; }
+	NODISCARD FORCEINLINE NetworkType   GetNetworkType() const { return m_NetworkType; }
+	NODISCARD FORCEINLINE f64           GetDelta() const { return m_Delta; }
+	NODISCARD FORCEINLINE f64           GetUnscaledDelta() const { return m_UnscaledDelta; }
+	NODISCARD FORCEINLINE f64           GetTimeScale() const { return m_TimeScale; }
+	NODISCARD FORCEINLINE f64*          GetTimeScaleRef() { return &m_TimeScale; }
+	FORCEINLINE void                    SetTimeScale(f64 timeScale)
 	{
 		m_TimeScale = timeScale;
 		m_Delta     = m_UnscaledDelta * m_TimeScale;
 	}
 
 private:
+	PhysicsScene                          m_PhysicsScene;
 	std::unordered_map<UUID, Ref<Entity>> m_Entities;
 	std::vector<Ref<TileMap>>             m_TileMaps;
 	f64                                   m_TimeScale     = 1.0f;

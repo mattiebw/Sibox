@@ -53,6 +53,8 @@ void World::Tick(f64 delta)
 	m_UnscaledDelta = delta;
 	m_Delta         = delta * m_TimeScale;
 
+	m_PhysicsScene.Update();
+	
 	// MW @todo: This sucks; players should either update the tilemap themselves (or call a function on the world that does it),
 	// or the World should keep a list of all the players. Regardless, we should not be iterating over all entities to find
 	// all the players every frame.

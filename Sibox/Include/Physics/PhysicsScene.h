@@ -5,9 +5,9 @@ class PhysicsScene
 {
 public:
     void Update();
-    Body& AddBody(const Body& body);
-    void RemoveBody(u32 handle);
+    void AddBody(Body* body);
+    void RemoveBody(Body* body);
     
 protected:
-    std::vector<Body> m_Bodies;
+    std::vector<Body*> m_Bodies;
 };

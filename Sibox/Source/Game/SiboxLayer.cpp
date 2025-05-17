@@ -8,8 +8,8 @@
 #include "World/TileSets.h"
 #include "World/World.h"
 
-#include <misc/cpp/imgui_stdlib.h>
-
+#include "Game/Assets.h"
+#include "Physics/Entities/SphereEntity.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
 
@@ -18,19 +18,25 @@ void SiboxLayer::OnAttach()
 	SIBOX_INFO("Initialising Sibox game!");
 
 	// Bodging some stuff!
-	TileSets::Init();
+	Assets::Initialise();
 	Application *app   = Application::Get();
 	Ref<World>   world = app->AddWorld();
 	m_Player           = world->AddEntity<Player>("Player");
 
-	{
-		LOG_SCOPE_TIMER("Loading mesh");
-		Ref<Mesh> testMesh = CreateRef<Mesh>(MeshSpecification());
-		testMesh->LoadFromFile("Content/Meshes/Test.mesh");
+	// {
+	// 	LOG_SCOPE_TIMER("Loading mesh");
+	// 	Ref<Mesh> testMesh = CreateRef<Mesh>(MeshSpecification());
+	// 	testMesh->LoadFromFile("Content/Meshes/Test.mesh");
+	//
+	// 	m_Mesh = world->AddEntity<MeshEntity>();
+	// 	m_Mesh->SetMesh(testMesh);
+	// 	m_Mesh->EntityTransform.Position.Z = 10;
+	// }
 
-		m_Mesh = world->AddEntity<MeshEntity>();
-		m_Mesh->SetMesh(testMesh);
-		m_Mesh->EntityTransform.Position.Z = 10;
+	for (s32 i = 0; i < 100; i++)
+	{
+		auto sphere = world->AddEntity<SphereEntity>("Sphere");
+		sphere->SetPosition(Vector3F(Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f)));
 	}
 }
 
@@ -83,10 +89,10 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	}
 	ImGui::Dummy(ImVec2(0, 20));
 
-	ImGui::Text("Mesh");
-	ImGui::DragFloat3("Mesh Position", m_Mesh->EntityTransform.Position.Data());
-	ImGui::DragFloat3("Mesh Rotation", m_Mesh->EntityTransform.Rotation.Data());
-	ImGui::DragFloat3("Mesh Scale", m_Mesh->EntityTransform.Scale.Data());
+	// ImGui::Text("Mesh");
+	// ImGui::DragFloat3("Mesh Position", m_Mesh->EntityTransform.Position.Data());
+	// ImGui::DragFloat3("Mesh Rotation", m_Mesh->EntityTransform.Rotation.Data());
+	// ImGui::DragFloat3("Mesh Scale", m_Mesh->EntityTransform.Scale.Data());
 	
 	ImGui::End();
 }

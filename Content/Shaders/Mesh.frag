@@ -55,6 +55,14 @@ void main()
     }
 
     if (texColor.a == 0.0) discard;
+    
+    vec3 norm = normalize(Input.Normal);
+    vec3 lightDir = normalize(vec3(10, 10, 10) - Input.WorldPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * vec3(1, 1, 1);
+    
+    float ambientStrength = 0.75;
+    vec3 ambient = ambientStrength * vec3(0.02, 0.6, 0.851);
 
-    o_Color = texColor;
+    o_Color = vec4((ambient + diffuse), 1) * texColor;
 }

@@ -829,8 +829,8 @@ void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material*
 
 	for (const SubMesh& submesh : mesh->GetSubMeshes())
 	{
-		const Material* mat = nullptr;
-		if (!materials || submesh.GetMaterialIndex() >= materialCount)
+		const Material* mat = materials;
+		if (!mat || submesh.GetMaterialIndex() >= materialCount)
 			mat = &m_DefaultMaterial;
 		else
 			mat += submesh.GetMaterialIndex();
