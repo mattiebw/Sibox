@@ -580,6 +580,28 @@ public:
 		*this = scaleMatrix * (*this);
 	}
 
+	Matrix<T, 3> ToMat3(T scalar) const
+	{
+		Matrix<T, 3> result(scalar);
+
+		result[0][0] = m_Data[0][0];
+		
+		result[0][1] = m_Data[0][1];
+		result[1][0] = m_Data[1][0];
+		result[1][1] = m_Data[1][1];
+		
+		if constexpr (Size >= 3)
+		{
+			result[0][2] = m_Data[0][2];
+			result[1][2] = m_Data[1][2];
+			result[2][0] = m_Data[2][0];
+			result[2][1] = m_Data[2][1];
+			result[2][2] = m_Data[2][2];
+		}
+
+		return result;
+	}
+
 private:
 	T m_Data[Size][Size];
 };

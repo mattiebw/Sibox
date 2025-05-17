@@ -826,6 +826,8 @@ void Renderer::DrawMesh(Mesh *mesh, const Matrix4x4F &transform, const Material*
 	else
 		m_MeshShader->SetUniformMatrix4f("u_ViewProjection", Matrix4x4F(1.0f));
 	m_MeshShader->SetUniformMatrix4f("u_ModelTransform", transform);
+	// mat3(transpose(inverse(u_ModelTransform)))
+	m_MeshShader->SetUniformMatrix3f("u_NormalTransform", transform.Inverse().Transpose().ToMat3(1));
 
 	for (const SubMesh& submesh : mesh->GetSubMeshes())
 	{
