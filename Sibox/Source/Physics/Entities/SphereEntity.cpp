@@ -33,7 +33,7 @@ void SphereEntity::Destroyed()
 	m_World->GetPhysicsScene().RemoveBody(m_Body);
 }
 
-void SphereEntity::SetPosition(Vector3F pos)
+void SphereEntity::SetBodyPosition(Vector3F pos)
 {
 	m_Body->Position = pos;
 	EntityTransform.Position = pos;

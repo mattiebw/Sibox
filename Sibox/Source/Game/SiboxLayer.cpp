@@ -9,6 +9,7 @@
 #include "World/World.h"
 
 #include "Game/Assets.h"
+#include "Physics/Entities/AABBEntity.h"
 #include "Physics/Entities/SphereEntity.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
@@ -33,9 +34,9 @@ void SiboxLayer::OnAttach()
 	// 	m_Mesh->EntityTransform.Position.Z = 10;
 	// }
 
-	auto baseSphere = m_World->AddEntity<SphereEntity>("Base");
-	baseSphere->Setup(1000.f, 0.0f);
-	baseSphere->SetPosition(Vector3F(0.f, -1050.f, 0.0f));
+	auto baseBox = m_World->AddEntity<AABBEntity>("Base");
+	baseBox->Setup(Vector3F(100, 5, 100), 0.0f);
+	baseBox->SetBodyPosition(Vector3F(0.f, -50.f, 0.0f));
 	
 	AddSpheres();
 }
@@ -108,6 +109,6 @@ void SiboxLayer::AddSpheres()
 	{
 		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
 		sphere->Setup(Random::Float(0.5f, 2.f));
-		sphere->SetPosition(Vector3F(Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f)));
+		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 0, Random::Float(-100.f, 100.f)));
 	}
 }

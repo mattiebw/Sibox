@@ -45,7 +45,7 @@ void Body::ApplyLinearImpulse(const Vector3F &impulse)
 // Intersection test functions.
 namespace
 {
-	bool SphereIntersects(const Body &bodyA, const Body &bodyB)
+	bool SphereIntersectsSphere(const Body &bodyA, const Body &bodyB)
 	{
 		f32 radiusSum   = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius();
 		f32 distSquared = (bodyB.Position - bodyA.Position).LengthSquared();
@@ -54,6 +54,37 @@ namespace
 			return true;
 
 		return false;
+	}
+
+	bool AABBIntersectsAABB(const Body &bodyA, const Body &bodyB)
+	{
+		Vector3F minA = bodyA.Position - bodyA.GetShape().GetSize();
+		Vector3F maxA = bodyA.Position + bodyA.GetShape().GetSize();
+		Vector3F minB = bodyA.Position - bodyB.GetShape().GetSize();
+		Vector3F maxB = bodyA.Position + bodyB.GetShape().GetSize();
+
+		if (minA.X > maxB.X || minB.X > maxA.X)
+			return false;
+		if (minA.Y > maxB.Y || minB.Y > maxA.Y)
+			return false;
+		if (minA.Z > maxB.Z || minB.Z > maxA.Z)
+			return false;
+
+		return true;
+	}
+
+	bool AABBIntersectsSphere(const Body &aabb, const Body &sphere)
+	{
+		Vector3F aabbMin = aabb.Position - aabb.GetShape().GetSize();
+		Vector3F aabbMax = aabb.Position + aabb.GetShape().GetSize();
+
+		Vector3F closestPoint = sphere.Position;
+		closestPoint.X        = std::max(aabbMin.X, std::min(closestPoint.X, aabbMax.X));
+		closestPoint.Y        = std::max(aabbMin.Y, std::min(closestPoint.Y, aabbMax.Y));
+		closestPoint.Z        = std::max(aabbMin.Z, std::min(closestPoint.Z, aabbMax.Z));
+
+		return (closestPoint - sphere.Position).LengthSquared() <= sphere.GetShape().GetRadius() * sphere.GetShape().
+		                                                                                                  GetRadius();
 	}
 }
 
@@ -66,7 +97,24 @@ bool Body::Intersects(const Body &bodyA, const Body &bodyB)
 		{
 		case ShapeType::Sphere:
 			// Sphere vs Sphere
-			return SphereIntersects(bodyA, bodyB);
+			return SphereIntersectsSphere(bodyA, bodyB);
+		case ShapeType::AABB:
+			// Sphere vs AABB
+			return AABBIntersectsSphere(bodyB, bodyA);
+		case ShapeType::Invalid:
+		default:
+			SIBOX_ERROR("Unsupported shape type for intersection test.");
+			return false;
+		}
+	case ShapeType::AABB:
+		switch (bodyB.m_Shape.GetType())
+		{
+		case ShapeType::Sphere:
+			// AABB vs Sphere
+			return AABBIntersectsSphere(bodyA, bodyB);
+		case ShapeType::AABB:
+			// AABB vs AABB
+			return AABBIntersectsAABB(bodyA, bodyB);
 		case ShapeType::Invalid:
 		default:
 			SIBOX_ERROR("Unsupported shape type for intersection test.");

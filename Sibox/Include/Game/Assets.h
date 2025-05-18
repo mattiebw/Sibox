@@ -11,5 +11,6 @@ public:
 	static Ref<Texture> GreenGrid;
 	static Ref<Texture> GreyGrid;
 	
+	static Ref<Mesh> Cube;
 	static Ref<Mesh> Sphere;
 };
