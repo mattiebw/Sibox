@@ -9,6 +9,7 @@ public:
 	static void Initialise();
 
 	static Ref<Texture> GreenGrid;
+	static Ref<Texture> GreyGrid;
 	
 	static Ref<Mesh> Sphere;
 };

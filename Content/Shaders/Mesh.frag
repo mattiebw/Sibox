@@ -58,7 +58,7 @@ void main()
     
     vec3 norm = normalize(Input.Normal);
     vec3 lightDir = normalize(vec3(10, 10, 10) - Input.WorldPos);
-    float diff = max(dot(norm, lightDir), 0.0);
+    float diff = clamp(dot(norm, lightDir), 0.0, 0.7);
     vec3 diffuse = diff * vec3(1, 1, 1);
     
     float ambientStrength = 0.75;

@@ -33,6 +33,10 @@ void SiboxLayer::OnAttach()
 	// 	m_Mesh->EntityTransform.Position.Z = 10;
 	// }
 
+	auto baseSphere = world->AddEntity<SphereEntity>("Base");
+	baseSphere->Setup(1000.f, 0.0f);
+	baseSphere->SetPosition(Vector3F(0.f, -1050.f, 0.0f));
+	
 	for (s32 i = 0; i < 20; i++)
 	{
 		auto sphere = world->AddEntity<SphereEntity>("Sphere");

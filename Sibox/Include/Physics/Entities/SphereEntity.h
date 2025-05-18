@@ -9,7 +9,7 @@ class SphereEntity : public Entity
 {
 	ENTITY_CLASS_BODY(SphereEntity);
 
-	void Setup(f32 radius = 1.0f);
+	void Setup(f32 radius = 1.0f, f32 invMass = 1.0f);
 	
 	virtual void Tick(f64 delta) override;
 	virtual void Render() override;
