@@ -2,6 +2,7 @@
 
 #include "Core/Layer.h"
 
+class Entity;
 class World;
 class Player;
 class MeshEntity;
@@ -18,6 +19,7 @@ public:
 	void AddSpheres();
 
 protected:
+	std::vector<Entity*> m_DynamicBodies;
 	Ref<World> m_World;
 	Ref<MeshEntity> m_Mesh;
 	Ref<Player> m_Player;

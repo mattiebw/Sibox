@@ -15,6 +15,9 @@ class Player : public Entity
 
 	NODISCARD FORCEINLINE Ref<Camera>& GetCamera() { return m_Camera; }
 
+	f32 Speed = 10.0f;
+	f32 MouseSens = 0.1f;
+	
 private:
 	f32           m_Time = 0;
 	Ref<Viewport> m_Viewport;

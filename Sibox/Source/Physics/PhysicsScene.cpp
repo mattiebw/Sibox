@@ -59,3 +59,22 @@ void PhysicsScene::RemoveBody(Body *body)
 		}
 	}
 }
+
+void PhysicsScene::ClearBodies()
+{
+	for (Body *body : m_Bodies)
+		delete body;
+	m_Bodies.clear();
+}
+
+void PhysicsScene::ClearDynamicBodies()
+{
+	for (int i = static_cast<int>(m_Bodies.size()) - 1; i >= 0; i--)
+	{
+		if (m_Bodies[i]->InverseMass == 0.0f)
+			continue;
+
+		delete m_Bodies[i];
+		m_Bodies.erase(m_Bodies.begin() + i);
+	}
+}

@@ -51,8 +51,8 @@ void Player::Tick(f64 delta)
 			if (isCursorLocked)
 			{
 				Vector2F mouseMovement = Input::GetMouseDelta();
-				EntityTransform.Rotation.Yaw += mouseMovement.X * 0.1f;
-				EntityTransform.Rotation.Pitch += mouseMovement.Y * 0.1f;
+				EntityTransform.Rotation.Yaw += mouseMovement.X * MouseSens;
+				EntityTransform.Rotation.Pitch += mouseMovement.Y * MouseSens;
 				EntityTransform.Rotation.Pitch = MathUtil::Clamp(EntityTransform.Rotation.Pitch, -89.0f, 89.0f);
 			}
 			
@@ -64,9 +64,9 @@ void Player::Tick(f64 delta)
 			if (input.X != 0 || input.Y != 0)
 			{
 				input.Normalize();
-				EntityTransform.Position += EntityTransform.GetForwardVector() * input.X * 8.0f * static_cast<f32>(
+				EntityTransform.Position += EntityTransform.GetForwardVector() * input.X * Speed * static_cast<f32>(
 					delta);
-				EntityTransform.Position += EntityTransform.GetRightVector() * input.Y * 8.0f * static_cast<f32>(delta);
+				EntityTransform.Position += EntityTransform.GetRightVector() * input.Y * Speed * static_cast<f32>(delta);
 			}
 
 			if (Input::IsKeyDown(SIBOX_KEY_SPACE))

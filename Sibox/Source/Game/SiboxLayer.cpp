@@ -69,6 +69,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::Text("Player");
 	ImGui::DragFloat3("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
+	ImGui::DragFloat("Player Speed", &m_Player->Speed, 0.5f, 0.0f, 100.0f);
 	ImGui::Dummy(ImVec2(0, 20));
 	
 	ImGui::Text("Camera");
@@ -96,7 +97,13 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	// ImGui::DragFloat3("Mesh Scale", m_Mesh->EntityTransform.Scale.Data());
 
 	ImGui::Text("Physics");
-	ImGui::Text("Bodies: %d", m_World->GetPhysicsScene().GetBodyCount());
+	ImGui::Text("Bodies: %llu", m_World->GetPhysicsScene().GetBodyCount());
+	if (ImGui::Button("Clear Dynamic Bodies"))
+	{
+		for (Entity *entity : m_DynamicBodies)
+			m_World->DestroyEntity(entity);
+		m_DynamicBodies.clear();
+	}
 	if (ImGui::Button("Add Spheres"))
 		AddSpheres();
 	
@@ -110,5 +117,6 @@ void SiboxLayer::AddSpheres()
 		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
 		sphere->Setup(Random::Float(0.5f, 2.f));
 		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 0, Random::Float(-100.f, 100.f)));
+		m_DynamicBodies.push_back(sphere.get());
 	}
 }

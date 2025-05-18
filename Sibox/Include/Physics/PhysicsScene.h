@@ -9,6 +9,9 @@ public:
     void AddBody(Body* body);
     void RemoveBody(Body* body);
 
+    void ClearBodies();
+    void ClearDynamicBodies();
+
     NODISCARD FORCEINLINE u64 GetBodyCount() const { return m_Bodies.size(); }
     
 protected:
