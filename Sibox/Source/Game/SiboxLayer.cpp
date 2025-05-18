@@ -34,9 +34,13 @@ void SiboxLayer::OnAttach()
 	// 	m_Mesh->EntityTransform.Position.Z = 10;
 	// }
 
-	auto baseBox = m_World->AddEntity<AABBEntity>("Base");
-	baseBox->Setup(Vector3F(100, 5, 100), 0.0f);
-	baseBox->SetBodyPosition(Vector3F(0.f, -50.f, 0.0f));
+	// auto baseBox = m_World->AddEntity<AABBEntity>("Base");
+	// baseBox->Setup(Vector3F(100, 5, 100), 0.0f);
+	// baseBox->SetBodyPosition(Vector3F(0.f, -50.f, 0.0f));
+
+	auto baseSphere = m_World->AddEntity<SphereEntity>("Base");
+	baseSphere->Setup(1000.0f, 0.0f);
+	baseSphere->SetBodyPosition(Vector3F(0.f, -1050.f, 0.0f));
 	
 	AddSpheres();
 }
@@ -69,7 +73,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	ImGui::Text("Player");
 	ImGui::DragFloat3("Player Position", m_Player->EntityTransform.Position.Data());
 	ImGui::DragFloat3("Player Rotation", m_Player->EntityTransform.Rotation.Data());
-	ImGui::DragFloat("Player Speed", &m_Player->Speed, 0.5f, 0.0f, 100.0f);
+	ImGui::SliderFloat("Player Speed", &m_Player->Speed, 0.0f, 250.0f);
 	ImGui::Dummy(ImVec2(0, 20));
 	
 	ImGui::Text("Camera");

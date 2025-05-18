@@ -13,4 +13,5 @@ public:
 	
 	static Ref<Mesh> Cube;
 	static Ref<Mesh> Sphere;
+	static Ref<Mesh> VeryFuckingDetailedSphere;
 };

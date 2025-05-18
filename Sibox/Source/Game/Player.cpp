@@ -71,12 +71,12 @@ void Player::Tick(f64 delta)
 
 			if (Input::IsKeyDown(SIBOX_KEY_SPACE))
 			{
-				EntityTransform.Position.Y += 8.0f * static_cast<f32>(delta);
+				EntityTransform.Position.Y += Speed * static_cast<f32>(delta);
 			}
 
 			if (Input::IsKeyDown(SIBOX_KEY_LSHIFT))
 			{
-				EntityTransform.Position.Y -= 8.0f * static_cast<f32>(delta);
+				EntityTransform.Position.Y -= Speed * static_cast<f32>(delta);
 			}
 		}
 		break;

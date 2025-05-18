@@ -392,7 +392,7 @@ struct Vector3
 
 	NODISCARD FORCEINLINE Vector3 Normalized() const
 	{
-		Vector2 result = *this;
+		Vector3 result = *this;
 		result.Normalize();
 		return result;
 	}

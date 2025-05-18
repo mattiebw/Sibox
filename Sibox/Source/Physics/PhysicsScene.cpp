@@ -31,10 +31,10 @@ void PhysicsScene::Update()
 				continue;
 
 			// If two bodys intersect, we'll just make them stop moving for now.
-			if (Body::Intersects(*body, *otherBody))
+			BodyContact contact;
+			if (Body::Intersects(*body, *otherBody, contact))
 			{
-				body->LinearVelocity.Zero();
-				otherBody->LinearVelocity.Zero();
+				ResolveContact(contact);
 			}
 		}
 
@@ -77,4 +77,10 @@ void PhysicsScene::ClearDynamicBodies()
 		delete m_Bodies[i];
 		m_Bodies.erase(m_Bodies.begin() + i);
 	}
+}
+
+void PhysicsScene::ResolveContact(BodyContact &contact)
+{
+	contact.BodyA->LinearVelocity.Zero();
+	contact.BodyB->LinearVelocity.Zero();
 }

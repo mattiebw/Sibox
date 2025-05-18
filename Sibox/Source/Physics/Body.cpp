@@ -45,10 +45,18 @@ void Body::ApplyLinearImpulse(const Vector3F &impulse)
 // Intersection test functions.
 namespace
 {
-	bool SphereIntersectsSphere(const Body &bodyA, const Body &bodyB)
+	bool SphereIntersectsSphere(Body &bodyA, Body &bodyB, BodyContact &contact)
 	{
-		f32 radiusSum   = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius();
-		f32 distSquared = (bodyB.Position - bodyA.Position).LengthSquared();
+		contact.BodyA = &bodyA;
+		contact.BodyB = &bodyB;
+
+		f32      radiusSum       = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius();
+		Vector3F dist            = bodyB.Position - bodyA.Position;
+		contact.NormalWorldSpace = dist.Normalized();
+		f32 distSquared          = dist.LengthSquared();
+
+		contact.WorldSpacePointOnA = bodyA.Position + contact.NormalWorldSpace * bodyA.GetShape().GetRadius();
+		contact.WorldSpacePointOnB = bodyB.Position - contact.NormalWorldSpace * bodyB.GetShape().GetRadius();
 
 		if (distSquared <= radiusSum * radiusSum)
 			return true;
@@ -56,8 +64,11 @@ namespace
 		return false;
 	}
 
-	bool AABBIntersectsAABB(const Body &bodyA, const Body &bodyB)
+	bool AABBIntersectsAABB(Body &bodyA, Body &bodyB, BodyContact& contact)
 	{
+		contact.BodyA = &bodyA;
+		contact.BodyB = &bodyB;
+
 		Vector3F minA = bodyA.Position - bodyA.GetShape().GetSize();
 		Vector3F maxA = bodyA.Position + bodyA.GetShape().GetSize();
 		Vector3F minB = bodyA.Position - bodyB.GetShape().GetSize();
@@ -69,12 +80,15 @@ namespace
 			return false;
 		if (minA.Z > maxB.Z || minB.Z > maxA.Z)
 			return false;
-
+		
 		return true;
 	}
 
-	bool AABBIntersectsSphere(const Body &aabb, const Body &sphere)
+	bool AABBIntersectsSphere(Body &aabb, Body &sphere, BodyContact& contact)
 	{
+		contact.BodyA = &aabb;
+		contact.BodyB = &sphere;
+
 		Vector3F aabbMin = aabb.Position - aabb.GetShape().GetSize();
 		Vector3F aabbMax = aabb.Position + aabb.GetShape().GetSize();
 
@@ -88,7 +102,7 @@ namespace
 	}
 }
 
-bool Body::Intersects(const Body &bodyA, const Body &bodyB)
+bool Body::Intersects(Body &bodyA, Body &bodyB, BodyContact &contact)
 {
 	switch (bodyA.m_Shape.GetType())
 	{
@@ -97,10 +111,10 @@ bool Body::Intersects(const Body &bodyA, const Body &bodyB)
 		{
 		case ShapeType::Sphere:
 			// Sphere vs Sphere
-			return SphereIntersectsSphere(bodyA, bodyB);
+			return SphereIntersectsSphere(bodyA, bodyB, contact);
 		case ShapeType::AABB:
 			// Sphere vs AABB
-			return AABBIntersectsSphere(bodyB, bodyA);
+			return AABBIntersectsSphere(bodyB, bodyA, contact);
 		case ShapeType::Invalid:
 		default:
 			SIBOX_ERROR("Unsupported shape type for intersection test.");
@@ -111,10 +125,10 @@ bool Body::Intersects(const Body &bodyA, const Body &bodyB)
 		{
 		case ShapeType::Sphere:
 			// AABB vs Sphere
-			return AABBIntersectsSphere(bodyA, bodyB);
+			return AABBIntersectsSphere(bodyA, bodyB, contact);
 		case ShapeType::AABB:
 			// AABB vs AABB
-			return AABBIntersectsAABB(bodyA, bodyB);
+			return AABBIntersectsAABB(bodyA, bodyB, contact);
 		case ShapeType::Invalid:
 		default:
 			SIBOX_ERROR("Unsupported shape type for intersection test.");

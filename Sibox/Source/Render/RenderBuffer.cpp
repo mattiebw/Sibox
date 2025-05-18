@@ -99,7 +99,7 @@ bool IndexBuffer::Create(const void *indices, u32 count, IndexType indexType, co
 	// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
 	// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
 	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-	glBufferData(GL_ARRAY_BUFFER, m_Count * sizeof(u32), indices, BufferUsageTypeToGL(type));
+	glBufferData(GL_ARRAY_BUFFER, m_Count * (indexType == IndexType::U16 ? sizeof(u16) : sizeof(u32)), indices, BufferUsageTypeToGL(type));
 	m_IndexType = indexType;
 	return true;
 }
