@@ -9,7 +9,6 @@
 #include "World/World.h"
 
 #include "Game/Assets.h"
-#include "Physics/Entities/AABBEntity.h"
 #include "Physics/Entities/SphereEntity.h"
 #include "Render/Camera.h"
 #include "World/ChunkProvider.h"
@@ -110,6 +109,10 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	}
 	if (ImGui::Button("Add Spheres"))
 		AddSpheres();
+	if (ImGui::Button("Add Sphere at Origin"))
+		AddSphere(Vector3F(0.0f, 0.0f, 0.0f));
+	if (ImGui::Button("Add Sphere at Player"))
+		AddSphere(m_Player->EntityTransform.Position);
 	
 	ImGui::End();
 }
@@ -123,4 +126,12 @@ void SiboxLayer::AddSpheres()
 		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 0, Random::Float(-100.f, 100.f)));
 		m_DynamicBodies.push_back(sphere.get());
 	}
+}
+
+void SiboxLayer::AddSphere(const Vector3F &location)
+{
+	auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
+	sphere->Setup(1.0f);
+	sphere->SetBodyPosition(location);
+	m_DynamicBodies.push_back(sphere.get());
 }

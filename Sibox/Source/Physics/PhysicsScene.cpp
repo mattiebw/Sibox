@@ -25,7 +25,7 @@ void PhysicsScene::Update()
 			// Ignore self
 			if (body == otherBody)
 				continue;
-			
+
 			// Ignore body pairs that both have infinite mass.
 			if (body->InverseMass == 0.0f && otherBody->InverseMass == 0.0f)
 				continue;
@@ -83,20 +83,35 @@ void PhysicsScene::ClearDynamicBodies()
 // We're just resolving an interpenetration, which is not really how we want to do it, but our initial implementation.
 void PhysicsScene::ResolveContact(BodyContact &contact)
 {
-	// Get our bodies, just to make the code cleaner.
-	Body* bodyA = contact.BodyA;
-	Body* bodyB = contact.BodyB;
+	// Get our bodies and their masses, just to make the code cleaner.
+	Body *bodyA            = contact.BodyA;
+	Body *bodyB            = contact.BodyB;
+	f32   bodyAInverseMass = bodyA->InverseMass;
+	f32   bodyBInverseMass = bodyB->InverseMass;
 
-	// Zero our velocities. Not how it actually works, but this'll do for now.
-	bodyA->LinearVelocity.Zero();
-	bodyB->LinearVelocity.Zero();
+	// Calculate the collision impulse.
+	const Vector3F velocityDiff = bodyA->LinearVelocity - bodyB->LinearVelocity;
+	const float    impulse = -2.0f * velocityDiff.Dot(contact.NormalWorldSpace, false) / (bodyAInverseMass + bodyBInverseMass);
+	const Vector3F impulseVector = contact.NormalWorldSpace * impulse;
 
+	bodyA->ApplyLinearImpulse(impulseVector);
+	bodyB->ApplyLinearImpulse(-impulseVector);
+
+	// We move the bodies apart, and the amount each body moves is based on their mass relative to the other body.
 	const float aWeight = bodyA->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
 	const float bWeight = bodyB->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
-
+	
 	// Penetration is a vector representing how far the two bodies are penetrating into each other.
-	const Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
+	Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
 
-	bodyA->Position += penetration * aWeight;
+	// MW @todo @hack: add a small amount more to the weight such that we definitely avoid the intersection in the next check.
+	// When we spawn a sphere at the origin and let it fall down the base sphere, the sphere will not bounce back up.
+	// Stepping through the code, the first collision check works fine - the sphere gets it's linear velocity set to be
+	// the reverse of it's current velocity (from gravity), meaning it should bounce up. However, when we check the pair
+	// again (as we check each pair twice at the moment), they still technically collide due to floating point precision,
+	// and the collision impulse is applied again in the opposite direction, meaning the sphere looses its velocity.
+	penetration *= 1.001f;
+	
+	bodyA->Position += penetration * aWeight; 
 	bodyB->Position -= penetration * bWeight;
 }

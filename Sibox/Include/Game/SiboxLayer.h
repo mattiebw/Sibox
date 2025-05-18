@@ -17,6 +17,7 @@ public:
 	void RenderImGUI(f64 delta) override;
 
 	void AddSpheres();
+	void AddSphere(const Vector3F& location);
 
 protected:
 	std::vector<Entity*> m_DynamicBodies;
