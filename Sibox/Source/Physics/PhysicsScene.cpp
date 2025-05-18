@@ -79,8 +79,24 @@ void PhysicsScene::ClearDynamicBodies()
 	}
 }
 
+// This is our initial collision resolution function.
+// We're just resolving an interpenetration, which is not really how we want to do it, but our initial implementation.
 void PhysicsScene::ResolveContact(BodyContact &contact)
 {
-	contact.BodyA->LinearVelocity.Zero();
-	contact.BodyB->LinearVelocity.Zero();
+	// Get our bodies, just to make the code cleaner.
+	Body* bodyA = contact.BodyA;
+	Body* bodyB = contact.BodyB;
+
+	// Zero our velocities. Not how it actually works, but this'll do for now.
+	bodyA->LinearVelocity.Zero();
+	bodyB->LinearVelocity.Zero();
+
+	const float aWeight = bodyA->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
+	const float bWeight = bodyB->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
+
+	// Penetration is a vector representing how far the two bodies are penetrating into each other.
+	const Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
+
+	bodyA->Position += penetration * aWeight;
+	bodyB->Position -= penetration * bWeight;
 }
