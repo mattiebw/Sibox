@@ -9,7 +9,8 @@ class SphereEntity : public Entity
 {
 	ENTITY_CLASS_BODY(SphereEntity);
 
-	virtual void AddedToWorld(World* world) override;
+	void Setup(f32 radius = 1.0f);
+	
 	virtual void Tick(f64 delta) override;
 	virtual void Render() override;
 	virtual void Destroyed() override;

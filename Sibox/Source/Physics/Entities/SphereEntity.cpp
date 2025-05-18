@@ -5,12 +5,12 @@
 #include "Game/Assets.h"
 #include "World/World.h"
 
-void SphereEntity::AddedToWorld(World* world)
+void SphereEntity::Setup(f32 radius)
 {
-	m_Body = new Body(Shape::CreateSphere(1.f));
-	world->GetPhysicsScene().AddBody(m_Body);
+	m_Body = new Body(Shape::CreateSphere(radius));
+	m_World->GetPhysicsScene().AddBody(m_Body);
 	m_Material.Texture0 = Assets::GreenGrid;
-} 
+}
 
 void SphereEntity::Tick(f64 delta)
 {

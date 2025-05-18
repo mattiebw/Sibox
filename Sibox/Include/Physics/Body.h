@@ -9,16 +9,18 @@ public:
 	explicit Body(const Shape &shape)
 		: Position(0, 0, 0),
 		  Rotation(0, 0, 0, 1),
+		  LinearVelocity(0, 0, 0),
 		  m_Shape(shape)
 	{
 	}
 
 	Vector3F    Position;
 	QuaternionF Rotation;
+	Vector3F    LinearVelocity;
 
-	NODISCARD Vector3F WorldSpaceToBodySpace(const Vector3F& worldSpace) const;
-	NODISCARD Vector3F BodySpaceToWorldSpace(const Vector3F& bodySpace) const;
-	
+	NODISCARD Vector3F WorldSpaceToBodySpace(const Vector3F &worldSpace) const;
+	NODISCARD Vector3F BodySpaceToWorldSpace(const Vector3F &bodySpace) const;
+
 	NODISCARD Vector3F GetCenterOfMassWorldSpace() const;
 	NODISCARD Vector3F GetCenterOfMassBodySpace() const;
 

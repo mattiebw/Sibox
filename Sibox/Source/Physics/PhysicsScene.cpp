@@ -6,6 +6,12 @@
 void PhysicsScene::Update()
 {
     f64 delta = Application::Get()->GetDeltaTime();
+
+    for (Body* body : m_Bodies)
+    {
+        body->LinearVelocity += Vector3F(0, -9.81f, 0) * static_cast<float>(delta);
+        body->Position += body->LinearVelocity * static_cast<float>(delta);
+    }
 }
 
 void PhysicsScene::AddBody(Body* body)
