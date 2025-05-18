@@ -36,7 +36,7 @@ void SiboxLayer::OnAttach()
 	for (s32 i = 0; i < 20; i++)
 	{
 		auto sphere = world->AddEntity<SphereEntity>("Sphere");
-		sphere->Setup(Random::Float(0.2f, 5.f));
+		sphere->Setup(Random::Float(0.5f, 2.f));
 		sphere->SetPosition(Vector3F(Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f)));
 	}
 }

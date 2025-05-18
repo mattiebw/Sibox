@@ -17,6 +17,7 @@ void SphereEntity::Tick(f64 delta)
 	Entity::Tick(delta);
 	EntityTransform.Position = m_Body->Position;
 	EntityTransform.Rotation = m_Body->Rotation.EulerAngles();
+	EntityTransform.Scale = Vector3F(m_Body->GetShape().GetRadius());
 }
 
 void SphereEntity::Render()

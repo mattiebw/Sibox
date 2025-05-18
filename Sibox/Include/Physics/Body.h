@@ -20,6 +20,9 @@ public:
 	Vector3F    LinearVelocity;
 	f32         InverseMass;
 
+	NODISCARD const Shape &GetShape() const { return m_Shape; }
+	NODISCARD Shape& GetShape() { return m_Shape; }
+	
 	NODISCARD Vector3F WorldSpaceToBodySpace(const Vector3F &worldSpace) const;
 	NODISCARD Vector3F BodySpaceToWorldSpace(const Vector3F &bodySpace) const;
 
