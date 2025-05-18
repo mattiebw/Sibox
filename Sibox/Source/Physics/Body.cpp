@@ -3,9 +3,9 @@
 
 Vector3F Body::WorldSpaceToBodySpace(const Vector3F &worldSpace) const
 {
-	Vector3F localSpace = worldSpace - GetCenterOfMassWorldSpace();
+	Vector3F    localSpace      = worldSpace - GetCenterOfMassWorldSpace();
 	QuaternionF inverseRotation = Rotation.Inverted();
-	Vector3F bodySpace = inverseRotation.RotatePoint(localSpace);
+	Vector3F    bodySpace       = inverseRotation.RotatePoint(localSpace);
 	return bodySpace;
 }
 
@@ -40,4 +40,41 @@ void Body::ApplyLinearImpulse(const Vector3F &impulse)
 	// Meaning:
 	// Change in Velocity = Impulse / Mass
 	LinearVelocity += impulse * InverseMass;
+}
+
+// Intersection test functions.
+namespace
+{
+	bool SphereIntersects(const Body &bodyA, const Body &bodyB)
+	{
+		f32 radiusSum   = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius();
+		f32 distSquared = (bodyB.Position - bodyA.Position).LengthSquared();
+
+		if (distSquared <= radiusSum * radiusSum)
+			return true;
+
+		return false;
+	}
+}
+
+bool Body::Intersects(const Body &bodyA, const Body &bodyB)
+{
+	switch (bodyA.m_Shape.GetType())
+	{
+	case ShapeType::Sphere:
+		switch (bodyB.m_Shape.GetType())
+		{
+		case ShapeType::Sphere:
+			// Sphere vs Sphere
+			return SphereIntersects(bodyA, bodyB);
+		case ShapeType::Invalid:
+		default:
+			SIBOX_ERROR("Unsupported shape type for intersection test.");
+			return false;
+		}
+	case ShapeType::Invalid:
+	default:
+		SIBOX_ERROR("Unsupported shape type for intersection test.");
+		return false;
+	}
 }

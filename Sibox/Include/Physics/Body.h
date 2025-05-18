@@ -31,6 +31,8 @@ public:
 
 	void ApplyLinearImpulse(const Vector3F &impulse);
 
+	static bool Intersects(const Body &bodyA, const Body &bodyB);
+
 protected:
 	Shape m_Shape;
 };

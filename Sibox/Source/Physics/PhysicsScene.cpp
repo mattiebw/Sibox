@@ -19,6 +19,25 @@ void PhysicsScene::Update()
 		Vector3F gravity = Vector3F{0.0f, -9.81f, 0.0f} * mass * delta;
 		body->ApplyLinearImpulse(gravity);
 
+		// Horrible brute force collision check for now.
+		for (Body *otherBody : m_Bodies)
+		{
+			// Ignore self
+			if (body == otherBody)
+				continue;
+			
+			// Ignore body pairs that both have infinite mass.
+			if (body->InverseMass == 0.0f && otherBody->InverseMass == 0.0f)
+				continue;
+
+			// If two bodys intersect, we'll just make them stop moving for now.
+			if (Body::Intersects(*body, *otherBody))
+			{
+				body->LinearVelocity.Zero();
+				otherBody->LinearVelocity.Zero();
+			}
+		}
+
 		// Apply linear velocity
 		body->Position += body->LinearVelocity * static_cast<float>(delta);
 	}
