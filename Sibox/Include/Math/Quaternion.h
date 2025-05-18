@@ -104,9 +104,9 @@ struct Quaternion
 		return result;
 	}
 
-	inline Vector3<T> RotatePoint(const Vector3<T> &rhs)
+	inline Vector3<T> RotatePoint(const Vector3<T> &rhs) const
 	{
-		Quaternion vector(rhs.x, rhs.y, rhs.z, 0);
+		Quaternion vector(rhs.X, rhs.Y, rhs.Z, 0);
 		Quaternion final = *this * vector * Inverted();
 		return Vector3<T>(final.X, final.Y, final.Z);
 	}

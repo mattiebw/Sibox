@@ -5,7 +5,7 @@
 
 void PhysicsScene::Update()
 {
-    f32 delta = Application::Get()->GetDeltaTime();
+    f64 delta = Application::Get()->GetDeltaTime();
 }
 
 void PhysicsScene::AddBody(Body* body)
