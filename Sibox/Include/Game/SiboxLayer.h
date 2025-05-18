@@ -2,6 +2,7 @@
 
 #include "Core/Layer.h"
 
+class World;
 class Player;
 class MeshEntity;
 
@@ -14,7 +15,10 @@ public:
 	void Render(f64 delta) override;
 	void RenderImGUI(f64 delta) override;
 
+	void AddSpheres();
+
 protected:
+	Ref<World> m_World;
 	Ref<MeshEntity> m_Mesh;
 	Ref<Player> m_Player;
 };

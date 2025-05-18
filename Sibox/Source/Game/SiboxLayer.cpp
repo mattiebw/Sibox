@@ -20,8 +20,8 @@ void SiboxLayer::OnAttach()
 	// Bodging some stuff!
 	Assets::Initialise();
 	Application *app   = Application::Get();
-	Ref<World>   world = app->AddWorld();
-	m_Player           = world->AddEntity<Player>("Player");
+	m_World = app->AddWorld();
+	m_Player           = m_World->AddEntity<Player>("Player");
 
 	// {
 	// 	LOG_SCOPE_TIMER("Loading mesh");
@@ -33,16 +33,11 @@ void SiboxLayer::OnAttach()
 	// 	m_Mesh->EntityTransform.Position.Z = 10;
 	// }
 
-	auto baseSphere = world->AddEntity<SphereEntity>("Base");
+	auto baseSphere = m_World->AddEntity<SphereEntity>("Base");
 	baseSphere->Setup(1000.f, 0.0f);
 	baseSphere->SetPosition(Vector3F(0.f, -1050.f, 0.0f));
 	
-	for (s32 i = 0; i < 20; i++)
-	{
-		auto sphere = world->AddEntity<SphereEntity>("Sphere");
-		sphere->Setup(Random::Float(0.5f, 2.f));
-		sphere->SetPosition(Vector3F(Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f)));
-	}
+	AddSpheres();
 }
 
 void SiboxLayer::OnDetach()
@@ -98,6 +93,21 @@ void SiboxLayer::RenderImGUI(f64 delta)
 	// ImGui::DragFloat3("Mesh Position", m_Mesh->EntityTransform.Position.Data());
 	// ImGui::DragFloat3("Mesh Rotation", m_Mesh->EntityTransform.Rotation.Data());
 	// ImGui::DragFloat3("Mesh Scale", m_Mesh->EntityTransform.Scale.Data());
+
+	ImGui::Text("Physics");
+	ImGui::Text("Bodies: %d", m_World->GetPhysicsScene().GetBodyCount());
+	if (ImGui::Button("Add Spheres"))
+		AddSpheres();
 	
 	ImGui::End();
+}
+
+void SiboxLayer::AddSpheres()
+{
+	for (s32 i = 0; i < 20; i++)
+	{
+		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
+		sphere->Setup(Random::Float(0.5f, 2.f));
+		sphere->SetPosition(Vector3F(Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f), Random::Float(-10.f, 10.f)));
+	}
 }
