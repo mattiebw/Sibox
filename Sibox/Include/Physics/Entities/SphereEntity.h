@@ -17,6 +17,9 @@ class SphereEntity : public Entity
 
 	void SetBodyPosition(Vector3F pos);
 
+	NODISCARD FORCEINLINE const Body* GetBody() const { return m_Body; }
+	NODISCARD FORCEINLINE Body* GetBody() { return m_Body; }
+
 protected:
 	Material m_Material;
 	Body* m_Body = nullptr;

@@ -28,6 +28,7 @@ public:
 		  Rotation(0, 0, 0, 1),
 		  LinearVelocity(0, 0, 0),
 		  InverseMass(1.f),
+		  Elasticity(1.f),
 		  m_Shape(shape)
 	{
 	}
@@ -36,6 +37,7 @@ public:
 	QuaternionF Rotation;
 	Vector3F    LinearVelocity;
 	f32         InverseMass;
+	f32         Elasticity;
 
 	NODISCARD const Shape& GetShape() const { return m_Shape; }
 	NODISCARD Shape&       GetShape() { return m_Shape; }
@@ -48,7 +50,7 @@ public:
 
 	void ApplyLinearImpulse(const Vector3F &impulse);
 
-	static bool Intersects(Body &bodyA, Body &bodyB, BodyContact& contact);
+	static bool Intersects(Body &bodyA, Body &bodyB, BodyContact &contact);
 
 protected:
 	Shape m_Shape;

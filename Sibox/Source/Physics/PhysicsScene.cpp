@@ -89,9 +89,12 @@ void PhysicsScene::ResolveContact(BodyContact &contact)
 	f32   bodyAInverseMass = bodyA->InverseMass;
 	f32   bodyBInverseMass = bodyB->InverseMass;
 
+	// Get our elasticity value - for now, we just multiply the two bodies' elasticity values together.
+	f32 elasticity = bodyA->Elasticity * bodyB->Elasticity;
+	
 	// Calculate the collision impulse.
 	const Vector3F velocityDiff = bodyA->LinearVelocity - bodyB->LinearVelocity;
-	const float    impulse = -2.0f * velocityDiff.Dot(contact.NormalWorldSpace, false) / (bodyAInverseMass + bodyBInverseMass);
+	const float    impulse = -(1 + elasticity) * velocityDiff.Dot(contact.NormalWorldSpace, false) / (bodyAInverseMass + bodyBInverseMass);
 	const Vector3F impulseVector = contact.NormalWorldSpace * impulse;
 
 	bodyA->ApplyLinearImpulse(impulseVector);
@@ -110,7 +113,7 @@ void PhysicsScene::ResolveContact(BodyContact &contact)
 	// the reverse of it's current velocity (from gravity), meaning it should bounce up. However, when we check the pair
 	// again (as we check each pair twice at the moment), they still technically collide due to floating point precision,
 	// and the collision impulse is applied again in the opposite direction, meaning the sphere looses its velocity.
-	penetration *= 1.001f;
+	penetration *= 1.005f;
 	
 	bodyA->Position += penetration * aWeight; 
 	bodyB->Position -= penetration * bWeight;

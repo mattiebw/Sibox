@@ -40,6 +40,7 @@ void SiboxLayer::OnAttach()
 	auto baseSphere = m_World->AddEntity<SphereEntity>("Base");
 	baseSphere->Setup(1000.0f, 0.0f);
 	baseSphere->SetBodyPosition(Vector3F(0.f, -1050.f, 0.0f));
+	baseSphere->GetBody()->Elasticity = 1.0f;
 	
 	AddSpheres();
 }
