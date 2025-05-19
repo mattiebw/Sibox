@@ -19,40 +19,46 @@ public:
 		Zero();
 		for (s32 i = 0; i < Size; i++)
 		{
-			m_Data[i][i] = diagonal;
+			m_Columns[i][i] = diagonal;
 		}
 	}
 
 	Matrix(T value00, T value11)
 	{
 		Zero();
-		m_Data[0][0] = value00;
-		m_Data[1][1] = value11;
+		m_Columns[0][0] = value00;
+		m_Columns[1][1] = value11;
 	}
 
 	Matrix(T value00, T value11, T value22)
 	{
 		static_assert(Size >= 3);
 		Zero();
-		m_Data[0][0] = value00;
-		m_Data[1][1] = value11;
-		m_Data[2][2] = value22;
+		m_Columns[0][0] = value00;
+		m_Columns[1][1] = value11;
+		m_Columns[2][2] = value22;
 	}
 
 	Matrix(T value00, T value11, T value22, T value33)
 	{
 		static_assert(Size >= 4);
 		Zero();
-		m_Data[0][0] = value00;
-		m_Data[1][1] = value11;
-		m_Data[2][2] = value22;
-		m_Data[3][3] = value33;
+		m_Columns[0][0] = value00;
+		m_Columns[1][1] = value11;
+		m_Columns[2][2] = value22;
+		m_Columns[3][3] = value33;
 	}
 
 	Matrix(Vector4<T> a, Vector4<T> b, Vector4<T> c, Vector4<T> d)
-		: m_Data{{a.X, a.Y, a.Z, a.W}, {b.X, b.Y, b.Z, b.W}, {c.X, c.Y, c.Z, c.W}, {d.X, d.Y, d.Z, d.W}}
+		: m_Columns{{a.X, a.Y, a.Z, a.W}, {b.X, b.Y, b.Z, b.W}, {c.X, c.Y, c.Z, c.W}, {d.X, d.Y, d.Z, d.W}}
 	{
 		static_assert(Size == 4);
+	}
+
+	Matrix(Vector3<T> a, Vector3<T> b, Vector3<T> c)
+		: m_Columns{ {a.X, a.Y, a.Z}, {b.X, b.Y, b.Z}, {c.X, c.Y, c.Z} }
+	{
+		static_assert(Size == 3);
 	}
 
 	static Matrix<T, 4> MakePerspective(T verticalFov, T aspect, T near, T far)
@@ -86,7 +92,7 @@ public:
 		Matrix<OT, Size> result;
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j       = 0; j < Size; j++)
-				result[i][j] = static_cast<OT>(m_Data[i][j]);
+				result[i][j] = static_cast<OT>(m_Columns[i][j]);
 		return result;
 	}
 
@@ -98,7 +104,7 @@ public:
 
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j = 0; j < Size; j++)
-				result.m_Data[i][j] += other.m_Data[i][j];
+				result.m_Columns[i][j] += other.m_Columns[i][j];
 
 		return result;
 	}
@@ -110,7 +116,7 @@ public:
 
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j = 0; j < Size; j++)
-				result.m_Data[i][j] -= other.m_Data[i][j];
+				result.m_Columns[i][j] -= other.m_Columns[i][j];
 
 		return result;
 	}
@@ -122,17 +128,17 @@ public:
 
 		if constexpr (Size == 2)
 		{
-			float a00 = m_Data[0][0];
-			float a01 = m_Data[0][1];
+			float a00 = m_Columns[0][0];
+			float a01 = m_Columns[0][1];
 
-			float a10 = m_Data[1][0];
-			float a11 = m_Data[1][1];
+			float a10 = m_Columns[1][0];
+			float a11 = m_Columns[1][1];
 
-			float b00 = other.m_Data[0][0];
-			float b01 = other.m_Data[0][1];
+			float b00 = other.m_Columns[0][0];
+			float b01 = other.m_Columns[0][1];
 
-			float b10 = other.m_Data[1][0];
-			float b11 = other.m_Data[1][1];
+			float b10 = other.m_Columns[1][0];
+			float b11 = other.m_Columns[1][1];
 
 			result[0][0] = (a00 * b00) + (a10 * b01);
 			result[0][1] = (a01 * b00) + (a11 * b01);
@@ -142,29 +148,29 @@ public:
 		}
 		else if constexpr (Size == 3)
 		{
-			float a00 = m_Data[0][0];
-			float a01 = m_Data[0][1];
-			float a02 = m_Data[0][2];
+			float a00 = m_Columns[0][0];
+			float a01 = m_Columns[0][1];
+			float a02 = m_Columns[0][2];
 
-			float a10 = m_Data[1][0];
-			float a11 = m_Data[1][1];
-			float a12 = m_Data[1][2];
+			float a10 = m_Columns[1][0];
+			float a11 = m_Columns[1][1];
+			float a12 = m_Columns[1][2];
 
-			float a20 = m_Data[2][0];
-			float a21 = m_Data[2][1];
-			float a22 = m_Data[2][2];
+			float a20 = m_Columns[2][0];
+			float a21 = m_Columns[2][1];
+			float a22 = m_Columns[2][2];
 
-			float b00 = other.m_Data[0][0];
-			float b01 = other.m_Data[0][1];
-			float b02 = other.m_Data[0][2];
+			float b00 = other.m_Columns[0][0];
+			float b01 = other.m_Columns[0][1];
+			float b02 = other.m_Columns[0][2];
 
-			float b10 = other.m_Data[1][0];
-			float b11 = other.m_Data[1][1];
-			float b12 = other.m_Data[1][2];
+			float b10 = other.m_Columns[1][0];
+			float b11 = other.m_Columns[1][1];
+			float b12 = other.m_Columns[1][2];
 
-			float b20 = other.m_Data[2][0];
-			float b21 = other.m_Data[2][1];
-			float b22 = other.m_Data[2][2];
+			float b20 = other.m_Columns[2][0];
+			float b21 = other.m_Columns[2][1];
+			float b22 = other.m_Columns[2][2];
 
 			result[0][0] = (a00 * b00) + (a10 * b01) + (a20 * b02);
 			result[0][1] = (a01 * b00) + (a11 * b01) + (a21 * b02);
@@ -180,45 +186,45 @@ public:
 		}
 		else if constexpr (Size == 4)
 		{
-			float a00 = m_Data[0][0];
-			float a01 = m_Data[0][1];
-			float a02 = m_Data[0][2];
-			float a03 = m_Data[0][3];
+			float a00 = m_Columns[0][0];
+			float a01 = m_Columns[0][1];
+			float a02 = m_Columns[0][2];
+			float a03 = m_Columns[0][3];
 
-			float a10 = m_Data[1][0];
-			float a11 = m_Data[1][1];
-			float a12 = m_Data[1][2];
-			float a13 = m_Data[1][3];
+			float a10 = m_Columns[1][0];
+			float a11 = m_Columns[1][1];
+			float a12 = m_Columns[1][2];
+			float a13 = m_Columns[1][3];
 
-			float a20 = m_Data[2][0];
-			float a21 = m_Data[2][1];
-			float a22 = m_Data[2][2];
-			float a23 = m_Data[2][3];
+			float a20 = m_Columns[2][0];
+			float a21 = m_Columns[2][1];
+			float a22 = m_Columns[2][2];
+			float a23 = m_Columns[2][3];
 
-			float a30 = m_Data[3][0];
-			float a31 = m_Data[3][1];
-			float a32 = m_Data[3][2];
-			float a33 = m_Data[3][3];
+			float a30 = m_Columns[3][0];
+			float a31 = m_Columns[3][1];
+			float a32 = m_Columns[3][2];
+			float a33 = m_Columns[3][3];
 
-			float b00 = other.m_Data[0][0];
-			float b01 = other.m_Data[0][1];
-			float b02 = other.m_Data[0][2];
-			float b03 = other.m_Data[0][3];
+			float b00 = other.m_Columns[0][0];
+			float b01 = other.m_Columns[0][1];
+			float b02 = other.m_Columns[0][2];
+			float b03 = other.m_Columns[0][3];
 
-			float b10 = other.m_Data[1][0];
-			float b11 = other.m_Data[1][1];
-			float b12 = other.m_Data[1][2];
-			float b13 = other.m_Data[1][3];
+			float b10 = other.m_Columns[1][0];
+			float b11 = other.m_Columns[1][1];
+			float b12 = other.m_Columns[1][2];
+			float b13 = other.m_Columns[1][3];
 
-			float b20 = other.m_Data[2][0];
-			float b21 = other.m_Data[2][1];
-			float b22 = other.m_Data[2][2];
-			float b23 = other.m_Data[2][3];
+			float b20 = other.m_Columns[2][0];
+			float b21 = other.m_Columns[2][1];
+			float b22 = other.m_Columns[2][2];
+			float b23 = other.m_Columns[2][3];
 
-			float b30 = other.m_Data[3][0];
-			float b31 = other.m_Data[3][1];
-			float b32 = other.m_Data[3][2];
-			float b33 = other.m_Data[3][3];
+			float b30 = other.m_Columns[3][0];
+			float b31 = other.m_Columns[3][1];
+			float b32 = other.m_Columns[3][2];
+			float b33 = other.m_Columns[3][3];
 
 			result[0][0] = (a00 * b00) + (a10 * b01) + (a20 * b02) + (a30 * b03);
 			result[0][1] = (a01 * b00) + (a11 * b01) + (a21 * b02) + (a31 * b03);
@@ -248,14 +254,14 @@ public:
 	{
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j = 0; j < Size; j++)
-				m_Data[i][j] += other.m_Data[i][j];
+				m_Columns[i][j] += other.m_Columns[i][j];
 	}
 
 	void operator-=(const Matrix<T, Size> &other)
 	{
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j = 0; j < Size; j++)
-				m_Data[i][j] -= other.m_Data[i][j];
+				m_Columns[i][j] -= other.m_Columns[i][j];
 	}
 
 	void operator*=(const Matrix<T, Size> &other)
@@ -270,8 +276,8 @@ public:
 
 		Vector2<T> result;
 
-		result.X = m_Data[0][0] * vector.X + m_Data[1][0] * vector.Y;
-		result.Y = m_Data[0][1] * vector.X + m_Data[1][1] * vector.Y;
+		result.X = m_Columns[0][0] * vector.X + m_Columns[1][0] * vector.Y;
+		result.Y = m_Columns[0][1] * vector.X + m_Columns[1][1] * vector.Y;
 
 		return result;
 	}
@@ -289,9 +295,9 @@ public:
 		{
 			return
 			{
-				m_Data[0][0] * vector.X + m_Data[1][0] * vector.Y + m_Data[2][0] * vector.Z,
-				m_Data[0][1] * vector.X + m_Data[1][1] * vector.Y + m_Data[2][1] * vector.Z,
-				m_Data[0][2] * vector.X + m_Data[1][2] * vector.Y + m_Data[2][2] * vector.Z,
+				m_Columns[0][0] * vector.X + m_Columns[1][0] * vector.Y + m_Columns[2][0] * vector.Z,
+				m_Columns[0][1] * vector.X + m_Columns[1][1] * vector.Y + m_Columns[2][1] * vector.Z,
+				m_Columns[0][2] * vector.X + m_Columns[1][2] * vector.Y + m_Columns[2][2] * vector.Z,
 			};
 		}
 	}
@@ -302,10 +308,10 @@ public:
 		static_assert(Size == 4, "Matrix must be 4x4 to multiply with a Vector4.");
 
 		return {
-			m_Data[0][0] * vector.X + m_Data[1][0] * vector.Y + m_Data[2][0] * vector.Z + m_Data[3][0] * vector.W,
-			m_Data[0][1] * vector.X + m_Data[1][1] * vector.Y + m_Data[2][1] * vector.Z + m_Data[3][1] * vector.W,
-			m_Data[0][2] * vector.X + m_Data[1][2] * vector.Y + m_Data[2][2] * vector.Z + m_Data[3][2] * vector.W,
-			m_Data[0][3] * vector.X + m_Data[1][3] * vector.Y + m_Data[2][3] * vector.Z + m_Data[3][3] * vector.W
+			m_Columns[0][0] * vector.X + m_Columns[1][0] * vector.Y + m_Columns[2][0] * vector.Z + m_Columns[3][0] * vector.W,
+			m_Columns[0][1] * vector.X + m_Columns[1][1] * vector.Y + m_Columns[2][1] * vector.Z + m_Columns[3][1] * vector.W,
+			m_Columns[0][2] * vector.X + m_Columns[1][2] * vector.Y + m_Columns[2][2] * vector.Z + m_Columns[3][2] * vector.W,
+			m_Columns[0][3] * vector.X + m_Columns[1][3] * vector.Y + m_Columns[2][3] * vector.Z + m_Columns[3][3] * vector.W
 		};
 	}
 
@@ -316,40 +322,40 @@ public:
 		Matrix<T, Size> out = *this;
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j = 0; j < Size; j++)
-				out.m_Data[i][j] *= other;
+				out.m_Columns[i][j] *= other;
 		return out;
 	}
 
 	// ------- Accessors -------
 	FORCEINLINE T* operator[](s32 index)
 	{
-		return m_Data[index];
+		return m_Columns[index];
 	}
 
 	FORCEINLINE const T* operator[](s32 index) const
 	{
-		return m_Data[index];
+		return m_Columns[index];
 	}
 
 	FORCEINLINE T Get(s32 row, s32 column) const
 	{
-		return m_Data[column][row];
+		return m_Columns[column][row];
 	}
 
 	FORCEINLINE void Set(s32 row, s32 column, T value)
 	{
-		m_Data[column][row] = value;
+		m_Columns[column][row] = value;
 	}
 
 	NODISCARD FORCEINLINE const T* Data() const
 	{
-		return &m_Data[0][0];
+		return &m_Columns[0][0];
 	}
 
 	// ------ Operations -------
 	FORCEINLINE void Zero()
 	{
-		memset(m_Data, 0, sizeof(m_Data));
+		memset(m_Columns, 0, sizeof(m_Columns));
 	}
 
 	FORCEINLINE void Identity()
@@ -357,7 +363,7 @@ public:
 		Zero();
 		for (s32 i = 0; i < Size; i++)
 		{
-			m_Data[i][i] = 1;
+			m_Columns[i][i] = 1;
 		}
 	}
 
@@ -367,7 +373,7 @@ public:
 
 		for (s32 i = 0; i < Size; i++)
 			for (s32 j              = 0; j < Size; j++)
-				result.m_Data[i][j] = m_Data[j][i];
+				result.m_Columns[i][j] = m_Columns[j][i];
 
 		return result;
 	}
@@ -377,63 +383,142 @@ public:
 		*this = Inverse();
 	}
 
+	NODISCARD FORCEINLINE T Determinant() const
+	{
+		// Thanks to https://en.wikipedia.org/wiki/Determinant
+		
+		if constexpr (Size == 2)
+		{
+			return (m_Columns[0][0] * m_Columns[1][1]) - (m_Columns[1][0] * m_Columns[0][1]);
+		}
+		else if constexpr (Size == 3)
+		{
+			T aei = m_Columns[0][0] * m_Columns[1][1] * m_Columns[2][2];
+			T bfg = m_Columns[1][0] * m_Columns[2][1] * m_Columns[0][2];
+			T cdh = m_Columns[2][0] * m_Columns[0][1] * m_Columns[1][2];
+			T ceg = m_Columns[2][0] * m_Columns[1][1] * m_Columns[0][2];
+			T bdi = m_Columns[1][0] * m_Columns[0][1] * m_Columns[2][2];
+			T afh = m_Columns[0][0] * m_Columns[2][1] * m_Columns[1][2];
+
+			return aei + bfg + cdh - ceg - bdi - afh;
+		}
+
+		static_assert(Size != 4, "4x4 determinants are not implemented yet");
+		return 0;
+	}
+
+	NODISCARD FORCEINLINE Matrix<T, Size - 1> Minor(const s32 i, const s32 j) const
+	{
+		static_assert(Size == 3, "Matrix minor is only implemented for 3x3 matricies");
+		
+		Matrix<T, Size - 1> minor;
+		
+		s32 yCounter = 0;
+		for (s32 y = 0; y < Size; y++)
+		{
+			if (y == j)
+				continue;
+
+			s32 xCounter = 0;
+			for (s32 x = 0; x < Size; x++)
+			{
+				if (x == i)
+					continue;
+
+				minor.Set(xCounter, yCounter, m_Columns[y][x]);
+				xCounter++;
+			}
+
+			yCounter++;
+		}
+		
+		return minor;
+	}
+	
+	NODISCARD FORCEINLINE T Cofactor(const s32 i, const s32 j) const
+	{
+		static_assert(Size == 3, "Cofactors are only implemented for 3x3 matrices");
+
+		const Matrix<T, 2> minor = Minor(i, j);
+		return static_cast<T>(pow(-1, i + 1 + j + 1)) * minor.Determinant();
+	}
+
 	NODISCARD FORCEINLINE Matrix Inverse() const
 	{
-		static_assert(Size == 4, "Matrix must be 4x4 to invert.");
+		static_assert(Size == 4 || Size == 3, "Matrix must be 3x3 or 4x4 to invert.");
 
-		T Coef00 = m_Data[2][2] * m_Data[3][3] - m_Data[3][2] * m_Data[2][3];
-		T Coef02 = m_Data[1][2] * m_Data[3][3] - m_Data[3][2] * m_Data[1][3];
-		T Coef03 = m_Data[1][2] * m_Data[2][3] - m_Data[2][2] * m_Data[1][3];
+		if constexpr (Size == 3)
+		{
+			Matrix<T, 3> inverse;
+			for (s32 column = 0; column < 3; column++)
+			{
+				for (s32 row = 0; row < 3; row++)
+				{
+					inverse.m_Columns[column][row] = Cofactor(row, column);
+				}
+			}
 
-		T Coef04 = m_Data[2][1] * m_Data[3][3] - m_Data[3][1] * m_Data[2][3];
-		T Coef06 = m_Data[1][1] * m_Data[3][3] - m_Data[3][1] * m_Data[1][3];
-		T Coef07 = m_Data[1][1] * m_Data[2][3] - m_Data[2][1] * m_Data[1][3];
+			f32 inverseDeterminant = 1 / Determinant();
+			inverse *= inverseDeterminant;
+			
+			return inverse;
+		}
+		else if constexpr (Size == 4)
+		{
+			T Coef00 = m_Columns[2][2] * m_Columns[3][3] - m_Columns[3][2] * m_Columns[2][3];
+			T Coef02 = m_Columns[1][2] * m_Columns[3][3] - m_Columns[3][2] * m_Columns[1][3];
+			T Coef03 = m_Columns[1][2] * m_Columns[2][3] - m_Columns[2][2] * m_Columns[1][3];
 
-		T Coef08 = m_Data[2][1] * m_Data[3][2] - m_Data[3][1] * m_Data[2][2];
-		T Coef10 = m_Data[1][1] * m_Data[3][2] - m_Data[3][1] * m_Data[1][2];
-		T Coef11 = m_Data[1][1] * m_Data[2][2] - m_Data[2][1] * m_Data[1][2];
+			T Coef04 = m_Columns[2][1] * m_Columns[3][3] - m_Columns[3][1] * m_Columns[2][3];
+			T Coef06 = m_Columns[1][1] * m_Columns[3][3] - m_Columns[3][1] * m_Columns[1][3];
+			T Coef07 = m_Columns[1][1] * m_Columns[2][3] - m_Columns[2][1] * m_Columns[1][3];
 
-		T Coef12 = m_Data[2][0] * m_Data[3][3] - m_Data[3][0] * m_Data[2][3];
-		T Coef14 = m_Data[1][0] * m_Data[3][3] - m_Data[3][0] * m_Data[1][3];
-		T Coef15 = m_Data[1][0] * m_Data[2][3] - m_Data[2][0] * m_Data[1][3];
+			T Coef08 = m_Columns[2][1] * m_Columns[3][2] - m_Columns[3][1] * m_Columns[2][2];
+			T Coef10 = m_Columns[1][1] * m_Columns[3][2] - m_Columns[3][1] * m_Columns[1][2];
+			T Coef11 = m_Columns[1][1] * m_Columns[2][2] - m_Columns[2][1] * m_Columns[1][2];
 
-		T Coef16 = m_Data[2][0] * m_Data[3][2] - m_Data[3][0] * m_Data[2][2];
-		T Coef18 = m_Data[1][0] * m_Data[3][2] - m_Data[3][0] * m_Data[1][2];
-		T Coef19 = m_Data[1][0] * m_Data[2][2] - m_Data[2][0] * m_Data[1][2];
+			T Coef12 = m_Columns[2][0] * m_Columns[3][3] - m_Columns[3][0] * m_Columns[2][3];
+			T Coef14 = m_Columns[1][0] * m_Columns[3][3] - m_Columns[3][0] * m_Columns[1][3];
+			T Coef15 = m_Columns[1][0] * m_Columns[2][3] - m_Columns[2][0] * m_Columns[1][3];
 
-		T Coef20 = m_Data[2][0] * m_Data[3][1] - m_Data[3][0] * m_Data[2][1];
-		T Coef22 = m_Data[1][0] * m_Data[3][1] - m_Data[3][0] * m_Data[1][1];
-		T Coef23 = m_Data[1][0] * m_Data[2][1] - m_Data[2][0] * m_Data[1][1];
+			T Coef16 = m_Columns[2][0] * m_Columns[3][2] - m_Columns[3][0] * m_Columns[2][2];
+			T Coef18 = m_Columns[1][0] * m_Columns[3][2] - m_Columns[3][0] * m_Columns[1][2];
+			T Coef19 = m_Columns[1][0] * m_Columns[2][2] - m_Columns[2][0] * m_Columns[1][2];
 
-		Vector4<T> Fac0(Coef00, Coef00, Coef02, Coef03);
-		Vector4<T> Fac1(Coef04, Coef04, Coef06, Coef07);
-		Vector4<T> Fac2(Coef08, Coef08, Coef10, Coef11);
-		Vector4<T> Fac3(Coef12, Coef12, Coef14, Coef15);
-		Vector4<T> Fac4(Coef16, Coef16, Coef18, Coef19);
-		Vector4<T> Fac5(Coef20, Coef20, Coef22, Coef23);
+			T Coef20 = m_Columns[2][0] * m_Columns[3][1] - m_Columns[3][0] * m_Columns[2][1];
+			T Coef22 = m_Columns[1][0] * m_Columns[3][1] - m_Columns[3][0] * m_Columns[1][1];
+			T Coef23 = m_Columns[1][0] * m_Columns[2][1] - m_Columns[2][0] * m_Columns[1][1];
 
-		Vector4<T> Vec0(m_Data[1][0], m_Data[0][0], m_Data[0][0], m_Data[0][0]);
-		Vector4<T> Vec1(m_Data[1][1], m_Data[0][1], m_Data[0][1], m_Data[0][1]);
-		Vector4<T> Vec2(m_Data[1][2], m_Data[0][2], m_Data[0][2], m_Data[0][2]);
-		Vector4<T> Vec3(m_Data[1][3], m_Data[0][3], m_Data[0][3], m_Data[0][3]);
+			Vector4<T> Fac0(Coef00, Coef00, Coef02, Coef03);
+			Vector4<T> Fac1(Coef04, Coef04, Coef06, Coef07);
+			Vector4<T> Fac2(Coef08, Coef08, Coef10, Coef11);
+			Vector4<T> Fac3(Coef12, Coef12, Coef14, Coef15);
+			Vector4<T> Fac4(Coef16, Coef16, Coef18, Coef19);
+			Vector4<T> Fac5(Coef20, Coef20, Coef22, Coef23);
 
-		Vector4<T> Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
-		Vector4<T> Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
-		Vector4<T> Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
-		Vector4<T> Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
+			Vector4<T> Vec0(m_Columns[1][0], m_Columns[0][0], m_Columns[0][0], m_Columns[0][0]);
+			Vector4<T> Vec1(m_Columns[1][1], m_Columns[0][1], m_Columns[0][1], m_Columns[0][1]);
+			Vector4<T> Vec2(m_Columns[1][2], m_Columns[0][2], m_Columns[0][2], m_Columns[0][2]);
+			Vector4<T> Vec3(m_Columns[1][3], m_Columns[0][3], m_Columns[0][3], m_Columns[0][3]);
 
-		Vector4<T>   SignA(+1, -1, +1, -1);
-		Vector4<T>   SignB(-1, +1, -1, +1);
-		Matrix<T, 4> Inverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+			Vector4<T> Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
+			Vector4<T> Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
+			Vector4<T> Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
+			Vector4<T> Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
 
-		Vector4<T> Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
+			Vector4<T>   SignA(+1, -1, +1, -1);
+			Vector4<T>   SignB(-1, +1, -1, +1);
+			Matrix<T, 4> Inverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
 
-		Vector4<T> Dot0 = Vector4<T>(m_Data[0][0], m_Data[0][1], m_Data[0][2], m_Data[0][3]) * Row0;
-		T          Dot1 = (Dot0.X + Dot0.Y) + (Dot0.Z + Dot0.W);
+			Vector4<T> Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
 
-		T OneOverDeterminant = static_cast<T>(1) / Dot1;
+			Vector4<T> Dot0 = Vector4<T>(m_Columns[0][0], m_Columns[0][1], m_Columns[0][2], m_Columns[0][3]) * Row0;
+			T          Dot1 = (Dot0.X + Dot0.Y) + (Dot0.Z + Dot0.W);
 
-		return Inverse * OneOverDeterminant;
+			T OneOverDeterminant = static_cast<T>(1) / Dot1;
+
+			return Inverse * OneOverDeterminant;
+		}
 	}
 
 	// ---- 2D Transformations ----
@@ -469,9 +554,9 @@ public:
 	{
 		static_assert(Size == 4, "Matrix must be 4x4 to receive transformations.");
 
-		m_Data[3][0] = translation.X;
-		m_Data[3][1] = translation.Y;
-		m_Data[3][2] = translation.Z;
+		m_Columns[3][0] = translation.X;
+		m_Columns[3][1] = translation.Y;
+		m_Columns[3][2] = translation.Z;
 	}
 
 	NODISCARD static Matrix<T, 4> MakeYawRotationMatrix(T angleRadians)
@@ -610,26 +695,26 @@ public:
 	{
 		Matrix<T, 3> result(scalar);
 
-		result[0][0] = m_Data[0][0];
+		result[0][0] = m_Columns[0][0];
 
-		result[0][1] = m_Data[0][1];
-		result[1][0] = m_Data[1][0];
-		result[1][1] = m_Data[1][1];
+		result[0][1] = m_Columns[0][1];
+		result[1][0] = m_Columns[1][0];
+		result[1][1] = m_Columns[1][1];
 
 		if constexpr (Size >= 3)
 		{
-			result[0][2] = m_Data[0][2];
-			result[1][2] = m_Data[1][2];
-			result[2][0] = m_Data[2][0];
-			result[2][1] = m_Data[2][1];
-			result[2][2] = m_Data[2][2];
+			result[0][2] = m_Columns[0][2];
+			result[1][2] = m_Columns[1][2];
+			result[2][0] = m_Columns[2][0];
+			result[2][1] = m_Columns[2][1];
+			result[2][2] = m_Columns[2][2];
 		}
 
 		return result;
 	}
 
 private:
-	T m_Data[Size][Size];
+	T m_Columns[Size][Size];
 };
 
 using Matrix2x2  = Matrix<f32, 2>;
@@ -653,23 +738,23 @@ using Matrix4x4D = Matrix<f64, 4>;
 // {
 //     // Create an identity matrix.
 //     Matrix2x2()
-//         : m_Data({{1, 0}, {0, 1}})
+//         : m_Columns({{1, 0}, {0, 1}})
 //     { }
 //
 //     Matrix2x2(T diagonal)
-//         : m_Data({{diagonal, 0}, {0, diagonal}})
+//         : m_Columns({{diagonal, 0}, {0, diagonal}})
 //     { }
 //
 //     Matrix2x2(Vector2<T> row1, Vector2<T> row2)
-//         : m_Data({row1, row2})
+//         : m_Columns({row1, row2})
 //     { }
 //
 //     Matrix2x2 operator+(const Matrix2x2 &other) const
 //     {
 //         Matrix2x2 result = *this;
 //
-//         result.m_Data[0] += other.m_Data[0];
-//         result.m_Data[1] += other.m_Data[1];
+//         result.m_Columns[0] += other.m_Columns[0];
+//         result.m_Columns[1] += other.m_Columns[1];
 //         
 //         return result;
 //     }
@@ -678,37 +763,37 @@ using Matrix4x4D = Matrix<f64, 4>;
 //     {
 //         Matrix2x2 result = *this;
 //
-//         result.m_Data[0] -= other.m_Data[0];
-//         result.m_Data[1] -= other.m_Data[1];
+//         result.m_Columns[0] -= other.m_Columns[0];
+//         result.m_Columns[1] -= other.m_Columns[1];
 //         
 //         return result;
 //     }
 //
 //     void operator+=(const Matrix2x2 &other)
 //     {
-//         m_Data[0] += other.m_Data[0];
-//         m_Data[1] += other.m_Data[1];
+//         m_Columns[0] += other.m_Columns[0];
+//         m_Columns[1] += other.m_Columns[1];
 //     }
 //
 //     void operator-=(const Matrix2x2 &other)
 //     {
-//         m_Data[0] -= other.m_Data[0];
-//         m_Data[1] -= other.m_Data[1];
+//         m_Columns[0] -= other.m_Columns[0];
+//         m_Columns[1] -= other.m_Columns[1];
 //     }
 //
 //     Matrix2x2 operator*(const Matrix2x2 &other) const
 //     {
 //         Matrix2x2 result;
 //
-//         // result[0][0] = m_Data[0][0] * other[0][0] + m_Data[0][1] * other[1][0];
-//         // result[0][1] = m_Data[0][0] * other[0][1] + m_Data[0][1] * other[1][1];
-//         // result[1][0] = m_Data[1][0] * other[0][0] + m_Data[1][1] * other[1][0];
-//         // result[1][1] = m_Data[1][0] * other[0][1] + m_Data[1][1] * other[1][1];
+//         // result[0][0] = m_Columns[0][0] * other[0][0] + m_Columns[0][1] * other[1][0];
+//         // result[0][1] = m_Columns[0][0] * other[0][1] + m_Columns[0][1] * other[1][1];
+//         // result[1][0] = m_Columns[1][0] * other[0][0] + m_Columns[1][1] * other[1][0];
+//         // result[1][1] = m_Columns[1][0] * other[0][1] + m_Columns[1][1] * other[1][1];
 //
 //         for (s32 i = 0; i < 2; i++)
 //         {
-//             result[i][0] = m_Data[i][0] * other[0][0] + m_Data[i][1] * other[1][0];
-//             result[i][1] = m_Data[i][0] * other[0][1] + m_Data[i][1] * other[1][1];
+//             result[i][0] = m_Columns[i][0] * other[0][0] + m_Columns[i][1] * other[1][0];
+//             result[i][1] = m_Columns[i][0] * other[0][1] + m_Columns[i][1] * other[1][1];
 //         }
 //         
 //         return result;
@@ -718,14 +803,14 @@ using Matrix4x4D = Matrix<f64, 4>;
 //     {
 //         return Vector2<T>
 //         {
-//             m_Data[0].Dot(vector),
-//             m_Data[1].Dot(vector)
+//             m_Columns[0].Dot(vector),
+//             m_Columns[1].Dot(vector)
 //         };
 //         
 //         // return Vector2<T>
 //         // {
-//         //     (m_Data[0][0] * vector.X) + (m_Data[0][1] * vector.Y),
-//         //     (m_Data[1][0] * vector.X) + (m_Data[1][1] * vector.Y)
+//         //     (m_Columns[0][0] * vector.X) + (m_Columns[0][1] * vector.Y),
+//         //     (m_Columns[1][0] * vector.X) + (m_Columns[1][1] * vector.Y)
 //         // };
 //     }
 //
@@ -733,16 +818,16 @@ using Matrix4x4D = Matrix<f64, 4>;
 //     {
 //         Matrix2x2 result = *this;
 //
-//         result.m_Data[0] *= scalar;
-//         result.m_Data[1] *= scalar;
+//         result.m_Columns[0] *= scalar;
+//         result.m_Columns[1] *= scalar;
 //         
 //         return result;
 //     }
 //
 //     void operator*=(T scalar)
 //     {
-//         m_Data[0] *= scalar;
-//         m_Data[1] *= scalar;
+//         m_Columns[0] *= scalar;
+//         m_Columns[1] *= scalar;
 //     }
 //
 //     void operator*=(const Matrix2x2 &other)
@@ -752,28 +837,28 @@ using Matrix4x4D = Matrix<f64, 4>;
 //     
 //     FORCEINLINE Vector2<T> &operator[](s32 index)
 //     {
-//         return m_Data[index];
+//         return m_Columns[index];
 //     }
 //
 //     FORCEINLINE const Vector2<T> &operator[](s32 index) const
 //     {
-//         return m_Data[index];
+//         return m_Columns[index];
 //     }
 //
 //     FORCEINLINE void Set(s32 row, s32 column, T value)
 //     {
-//         m_Data[row][column] = value;
+//         m_Columns[row][column] = value;
 //     }
 //
 //     // MW @todo: Will the compiler optimise this to a memset?
 //     FORCEINLINE void Zero()
 //     {
-//         m_Data[0].Zero();
-//         m_Data[1].Zero();
+//         m_Columns[0].Zero();
+//         m_Columns[1].Zero();
 //     }
 //     
 // private:
-//     Vector2<T> m_Data[2];
+//     Vector2<T> m_Columns[2];
 // };
 //
 // typedef Matrix2x2<s32> Matrix2x2i;
