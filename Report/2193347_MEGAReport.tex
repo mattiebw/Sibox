@@ -21,6 +21,24 @@
 \captionsetup{justification=raggedright,singlelinecheck=false,labelsep=newline,labelfont=bf,textfont=it}
 \usepackage[parfill]{parskip}
 \usepackage[textsize=tiny]{todonotes}
+\usepackage{tikz}
+\usepackage{lmodern}
+
+\newcommand\code[2][]{
+    \tikz[baseline=(s.base)]{
+        \node(s)[
+            rounded corners,
+            fill=gray!20,        % background color
+            draw=gray,          % border of box
+            text=gray!50!black, % text color
+            inner xsep =3pt,    % horizontal space between text and border
+            inner ysep =0pt,    % vertical space between text and border
+            text height=2ex,    % height of box
+            text depth =1ex,    % depth of box
+            #1                  % other options
+        ]{\texttt{#2}};
+    }
+}
 
 \DeclareCaptionFont{blue}{\color{black}}
 \newcommand{\maketimelinepart}{\color{black}\makebox[0pt]{\textbullet}\hskip-0.5pt\vrule width 1pt\hspace{\labelsep}}
@@ -77,11 +95,37 @@
 \tableofcontents
 \pagebreak
 
+\section{Artefact Overview}
+
+For this assignment, I implemented a basic 3D physics engine based on \textit{Game Physics In One Weekend} \autocite{hodges_game_2021}, 
+and an accompanying OpenGL renderer.
+
+A 30 second video of the artefact running is viewable here:\\\textcolor{blue}{https://www.youtube.com/watch?v=blah}.
+
+\todo{Add the video}
+
+\subsection{Renderer}
+
+\todo{IMAGES!!}
+
+I created a basic OpenGL renderer capable of rendering 3D meshes, quads, and text.
+This required the implementation of projection and transformation matrices, the understanding of the representation
+of 3D meshes as vertices, normal vectors, and indices, and a basic lighting function.
+
+\subsection{Physics Engine}
+
+I created a custom physics engine based on \textit{Game Physics In One Weekend} \autocite{hodges_game_2021}. It 
+features sphere bodies that can collide realistically, and a codebase that can be extended to add further
+body types. The physics engine is integrated with the renderer to visualise the physics simulation, and provide
+an interface to add and remove objects from the simulation, and adjust the timescale.
+
+\todo{IMAGES!!}
+
 \section{Maths Library}
 
-\todo{Debugging maths by comparing output with online calculators. Would've been easier to keep glm as reference.}
-
 \subsection{Vectors}
+
+The core of rendering and physics are \textbf{vectors}.
 
 \subsection{Euler Angles}
 
@@ -89,17 +133,57 @@
 
 \subsection{Matrices}
 
+Like vectors, my Matrix type is also templated, but so is the size of the Matrix (although, it is limited to 
+square matrices). I did this to hopefully reduce the amount of lines of code required to implement the types.
+In hindsight, I believe the templating of the Size mainly increased complexity and hurt performance, as 
+implementations could be less specialised. I avoided this slightly through the use of \code{if constexpr}, 
+which are if statements that are evaluated at compile-time.
+
+\todo{code examples}
+
+A consistent issue I encountered with my Matrix class was code that mixed up rows and columns. For example, my 
+initial implementation of matrix multiplication had this issue. I debugged this issue mainly through trial and 
+error. To avoid this issue in the future, I renamed my data variable from \code{Data} to
+\code{Columns}, which made it more explicit in the code that the Matrix data was column-major.
+
 \subsection{Utilities \& Conversions}
 
-\section{3D Rendering}
+\subsection{Debugging}
+\label{debuggingmaths}
 
-\subsection{Projection Matrices}
+When debugging, I used an online matrix calculator \autocite{reshish_inverse_nodate} to validate my results. As seen in Figure
+\ref{debuggingmat3invert}, I was able to validate the correctness of my 3x3 inversion function using a calculator. This was very 
+useful to find where in the library errors were occurring.
 
-\subsection{Winding Order}
+In future, it would perhaps be easier to include an established maths library, such as GLM \autocite{g-truc_creation_glm_2024},
+in the codebase such that it could be used as a reference for correct outputs; keeping validation within the code would allow 
+the easy use of asserts and the creation of tests. 
+
+\begin{figure}
+  \caption{Validating my Matrix 3x3 invert function using an online calculator}
+  \label{debuggingmat3invert}
+  \centering
+  \includegraphics[width=\textwidth]{Images/TestingInverse3x3.png}
+  \linebreak
+\end{figure}
+
+Debugging was made slightly harder by the use of \code{FORCEINLINE}, as breakpoints can behave unpredictably when
+code is inlined. However, inlining was important for performance. A better implementation may have a toggle to
+disable \code{FORCEINLINE} in debug builds.
+
+\section{3D Renderer}
+
+\subsection{Projection}
+
+\subsection{Meshes}
+
+\subsubsection{Winding Order}
+
+\subsection{Lighting}
 
 \todo{Explain winding order, relevance to cross products, could solve by flipping mesh indices}
 
-\section{Basic Physics Engine}
+\section{Physics Engine}
 
 \todo{Debugging physics. Bodge of multiplying the penetration vector}
 
