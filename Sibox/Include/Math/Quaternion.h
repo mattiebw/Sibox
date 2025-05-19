@@ -104,6 +104,13 @@ struct Quaternion
 		return result;
 	}
 
+	inline Vector3<T> RotatePoint(const T x, const T y, const T z) const
+	{
+		Quaternion vector(x, y, z, 0);
+		Quaternion final = *this * vector * Inverted();
+		return Vector3<T>(final.X, final.Y, final.Z);
+	}
+	
 	inline Vector3<T> RotatePoint(const Vector3<T> &rhs) const
 	{
 		Quaternion vector(rhs.X, rhs.Y, rhs.Z, 0);
@@ -136,7 +143,21 @@ struct Quaternion
 	inline Matrix<T, 3> ToMat3() const
 	{
 		Matrix<T, 3> result;
-		// MW @todo
+
+		Vector3F row1 = RotatePoint(result.Get(0, 0), result.Get(0, 1), result.Get(0, 2));
+		Vector3F row2 = RotatePoint(result.Get(1, 0), result.Get(1, 1), result.Get(1, 2));
+		Vector3F row3 = RotatePoint(result.Get(2, 0), result.Get(2, 1), result.Get(2, 2));
+
+		result.Set(0, 0, row1.X);
+		result.Set(0, 1, row1.Y);
+		result.Set(0, 2, row1.Z);
+		result.Set(1, 0, row2.X);
+		result.Set(1, 1, row2.Y);
+		result.Set(1, 2, row2.Z);
+		result.Set(2, 0, row3.X);
+		result.Set(2, 1, row3.Y);
+		result.Set(2, 2, row3.Z);
+		
 		return result;
 	}
 
@@ -152,8 +173,7 @@ struct Quaternion
 		else
 			result.Pitch = atan2f(pitchY, pitchX);
 		
-		result.Yaw   = MathUtil::RadiansToDegrees(
-			asin(MathUtil::Clamp(static_cast<T>(-2) * (X * Z - W * Y), static_cast<T>(-1), static_cast<T>(1))));
+		result.Yaw = asin(MathUtil::Clamp(static_cast<T>(-2) * (X * Z - W * Y), static_cast<T>(-1), static_cast<T>(1)));
 		
 		T const rollY = static_cast<T>(2) * (X * Y + W * Z);
 		T const rollX = W * W + X * X - Y * Y - Z * Z;
@@ -161,6 +181,10 @@ struct Quaternion
 			result.Roll = 0;
 		else
 			result.Roll = atan2f(rollY, rollX);
+
+		result.Pitch = MathUtil::RadiansToDegrees(result.Pitch);
+		result.Yaw = MathUtil::RadiansToDegrees(result.Yaw);
+		result.Roll = MathUtil::RadiansToDegrees(result.Roll);
 		
 		return result;
 	}

@@ -15,7 +15,7 @@ public:
     NODISCARD FORCEINLINE u64 GetBodyCount() const { return m_Bodies.size(); }
     
 protected:
-    void ResolveContact(BodyContact& contact);
+    static void ResolveContact(const BodyContact& contact);
     
     std::vector<Body*> m_Bodies;
 };

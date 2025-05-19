@@ -30,6 +30,7 @@ public:
 		  AngularVelocity(0, 0, 0),
 		  InverseMass(1.f),
 		  Elasticity(1.f),
+		  Friction(0.5f),
 		  m_Shape(shape)
 	{
 	}
@@ -40,7 +41,36 @@ public:
 	Vector3F    AngularVelocity;
 	f32         InverseMass;
 	f32         Elasticity;
+	f32         Friction;
 
+	// Inlined for performance.
+	FORCEINLINE void Update(f32 deltaSeconds)
+	{
+		Position += LinearVelocity * deltaSeconds;
+
+		// Get our new world space positions.
+		Vector3F worldSpaceCM = GetCenterOfMassWorldSpace();
+		Vector3F centerOfMassToPosition = Position - worldSpaceCM;
+
+		// Find the new angular velocity.
+		// This bit is a little confusing.
+		Matrix3x3F orientation = Rotation.ToMat3(); // Since our inertia tensor is a Matrix, we need our rotation in matrix form.
+		Matrix3x3F inertiaTensor = orientation * m_Shape.GetInertiaTensor() * orientation.Transpose(); // See GetInverseInertiaTensorWorldSpace
+		// Now we compute the angular acceleration. This is just Euler's equation of rigid body motion: α=I−1(ω×(Iω))
+		Vector3F angularAcceleration = inertiaTensor.Inverse() * AngularVelocity.Cross(inertiaTensor * AngularVelocity);
+		AngularVelocity += angularAcceleration * deltaSeconds;
+
+		// Add our angular velocity - this is fairly simple:
+		Vector3F angleChange = AngularVelocity * deltaSeconds;
+		QuaternionF deltaQuat = QuaternionF(angleChange, angleChange.Length());
+		Rotation = deltaQuat * Rotation; // Adding quaternions is multiplication
+		Rotation.Normalize();
+
+		// We update our position such that our center of mass remains in the same place relative
+		// to where it was previously with the new rotation applied.
+		Position = worldSpaceCM + deltaQuat.RotatePoint(centerOfMassToPosition);
+	}
+	
 	NODISCARD const Shape& GetShape() const { return m_Shape; }
 	NODISCARD Shape&       GetShape() { return m_Shape; }
 
@@ -53,6 +83,7 @@ public:
 	NODISCARD Matrix3x3F GetInverseInertiaTensorWorldSpace() const;
 	NODISCARD Matrix3x3F GetInverseInertiaTensorBodySpace() const;
 
+	void ApplyImpulse(const Vector3F &impulsePoint, const Vector3F &impulse);
 	void ApplyLinearImpulse(const Vector3F &impulse);
 	void ApplyAngularImpulse(const Vector3F &angularImpulse);
 

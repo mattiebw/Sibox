@@ -385,9 +385,13 @@ struct Vector3
 	FORCEINLINE void Normalize()
 	{
 		T length = Length();
-		X /= length;
-		Y /= length;
-		Z /= length;
+		T invLength = 1.0f / length;
+		if (!std::isinf(invLength)) // Check for division by zero (1 / 0 == inf). This makes normalisation safe for vectors with a length of 0.
+		{
+			X *= invLength;
+			Y *= invLength;
+			Z *= invLength;	
+		}
 	}
 
 	NODISCARD FORCEINLINE Vector3 Normalized() const

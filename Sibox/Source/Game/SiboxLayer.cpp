@@ -108,6 +108,10 @@ void SiboxLayer::RenderImGUI(f64 delta)
 			m_World->DestroyEntity(entity);
 		m_DynamicBodies.clear();
 	}
+	ImGui::PushItemWidth(100);
+	ImGui::SliderInt("##spheresToAdd", &m_SpheresToAdd, 1, 150);
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
 	if (ImGui::Button("Add Spheres"))
 		AddSpheres();
 	if (ImGui::Button("Add Sphere at Origin"))
@@ -120,7 +124,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 
 void SiboxLayer::AddSpheres()
 {
-	for (s32 i = 0; i < 20; i++)
+	for (s32 i = 0; i < m_SpheresToAdd; i++)
 	{
 		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
 		sphere->Setup(Random::Float(0.5f, 2.f));

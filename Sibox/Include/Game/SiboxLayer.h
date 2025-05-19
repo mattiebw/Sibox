@@ -20,6 +20,7 @@ public:
 	void AddSphere(const Vector3F& location);
 
 protected:
+	s32 m_SpheresToAdd = 20;
 	std::vector<Entity*> m_DynamicBodies;
 	Ref<World> m_World;
 	Ref<MeshEntity> m_Mesh;

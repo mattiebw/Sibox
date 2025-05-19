@@ -51,6 +51,20 @@ Matrix3x3F Body::GetInverseInertiaTensorBodySpace() const
 	return inertiaTensor;
 }
 
+void Body::ApplyImpulse(const Vector3F &impulsePoint, const Vector3F &impulse)
+{
+	if (InverseMass == 0.0f)
+		return;
+
+	// The linear motion is just the impulse. 
+	ApplyLinearImpulse(impulse);
+
+	Vector3F position = GetCenterOfMassWorldSpace();
+	Vector3F difference = impulsePoint - position;
+	Vector3F angularImpulse = difference.Cross(impulse);
+	ApplyAngularImpulse(angularImpulse);
+}
+
 void Body::ApplyLinearImpulse(const Vector3F &impulse)
 {
 	// We represent masses as inverse masses - there's a couple of reasons for this:
