@@ -24,6 +24,33 @@ Vector3F Body::GetCenterOfMassBodySpace() const
 	return m_Shape.GetCenterOfMass();
 }
 
+Matrix3x3F Body::GetInverseInertiaTensorWorldSpace() const
+{
+	Matrix3x3F inertiaTensor = m_Shape.GetInertiaTensor();
+	inertiaTensor.Invert();
+	inertiaTensor *= InverseMass;
+	Matrix3x3F orientation = Rotation.ToMat3();
+	
+	// A couple of notes:
+	// - The orientation matrix has a determinant of 1, meaning it is orthogonal. This means that the inverse is the same as the transpose.
+	//   Transposing is significantly faster than inverting, so we do that.
+	// - What we're doing here is building a matrix that will do the following to an angular impulse:
+	//   - Transform the angular impulse from world space to body space.
+	//   - Apply the body-space inertia tensor.
+	//   - Transform the result back to world space.
+	inertiaTensor = orientation * inertiaTensor * orientation.Transpose();
+	
+	return inertiaTensor;
+}
+
+Matrix3x3F Body::GetInverseInertiaTensorBodySpace() const
+{
+	Matrix3x3F inertiaTensor = m_Shape.GetInertiaTensor();
+	inertiaTensor.Invert();
+	inertiaTensor *= InverseMass;
+	return inertiaTensor;
+}
+
 void Body::ApplyLinearImpulse(const Vector3F &impulse)
 {
 	// We represent masses as inverse masses - there's a couple of reasons for this:
@@ -40,6 +67,28 @@ void Body::ApplyLinearImpulse(const Vector3F &impulse)
 	// Meaning:
 	// Change in Velocity = Impulse / Mass
 	LinearVelocity += impulse * InverseMass;
+}
+
+void Body::ApplyAngularImpulse(const Vector3F &angularImpulse)
+{
+	if (InverseMass == 0.0f)
+		return;
+
+	// Angular momentum = Inertia * Angular velocity
+	//                  = Cross product of position and linear momentum
+	// Change in angular momentum = Inertia * change in angular velocity
+	// Therefore: change in angular velocity = inverse inertia * cross product of position and impulse
+	// We assume that the provided angular impulse is already the cross product.
+	AngularVelocity += GetInverseInertiaTensorWorldSpace() * angularImpulse;
+
+	// We limit the angular velocity.
+	// MW @todo: Why?
+	constexpr f32 maxAngularVelocity = 30.0f;
+	if (AngularVelocity.LengthSquared() > maxAngularVelocity * maxAngularVelocity)
+	{
+		AngularVelocity.Normalize();
+		AngularVelocity *= maxAngularVelocity;
+	}
 }
 
 // Intersection test functions.

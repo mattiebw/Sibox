@@ -26,6 +26,8 @@ public:
 		return aabb;
 	}
 
+	NODISCARD Matrix3x3F GetInertiaTensor() const;
+
 	NODISCARD FORCEINLINE ShapeType GetType() const { return m_Type; }
 	NODISCARD FORCEINLINE float     GetRadius() const { return m_Size[0]; } // For spheres.
 	NODISCARD FORCEINLINE Vector3F  GetSize() const { return m_Size; }

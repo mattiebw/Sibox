@@ -27,6 +27,7 @@ public:
 		: Position(0, 0, 0),
 		  Rotation(0, 0, 0, 1),
 		  LinearVelocity(0, 0, 0),
+		  AngularVelocity(0, 0, 0),
 		  InverseMass(1.f),
 		  Elasticity(1.f),
 		  m_Shape(shape)
@@ -36,6 +37,7 @@ public:
 	Vector3F    Position;
 	QuaternionF Rotation;
 	Vector3F    LinearVelocity;
+	Vector3F    AngularVelocity;
 	f32         InverseMass;
 	f32         Elasticity;
 
@@ -48,7 +50,11 @@ public:
 	NODISCARD Vector3F GetCenterOfMassWorldSpace() const;
 	NODISCARD Vector3F GetCenterOfMassBodySpace() const;
 
+	NODISCARD Matrix3x3F GetInverseInertiaTensorWorldSpace() const;
+	NODISCARD Matrix3x3F GetInverseInertiaTensorBodySpace() const;
+
 	void ApplyLinearImpulse(const Vector3F &impulse);
+	void ApplyAngularImpulse(const Vector3F &angularImpulse);
 
 	static bool Intersects(Body &bodyA, Body &bodyB, BodyContact &contact);
 

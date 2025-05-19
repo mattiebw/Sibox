@@ -23,6 +23,32 @@ public:
 		}
 	}
 
+	Matrix(T value00, T value11)
+	{
+		Zero();
+		m_Data[0][0] = value00;
+		m_Data[1][1] = value11;
+	}
+
+	Matrix(T value00, T value11, T value22)
+	{
+		static_assert(Size >= 3);
+		Zero();
+		m_Data[0][0] = value00;
+		m_Data[1][1] = value11;
+		m_Data[2][2] = value22;
+	}
+
+	Matrix(T value00, T value11, T value22, T value33)
+	{
+		static_assert(Size >= 4);
+		Zero();
+		m_Data[0][0] = value00;
+		m_Data[1][1] = value11;
+		m_Data[2][2] = value22;
+		m_Data[3][3] = value33;
+	}
+
 	Matrix(Vector4<T> a, Vector4<T> b, Vector4<T> c, Vector4<T> d)
 		: m_Data{{a.X, a.Y, a.Z, a.W}, {b.X, b.Y, b.Z, b.W}, {c.X, c.Y, c.Z, c.W}, {d.X, d.Y, d.Z, d.W}}
 	{
@@ -585,11 +611,11 @@ public:
 		Matrix<T, 3> result(scalar);
 
 		result[0][0] = m_Data[0][0];
-		
+
 		result[0][1] = m_Data[0][1];
 		result[1][0] = m_Data[1][0];
 		result[1][1] = m_Data[1][1];
-		
+
 		if constexpr (Size >= 3)
 		{
 			result[0][2] = m_Data[0][2];
