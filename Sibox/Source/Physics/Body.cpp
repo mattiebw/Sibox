@@ -108,30 +108,77 @@ void Body::ApplyAngularImpulse(const Vector3F &angularImpulse)
 // Intersection test functions.
 namespace
 {
-	bool SphereIntersectsSphere(Body &bodyA, Body &bodyB, BodyContact &contact)
+	bool RayIntersectsSphere(const Vector3F& rayStart, const Vector3F& rayDirection, const Vector3F& sphereCenter,
+		const f32 sphereRadius, float& t1, float& t2)
 	{
-		contact.BodyA = &bodyA;
-		contact.BodyB = &bodyB;
+		const Vector3F rayStartToSphere = sphereCenter - rayStart;
+		const f32 a = rayDirection.Dot(rayDirection);
+		const f32 b = rayStartToSphere.Dot(rayDirection);
+		const f32 c = rayStartToSphere.Dot(rayDirection) - sphereRadius * sphereRadius;
 
-		f32      radiusSum       = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius();
-		Vector3F dist            = bodyB.Position - bodyA.Position;
-		contact.NormalWorldSpace = dist.Normalized();
-		f32 distSquared          = dist.LengthSquared();
+		const f32 delta = b * b - a * c;
+		const f32 invA = 1.0f / a;
 
-		contact.WorldSpacePointOnA = bodyA.Position + contact.NormalWorldSpace * bodyA.GetShape().GetRadius();
-		contact.WorldSpacePointOnB = bodyB.Position - contact.NormalWorldSpace * bodyB.GetShape().GetRadius();
+		if (delta < 0.0f)
+		{
+			// This is a quadratic equation - less than 0 means no real solutions.
+			return false;
+		}
 
-		if (distSquared <= radiusSum * radiusSum)
-			return true;
+		const f32 deltaRoot = sqrtf(delta);
+		t1 = invA * (b - deltaRoot);
+		t2 = invA * (b + deltaRoot);
 
-		return false;
+		return true;
+	}
+	
+	bool SphereIntersectsSphere(Body &bodyA, Body &bodyB, const f32 delta, BodyContact &contact)
+	{
+		const Vector3F relativeVelocity = bodyA.LinearVelocity- bodyB.LinearVelocity;
+
+		const Vector3F startPointA = bodyA.Position;
+		const Vector3F endPointA = startPointA + relativeVelocity * delta;
+		const Vector3F rayDirection = endPointA - startPointA;
+
+		f32 t0 = 0;
+		f32 t1 = 0;
+
+		if (rayDirection.LengthSquared() < 0.001f * 0.001f)
+		{
+			// Tiny ray - we won't bother moving; just return if we're already intersecting or not.
+			Vector3F posDiff = bodyB.Position - bodyA.Position;
+			f32 radius = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius() + 0.001f;
+			if (posDiff.LengthSquared() > radius * radius)
+				return false;
+		}
+		else if (!RayIntersectsSphere(bodyA.Position, rayDirection, bodyB.Position, bodyB.GetShape().GetRadius(), t0, t1))
+			return false;
+			
+		t0 *= delta;
+		t1 *= delta;
+
+		// Collision was in the past - no (future) collision this frame.
+		if (t1 < 0.0f)
+			return false;
+
+		// Earliest positive TOI.
+		contact.TimeOfImpact = (t0 < 0.0f) ? 0.0f : t0;
+		if (contact.TimeOfImpact > delta) // No collision this frame.
+			return false;
+
+		Vector3F newPosA = bodyA.Position + bodyA.LinearVelocity * contact.TimeOfImpact;
+		Vector3F newPosB = bodyB.Position + bodyB.LinearVelocity * contact.TimeOfImpact;
+		Vector3F ab = newPosB - newPosA;
+		ab.Normalize();
+
+		contact.WorldSpacePointOnA = newPosA + ab * bodyA.GetShape().GetRadius();
+		contact.WorldSpacePointOnB = newPosB + ab * bodyB.GetShape().GetRadius();
+		
+		return true;
 	}
 
 	bool AABBIntersectsAABB(Body &bodyA, Body &bodyB, BodyContact& contact)
 	{
-		contact.BodyA = &bodyA;
-		contact.BodyB = &bodyB;
-
 		Vector3F minA = bodyA.Position - bodyA.GetShape().GetSize();
 		Vector3F maxA = bodyA.Position + bodyA.GetShape().GetSize();
 		Vector3F minB = bodyA.Position - bodyB.GetShape().GetSize();
@@ -149,9 +196,6 @@ namespace
 
 	bool AABBIntersectsSphere(Body &aabb, Body &sphere, BodyContact& contact)
 	{
-		contact.BodyA = &aabb;
-		contact.BodyB = &sphere;
-
 		Vector3F aabbMin = aabb.Position - aabb.GetShape().GetSize();
 		Vector3F aabbMax = aabb.Position + aabb.GetShape().GetSize();
 
@@ -163,10 +207,47 @@ namespace
 		return (closestPoint - sphere.Position).LengthSquared() <= sphere.GetShape().GetRadius() * sphere.GetShape().
 		                                                                                                  GetRadius();
 	}
+
+	bool SphereSphereCollision(Body &bodyA, Body &bodyB, BodyContact &contact, f32 delta)
+	{
+		Vector3F posA = bodyA.Position;
+		Vector3F posB = bodyB.Position;
+		Vector3F velA = bodyA.LinearVelocity;
+		Vector3F velB = bodyB.LinearVelocity;
+
+		if (SphereIntersectsSphere(bodyA, bodyB, delta, contact))
+		{
+			// First, step the bodies forward by the TOI to find their local space collision points.
+			bodyA.Update(contact.TimeOfImpact);
+			bodyB.Update(contact.TimeOfImpact);
+
+			// Convert world space contact points to body space.
+			contact.BodySpacePointOnA = bodyA.WorldSpaceToBodySpace(contact.WorldSpacePointOnA);
+			contact.BodySpacePointOnB = bodyB.WorldSpaceToBodySpace(contact.WorldSpacePointOnB);
+
+			contact.NormalWorldSpace = bodyA.Position - bodyB.Position;
+			contact.NormalWorldSpace.Normalize();
+
+			// Unwind the step we just did.
+			bodyA.Update(-contact.TimeOfImpact);
+			bodyB.Update(-contact.TimeOfImpact);
+
+			// Calculate the separation distance.
+			Vector3F bodyPosDiff = bodyB.Position - bodyA.Position;
+			contact.SeparationDistance = bodyPosDiff.Length() - (bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius()); 
+			
+			return true;
+		}
+
+		return false;
+	}
 }
 
-bool Body::Intersects(Body &bodyA, Body &bodyB, BodyContact &contact)
+bool Body::Intersects(Body &bodyA, Body &bodyB, BodyContact &contact, f32 delta)
 {
+	contact.BodyA = &bodyA;
+	contact.BodyB = &bodyB;
+	
 	switch (bodyA.m_Shape.GetType())
 	{
 	case ShapeType::Sphere:
@@ -174,7 +255,7 @@ bool Body::Intersects(Body &bodyA, Body &bodyB, BodyContact &contact)
 		{
 		case ShapeType::Sphere:
 			// Sphere vs Sphere
-			return SphereIntersectsSphere(bodyA, bodyB, contact);
+			return SphereSphereCollision(bodyA, bodyB, contact, delta);
 		case ShapeType::AABB:
 			// Sphere vs AABB
 			return AABBIntersectsSphere(bodyB, bodyA, contact);

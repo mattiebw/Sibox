@@ -34,7 +34,7 @@ void PhysicsScene::Update()
 
             // If two bodys intersect, we'll just make them stop moving for now.
             BodyContact contact;
-            if (Body::Intersects(*body, *otherBody, contact))
+            if (Body::Intersects(*body, *otherBody, contact, delta))
             {
                 ResolveContact(contact);
             }

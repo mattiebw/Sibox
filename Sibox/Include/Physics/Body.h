@@ -87,7 +87,7 @@ public:
 	void ApplyLinearImpulse(const Vector3F &impulse);
 	void ApplyAngularImpulse(const Vector3F &angularImpulse);
 
-	static bool Intersects(Body &bodyA, Body &bodyB, BodyContact &contact);
+	static bool Intersects(Body &bodyA, Body &bodyB, BodyContact &contact, f32 delta);
 
 protected:
 	Shape m_Shape;
