@@ -1,4 +1,5 @@
 #pragma once
+#include "Math/Quaternion.h"
 
 enum class ShapeType : u8
 {
@@ -27,6 +28,9 @@ public:
 	}
 
 	NODISCARD Matrix3x3F GetInertiaTensor() const;
+
+	NODISCARD BoundsF GetBounds(const Vector3F& position, const QuaternionF& orientation) const;
+	NODISCARD BoundsF GetBounds() const;
 
 	NODISCARD FORCEINLINE ShapeType GetType() const { return m_Type; }
 	NODISCARD FORCEINLINE float     GetRadius() const { return m_Size[0]; } // For spheres.

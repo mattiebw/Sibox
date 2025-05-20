@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 template <typename T>
-class Bounds
+struct Bounds
 {
 	Bounds()
 	{
@@ -70,7 +70,10 @@ class Bounds
 	NODISCARD FORCEINLINE T YWidth() const { return Max.Y - Min.Y; }
 	NODISCARD FORCEINLINE T ZWidth() const { return Max.Z - Min.Z; }
 	
-public:
 	Vector3<T> Min;
 	Vector3<T> Max;
 };
+
+using BoundsI = Bounds<s32>;
+using BoundsF = Bounds<f32>;
+using BoundsD = Bounds<f64>;

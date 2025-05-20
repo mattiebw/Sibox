@@ -29,3 +29,41 @@ Matrix3x3F Shape::GetInertiaTensor() const
 		return Matrix3x3F(-1);
 	}
 }
+
+BoundsF Shape::GetBounds(const Vector3F &position, const QuaternionF &orientation) const
+{
+	switch (m_Type)
+	{
+	case ShapeType::Sphere:
+		{
+			BoundsF output;
+			output.Min = Vector3F(-GetRadius()) + position;
+			output.Max = Vector3F(GetRadius()) + position;
+			return output;
+		}
+	case ShapeType::AABB:
+	case ShapeType::Invalid:
+	default:
+		SIBOX_ERROR("Invalid shape type for inertia tensor calculation.");
+		return {};
+	}
+}
+
+BoundsF Shape::GetBounds() const
+{
+	switch (m_Type)
+	{
+	case ShapeType::Sphere:
+		{
+			BoundsF output;
+			output.Min = Vector3F(-GetRadius());
+			output.Max = Vector3F(GetRadius());
+			return output;
+		}
+	case ShapeType::AABB:
+	case ShapeType::Invalid:
+	default:
+		SIBOX_ERROR("Invalid shape type for inertia tensor calculation.");
+		return {};
+	}
+}
