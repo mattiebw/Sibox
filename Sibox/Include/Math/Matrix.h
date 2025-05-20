@@ -619,17 +619,17 @@ public:
 		*this *= MakeRollRotationMatrix(angleRadians);
 	}
 
-	static Matrix<T, 4> MakeRotationMatrixSlow(T yawRadians, T pitchRadians, T rollRadians)
-	{
-		return MakeYawRotationMatrix(yawRadians) * MakePitchRotationMatrix(pitchRadians) *
-			MakeRollRotationMatrix(rollRadians);
-	}
-
 	FORCEINLINE void RotateSlow(T yawRadians, T pitchRadians, T rollRadians)
 	{
 		static_assert(Size == 4, "Matrix must be 4x4 to receive transformations.");
 
 		*this = MakeRotationMatrixSlow(yawRadians, pitchRadians, rollRadians) * (*this);
+	}
+
+	static Matrix<T, 4> MakeRotationMatrixSlow(T yawRadians, T pitchRadians, T rollRadians)
+	{
+		return MakeYawRotationMatrix(yawRadians) * MakePitchRotationMatrix(pitchRadians) *
+			MakeRollRotationMatrix(rollRadians);
 	}
 
 	// This is a faster version of the MakeRotationMatrix function, as it "unrolls" the creation and multiplication of
