@@ -407,7 +407,7 @@ struct Vector3
 	}
 
 	// Calculate the dot product between this vector and another.
-	NODISCARD FORCEINLINE T Dot(const Vector3 &other, bool normalise = true) const
+	NODISCARD FORCEINLINE T Dot(const Vector3 &other, bool normalise = false) const
 	{
 		if (normalise)
 			return Normalized().Dot(other.Normalized(), false);

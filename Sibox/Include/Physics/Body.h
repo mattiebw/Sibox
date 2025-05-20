@@ -20,6 +20,14 @@ struct BodyContact
 	Body *BodyA = nullptr, *BodyB = nullptr;
 };
 
+// The values here are so we can use this enum with qsort.
+enum class FirstContact : s8
+{
+	ContactA = -1,
+	ContactB = 0,
+	SameTime = 1
+};
+
 struct Body
 {
 public:

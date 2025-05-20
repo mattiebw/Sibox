@@ -39,10 +39,8 @@ void SiboxLayer::OnAttach()
 
 	auto baseSphere = m_World->AddEntity<SphereEntity>("Base");
 	baseSphere->Setup(1000.0f, 0.0f);
-	baseSphere->SetBodyPosition(Vector3F(0.f, -1050.f, 0.0f));
+	baseSphere->SetBodyPosition(Vector3F(0.f, -1000.f, 0.0f));
 	baseSphere->GetBody()->Elasticity = 1.0f;
-	
-	AddSpheres();
 }
 
 void SiboxLayer::OnDetach()
@@ -128,7 +126,7 @@ void SiboxLayer::AddSpheres()
 	{
 		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
 		sphere->Setup(Random::Float(0.5f, 2.f));
-		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 0, Random::Float(-100.f, 100.f)));
+		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 3, Random::Float(-100.f, 100.f)));
 		m_DynamicBodies.push_back(sphere.get());
 	}
 }

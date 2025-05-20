@@ -283,11 +283,24 @@ I implemented basic lighting based on the work of \textcite{phong_illumination_1
 
 \todo{Debugging physics. Bodge of multiplying the penetration vector}
 
+Also, I have learned to not give functions "secret" operations; a bug that took an hour to figure out was caused by my Cross product function normalising the 
+vectors before calculating the cross product. This was configurable with a boolean parameter, but it has a default value, so I did not realise for a long time.
+
+\begin{figure}
+  \caption{Code for testing for an intersection between a ray and a sphere, utilising a quadratic equation. It was the source of broken collisions, due to the
+  hidden feature of cross product function normalising the vectors.}
+  \label{rayvssphere}
+  \centering
+  \includegraphics[height=20em]{Images/RayVsSphereFunction.png}
+  \linebreak
+\end{figure}
+
 \todo{Discuss performance implications of many conversions between units, types.
 Rebuild from the top to improve cohesion?}
 
 \todo{Discuss learning notation}
 
+\clearpage
 \pagebreak
 
 \section{References}

@@ -30,7 +30,7 @@ Matrix3x3F Body::GetInverseInertiaTensorWorldSpace() const
 	inertiaTensor.Invert();
 	inertiaTensor *= InverseMass;
 	Matrix3x3F orientation = Rotation.ToMat3();
-	
+
 	// A couple of notes:
 	// - The orientation matrix has a determinant of 1, meaning it is orthogonal. This means that the inverse is the same as the transpose.
 	//   Transposing is significantly faster than inverting, so we do that.
@@ -39,7 +39,7 @@ Matrix3x3F Body::GetInverseInertiaTensorWorldSpace() const
 	//   - Apply the body-space inertia tensor.
 	//   - Transform the result back to world space.
 	inertiaTensor = orientation * inertiaTensor * orientation.Transpose();
-	
+
 	return inertiaTensor;
 }
 
@@ -59,8 +59,8 @@ void Body::ApplyImpulse(const Vector3F &impulsePoint, const Vector3F &impulse)
 	// The linear motion is just the impulse. 
 	ApplyLinearImpulse(impulse);
 
-	Vector3F position = GetCenterOfMassWorldSpace();
-	Vector3F difference = impulsePoint - position;
+	Vector3F position       = GetCenterOfMassWorldSpace();
+	Vector3F difference     = impulsePoint - position;
 	Vector3F angularImpulse = difference.Cross(impulse);
 	ApplyAngularImpulse(angularImpulse);
 }
@@ -108,16 +108,20 @@ void Body::ApplyAngularImpulse(const Vector3F &angularImpulse)
 // Intersection test functions.
 namespace
 {
-	bool RayIntersectsSphere(const Vector3F& rayStart, const Vector3F& rayDirection, const Vector3F& sphereCenter,
-		const f32 sphereRadius, float& t1, float& t2)
+	bool RayIntersectsSphere(const Vector3F &rayStart,
+	                         const Vector3F &rayDirection,
+	                         const Vector3F &sphereCenter,
+	                         const f32       sphereRadius,
+	                         float &         t1,
+	                         float &         t2)
 	{
-		const Vector3F rayStartToSphere = sphereCenter - rayStart;
-		const f32 a = rayDirection.Dot(rayDirection);
-		const f32 b = rayStartToSphere.Dot(rayDirection);
-		const f32 c = rayStartToSphere.Dot(rayDirection) - sphereRadius * sphereRadius;
+		const Vector3F m = sphereCenter - rayStart;
+		const f32      a = rayDirection.Dot(rayDirection);
+		const f32      b = m.Dot(rayDirection);
+		const f32      c = m.Dot(m) - sphereRadius * sphereRadius;
 
 		const f32 delta = b * b - a * c;
-		const f32 invA = 1.0f / a;
+		const f32 invA  = 1.0f / a;
 
 		if (delta < 0.0f)
 		{
@@ -126,18 +130,20 @@ namespace
 		}
 
 		const f32 deltaRoot = sqrtf(delta);
-		t1 = invA * (b - deltaRoot);
-		t2 = invA * (b + deltaRoot);
+		t1                  = invA * (b - deltaRoot);
+		t2                  = invA * (b + deltaRoot);
 
 		return true;
 	}
-	
-	bool SphereIntersectsSphere(Body &bodyA, Body &bodyB, const f32 delta, BodyContact &contact)
-	{
-		const Vector3F relativeVelocity = bodyA.LinearVelocity- bodyB.LinearVelocity;
 
-		const Vector3F startPointA = bodyA.Position;
-		const Vector3F endPointA = startPointA + relativeVelocity * delta;
+	bool SphereIntersectsSphere(const Shape &   shapeA, const Shape &shapeB, const Vector3F &posA, const Vector3F &posB,
+	                            const Vector3F &velA, const Vector3F &velB, const f32 delta, Vector3F &pointOnA,
+	                            Vector3F &      pointOnB, f32 &toi)
+	{
+		const Vector3F relativeVelocity = velA - velB;
+
+		const Vector3F startPointA  = posA;
+		const Vector3F endPointA    = startPointA + relativeVelocity * delta;
 		const Vector3F rayDirection = endPointA - startPointA;
 
 		f32 t0 = 0;
@@ -146,14 +152,14 @@ namespace
 		if (rayDirection.LengthSquared() < 0.001f * 0.001f)
 		{
 			// Tiny ray - we won't bother moving; just return if we're already intersecting or not.
-			Vector3F posDiff = bodyB.Position - bodyA.Position;
-			f32 radius = bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius() + 0.001f;
+			Vector3F posDiff = posB - posA;
+			f32      radius  = shapeA.GetRadius() + shapeB.GetRadius() + 0.001f;
 			if (posDiff.LengthSquared() > radius * radius)
 				return false;
 		}
-		else if (!RayIntersectsSphere(bodyA.Position, rayDirection, bodyB.Position, bodyB.GetShape().GetRadius(), t0, t1))
+		else if (!RayIntersectsSphere(posA, rayDirection, posB, shapeA.GetRadius() + shapeB.GetRadius(), t0, t1))
 			return false;
-			
+
 		t0 *= delta;
 		t1 *= delta;
 
@@ -162,22 +168,22 @@ namespace
 			return false;
 
 		// Earliest positive TOI.
-		contact.TimeOfImpact = (t0 < 0.0f) ? 0.0f : t0;
-		if (contact.TimeOfImpact > delta) // No collision this frame.
+		toi = (t0 < 0.0f) ? 0.0f : t0;
+		if (toi > delta) // No collision this frame.
 			return false;
 
-		Vector3F newPosA = bodyA.Position + bodyA.LinearVelocity * contact.TimeOfImpact;
-		Vector3F newPosB = bodyB.Position + bodyB.LinearVelocity * contact.TimeOfImpact;
-		Vector3F ab = newPosB - newPosA;
+		Vector3F newPosA = posA + velA * toi;
+		Vector3F newPosB = posB + velB * toi;
+		Vector3F ab      = newPosB - newPosA;
 		ab.Normalize();
 
-		contact.WorldSpacePointOnA = newPosA + ab * bodyA.GetShape().GetRadius();
-		contact.WorldSpacePointOnB = newPosB + ab * bodyB.GetShape().GetRadius();
-		
+		pointOnA = newPosA + ab * shapeA.GetRadius();
+		pointOnB = newPosB - ab * shapeB.GetRadius();
+
 		return true;
 	}
 
-	bool AABBIntersectsAABB(Body &bodyA, Body &bodyB, BodyContact& contact)
+	bool AABBIntersectsAABB(Body &bodyA, Body &bodyB, BodyContact &contact)
 	{
 		Vector3F minA = bodyA.Position - bodyA.GetShape().GetSize();
 		Vector3F maxA = bodyA.Position + bodyA.GetShape().GetSize();
@@ -190,11 +196,11 @@ namespace
 			return false;
 		if (minA.Z > maxB.Z || minB.Z > maxA.Z)
 			return false;
-		
+
 		return true;
 	}
 
-	bool AABBIntersectsSphere(Body &aabb, Body &sphere, BodyContact& contact)
+	bool AABBIntersectsSphere(Body &aabb, Body &sphere, BodyContact &contact)
 	{
 		Vector3F aabbMin = aabb.Position - aabb.GetShape().GetSize();
 		Vector3F aabbMax = aabb.Position + aabb.GetShape().GetSize();
@@ -215,7 +221,8 @@ namespace
 		Vector3F velA = bodyA.LinearVelocity;
 		Vector3F velB = bodyB.LinearVelocity;
 
-		if (SphereIntersectsSphere(bodyA, bodyB, delta, contact))
+		if (SphereIntersectsSphere(bodyA.GetShape(), bodyB.GetShape(), posA, posB, velA, velB, delta,
+		                           contact.WorldSpacePointOnA, contact.WorldSpacePointOnB, contact.TimeOfImpact))
 		{
 			// First, step the bodies forward by the TOI to find their local space collision points.
 			bodyA.Update(contact.TimeOfImpact);
@@ -233,9 +240,10 @@ namespace
 			bodyB.Update(-contact.TimeOfImpact);
 
 			// Calculate the separation distance.
-			Vector3F bodyPosDiff = bodyB.Position - bodyA.Position;
-			contact.SeparationDistance = bodyPosDiff.Length() - (bodyA.GetShape().GetRadius() + bodyB.GetShape().GetRadius()); 
-			
+			Vector3F bodyPosDiff       = bodyB.Position - bodyA.Position;
+			contact.SeparationDistance = bodyPosDiff.Length() - (bodyA.GetShape().GetRadius() + bodyB.GetShape().
+			                                                                                          GetRadius());
+
 			return true;
 		}
 
@@ -247,7 +255,7 @@ bool Body::Intersects(Body &bodyA, Body &bodyB, BodyContact &contact, f32 delta)
 {
 	contact.BodyA = &bodyA;
 	contact.BodyB = &bodyB;
-	
+
 	switch (bodyA.m_Shape.GetType())
 	{
 	case ShapeType::Sphere:

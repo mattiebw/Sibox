@@ -8,7 +8,8 @@ void PhysicsScene::Update()
     f32 delta = static_cast<f32>(Application::Get()->GetDeltaTime());
     if (delta == 0)
         return;
-		
+
+    // First, apply gravity to each body.
     for (Body *body : m_Bodies)
     {
         // Values we'll be using for the physics simulation.
@@ -20,27 +21,72 @@ void PhysicsScene::Update()
         // Apply gravity
         Vector3F gravity = Vector3F{0.0f, -9.81f, 0.0f} * mass * delta;
         body->ApplyLinearImpulse(gravity);
+    }
 
-        // Horrible brute force collision check for now.
-        for (Body *otherBody : m_Bodies)
+    s32 numContacts = 0;
+    const s32 maxContacts = m_Bodies.size() * m_Bodies.size();
+    const s32 maxSizeForStack = 256;
+    BodyContact* contacts = nullptr;
+    bool contactsIsMalloced = maxContacts > maxSizeForStack;
+
+    // Stack memory is faster, but limited in space. So we select which to use depending on how many contacts
+    // we need to allocate.
+    if (contactsIsMalloced)
+        contacts = new BodyContact[maxContacts];
+    else
+        contacts = static_cast<BodyContact*>(alloca(sizeof(BodyContact) * maxContacts));
+
+    for (s32 i = 0; i < m_Bodies.size(); i++)
+    {
+        for (s32 j = i + 1; j < m_Bodies.size(); j++)
         {
-            // Ignore self
-            if (body == otherBody)
+            Body& bodyA = *m_Bodies[i];
+            Body& bodyB = *m_Bodies[j];
+
+            // Ignore collisions between static bodies.
+            if (bodyA.InverseMass == 0.0f && bodyB.InverseMass == 0.0f)
                 continue;
 
-            // Ignore body pairs that both have infinite mass.
-            if (body->InverseMass == 0.0f && otherBody->InverseMass == 0.0f)
-                continue;
+            if (Body::Intersects(bodyA, bodyB, contacts[numContacts], delta))
+                numContacts++;
+        }
+    }
 
-            // If two bodys intersect, we'll just make them stop moving for now.
-            BodyContact contact;
-            if (Body::Intersects(*body, *otherBody, contact, delta))
-            {
-                ResolveContact(contact);
-            }
+    // Ensure that contacts are in order of TOI, so we can resolve them properly.
+    if (numContacts > 1)
+        qsort(contacts, numContacts, sizeof(BodyContact), CompareContactsForQSort);
+
+    f32 accumulatedDT = 0.0f;
+    for (int i = 0; i < numContacts; i++)
+    {
+        BodyContact& contact = contacts[i];
+        const f32 requiredDelta = contact.TimeOfImpact - accumulatedDT;
+
+        Body& bodyA = *contact.BodyA;
+        Body& bodyB = *contact.BodyB;
+
+        // Skip static body pairs.
+        if (bodyA.InverseMass == 0.0f
+            && bodyB.InverseMass == 0.0f)
+        {
+            continue;
         }
 
-        body->Update(delta);
+        for (Body* body : m_Bodies)
+            body->Update(requiredDelta);
+
+        ResolveContact(contact);
+        accumulatedDT += requiredDelta;
+    }
+
+    if (contactsIsMalloced)
+        delete[] contacts;
+    
+    const f32 remainingTime = delta - accumulatedDT;
+    if (remainingTime > 0)
+    {
+        for (Body* body : m_Bodies)
+            body->Update(remainingTime);
     }
 }
 
@@ -80,6 +126,17 @@ void PhysicsScene::ClearDynamicBodies()
     }
 }
 
+FirstContact PhysicsScene::CompareContacts(const BodyContact& a, const BodyContact& b)
+{
+    if (a.TimeOfImpact < b.TimeOfImpact)
+        return FirstContact::ContactA;
+
+    if (a.TimeOfImpact > b.TimeOfImpact)
+        return FirstContact::ContactB;
+
+    return FirstContact::SameTime;
+}
+
 // This is our initial collision resolution function.
 // We're just resolving an interpenetration, which is not really how we want to do it, but our initial implementation.
 void PhysicsScene::ResolveContact(const BodyContact &contact)
@@ -87,19 +144,21 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
     // Get our bodies and their masses, just to make the code cleaner.
     Body *bodyA = contact.BodyA;
     Body *bodyB = contact.BodyB;
-    f32 bodyAInverseMass = bodyA->InverseMass;
-    f32 bodyBInverseMass = bodyB->InverseMass;
+    const f32 bodyAInverseMass = bodyA->InverseMass;
+    const f32 bodyBInverseMass = bodyB->InverseMass;
+    const Vector3F worldSpacePointOnA = bodyA->BodySpaceToWorldSpace(contact.BodySpacePointOnA);
+    const Vector3F worldSpacePointOnB = bodyB->BodySpaceToWorldSpace(contact.BodySpacePointOnB);
 
     // Get our elasticity value - for now, we just multiply the two bodies' elasticity values together.
-    f32 elasticity = bodyA->Elasticity * bodyB->Elasticity;
+    const f32 elasticity = bodyA->Elasticity * bodyB->Elasticity;
 
     // Get our inertia matrices.
     const Matrix3x3F inverseInertiaWorldSpaceA = bodyA->GetInverseInertiaTensorWorldSpace();
     const Matrix3x3F inverseInertiaWorldSpaceB = bodyB->GetInverseInertiaTensorWorldSpace();
 
     // Distances from contact point and center of mass for both bodies.
-    const Vector3F centerToContactPointA = contact.WorldSpacePointOnA - bodyA->GetCenterOfMassWorldSpace();
-    const Vector3F centerToContactPointB = contact.WorldSpacePointOnB - bodyB->GetCenterOfMassWorldSpace();
+    const Vector3F centerToContactPointA = worldSpacePointOnA - bodyA->GetCenterOfMassWorldSpace();
+    const Vector3F centerToContactPointB = worldSpacePointOnB - bodyB->GetCenterOfMassWorldSpace();
 
     // Get the angular force for each body.
     // Consider the equation:
@@ -125,8 +184,8 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
         bodyBInverseMass + angularFactor);
     const Vector3F impulseVector = contact.NormalWorldSpace * impulse;
 
-    bodyA->ApplyImpulse(contact.WorldSpacePointOnA, -impulseVector);
-    bodyB->ApplyImpulse(contact.WorldSpacePointOnB, impulseVector);
+    bodyA->ApplyImpulse(worldSpacePointOnA, -impulseVector);
+    bodyB->ApplyImpulse(worldSpacePointOnB, impulseVector);
 
     // Now, we calculate the impulse caused by friction.
     // As with elasticity, we'll just multiply the two together for an approximation of the collision friction.
@@ -148,24 +207,27 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
     const f32 reducedMass = 1.0f / (bodyAInverseMass + bodyBInverseMass + inverseInertia);
     const Vector3F impulseFriction = velocityTangent * reducedMass * friction;
 
-    bodyA->ApplyImpulse(contact.WorldSpacePointOnA, -impulseFriction);
-    bodyB->ApplyImpulse(contact.WorldSpacePointOnB, impulseFriction);
+    bodyA->ApplyImpulse(worldSpacePointOnA, -impulseFriction);
+    bodyB->ApplyImpulse(worldSpacePointOnB, impulseFriction);
 
-    // We move the bodies apart, and the amount each body moves is based on their mass relative to the other body.
-    const float aWeight = bodyA->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
-    const float bWeight = bodyB->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
+    if (contact.TimeOfImpact == 0.0f)
+    {
+        // We move the bodies apart, and the amount each body moves is based on their mass relative to the other body.
+        const float aWeight = bodyA->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
+        const float bWeight = bodyB->InverseMass / (bodyA->InverseMass + bodyB->InverseMass);
 
-    // Penetration is a vector representing how far the two bodies are penetrating into each other.
-    Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
+        // Penetration is a vector representing how far the two bodies are penetrating into each other.
+        Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
 
-    // MW @todo @hack: add a small amount more to the weight such that we definitely avoid the intersection in the next check.
-    // When we spawn a sphere at the origin and let it fall down the base sphere, the sphere will not bounce back up.
-    // Stepping through the code, the first collision check works fine - the sphere gets it's linear velocity set to be
-    // the reverse of it's current velocity (from gravity), meaning it should bounce up. However, when we check the pair
-    // again (as we check each pair twice at the moment), they still technically collide due to floating point precision,
-    // and the collision impulse is applied again in the opposite direction, meaning the sphere looses its velocity.
-    penetration *= 1.005f;
+        // MW @todo @hack: add a small amount more to the weight such that we definitely avoid the intersection in the next check.
+        // When we spawn a sphere at the origin and let it fall down the base sphere, the sphere will not bounce back up.
+        // Stepping through the code, the first collision check works fine - the sphere gets it's linear velocity set to be
+        // the reverse of it's current velocity (from gravity), meaning it should bounce up. However, when we check the pair
+        // again (as we check each pair twice at the moment), they still technically collide due to floating point precision,
+        // and the collision impulse is applied again in the opposite direction, meaning the sphere looses its velocity.
+        penetration *= 1.005f;
 
-    bodyA->Position += penetration * aWeight;
-    bodyB->Position -= penetration * bWeight;
+        bodyA->Position += penetration * aWeight;
+        bodyB->Position -= penetration * bWeight;
+    }
 }

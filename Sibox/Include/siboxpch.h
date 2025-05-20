@@ -38,6 +38,7 @@
 #include "Core/SiboxCore.h"
 #include "Math/Vector.h"
 #include "Math/Matrix.h"
+#include "Math/Bounds.h"
 #include "Core/SiboxLog.h"
 #include "Core/Buffer.h"
 #include "Core/Delegate/Delegate.h"
