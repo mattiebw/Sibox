@@ -22,6 +22,7 @@ void SiboxLayer::OnAttach()
 	Application *app   = Application::Get();
 	m_World = app->AddWorld();
 	m_Player           = m_World->AddEntity<Player>("Player");
+	m_Player->SetPosition({ 0, 10.0f, -100.0f });
 
 	// {
 	// 	LOG_SCOPE_TIMER("Loading mesh");
@@ -50,6 +51,17 @@ void SiboxLayer::OnDetach()
 
 void SiboxLayer::Update(f64 delta)
 {
+	if (Input::IsMouseButtonDownThisFrame(SIBOX_MOUSE_BUTTON_RIGHT))
+	{
+		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
+		sphere->Setup(Random::Float(0.5f, 2.f));
+		Vector3F playerLookDirection = m_Player->GetCamera()->Transformation.GetRightVector();
+		Vector3F playerPosition      = m_Player->EntityTransform.Position;
+		Vector3F spawnPosition       = playerPosition + playerLookDirection * 5.0f;
+		sphere->SetBodyPosition(spawnPosition);
+		sphere->GetBody()->LinearVelocity = playerLookDirection * 100.0f;
+		m_DynamicBodies.push_back(sphere.get());
+	}
 }
 
 void SiboxLayer::Render(f64 delta)
@@ -107,6 +119,7 @@ void SiboxLayer::RenderImGUI(f64 delta)
 		m_DynamicBodies.clear();
 	}
 	ImGui::PushItemWidth(100);
+	ImGui::DragFloat("Sphere Height", &m_SphereHeight, 0.1f, -1000.0f, 1000.0f);
 	ImGui::SliderInt("##spheresToAdd", &m_SpheresToAdd, 1, 150);
 	ImGui::PopItemWidth();
 	ImGui::SameLine();
@@ -126,7 +139,7 @@ void SiboxLayer::AddSpheres()
 	{
 		auto sphere = m_World->AddEntity<SphereEntity>("Sphere");
 		sphere->Setup(Random::Float(0.5f, 2.f));
-		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), 3, Random::Float(-100.f, 100.f)));
+		sphere->SetBodyPosition(Vector3F(Random::Float(-100.f, 100.f), m_SphereHeight, Random::Float(-100.f, 100.f)));
 		m_DynamicBodies.push_back(sphere.get());
 	}
 }

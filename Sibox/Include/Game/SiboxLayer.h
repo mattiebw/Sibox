@@ -21,6 +21,7 @@ public:
 
 protected:
 	s32 m_SpheresToAdd = 20;
+	f32 m_SphereHeight = 30.0f;
 	std::vector<Entity*> m_DynamicBodies;
 	Ref<World> m_World;
 	Ref<MeshEntity> m_Mesh;
