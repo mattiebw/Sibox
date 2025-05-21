@@ -190,9 +190,6 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
     const Vector3F velocityB = bodyB->LinearVelocity + bodyB->AngularVelocity.Cross(centerToContactPointB);
 
     // Calculate the collision impulse.
-    // Consider the equations for linear conservation of momentum:
-    // v′1 = v1 + (J / m1)
-    // v'2 = v2 - (J / m2)
     const Vector3F velocityDiff = velocityA - velocityB;
     const float impulse = (1.0f + elasticity) * velocityDiff.Dot(contact.NormalWorldSpace, false) / (bodyAInverseMass +
         bodyBInverseMass + angularFactor);
@@ -232,14 +229,6 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
 
         // Penetration is a vector representing how far the two bodies are penetrating into each other.
         Vector3F penetration = contact.WorldSpacePointOnB - contact.WorldSpacePointOnA;
-
-        // MW @todo @hack: add a small amount more to the weight such that we definitely avoid the intersection in the next check.
-        // When we spawn a sphere at the origin and let it fall down the base sphere, the sphere will not bounce back up.
-        // Stepping through the code, the first collision check works fine - the sphere gets it's linear velocity set to be
-        // the reverse of it's current velocity (from gravity), meaning it should bounce up. However, when we check the pair
-        // again (as we check each pair twice at the moment), they still technically collide due to floating point precision,
-        // and the collision impulse is applied again in the opposite direction, meaning the sphere looses its velocity.
-        penetration *= 1.005f;
 
         bodyA->Position += penetration * aWeight;
         bodyB->Position -= penetration * bWeight;

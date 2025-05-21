@@ -41,7 +41,7 @@ protected:
     }
     static void ResolveContact(const BodyContact& contact);
 
-    static s32 CompareSAP(const void* a, const void* b); // MW @todo: What is "SAP"?
+    static s32 CompareSAP(const void* a, const void* b); // Sweep and prune
 
     static void SortBodiesBounds(const Body** bodies, const s32 bodyCount, PseudoBody* sortedArray, const f32 delta);
     static void BuildPairs(std::vector<CollisionPair>& pairs, const PseudoBody* sortedBodies, const s32 bodyCount);
