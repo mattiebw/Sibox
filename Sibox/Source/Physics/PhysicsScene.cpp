@@ -3,6 +3,12 @@
 
 #include "Core/Application.h"
 
+PhysicsScene::~PhysicsScene()
+{
+    // Note that deleting nullptr is safe.
+    delete[] m_SortedBodyArray;
+}
+
 void PhysicsScene::Update()
 {
     f32 delta = static_cast<f32>(Application::Get()->GetDeltaTime());
@@ -23,11 +29,16 @@ void PhysicsScene::Update()
         body->ApplyLinearImpulse(gravity);
     }
 
-    s32 numContacts = 0;
-    const s32 maxContacts = m_Bodies.size() * m_Bodies.size();
-    const s32 maxSizeForStack = 256;
-    BodyContact* contacts = nullptr;
-    bool contactsIsMalloced = maxContacts > maxSizeForStack;
+    // Perform the braod phase collision check.
+    std::vector<CollisionPair> pairs;
+    BroadPhase(const_cast<const Body**>(m_Bodies.data()), m_Bodies.size(), pairs, delta);
+
+    // Narrow phase collision detection.
+    s32           numContacts        = 0;
+    const s32     maxContacts        = m_Bodies.size() * m_Bodies.size();
+    constexpr s32 maxSizeForStack    = 256;
+    BodyContact*  contacts           = nullptr;
+    bool          contactsIsMalloced = maxContacts > maxSizeForStack;
 
     // Stack memory is faster, but limited in space. So we select which to use depending on how many contacts
     // we need to allocate.
@@ -36,20 +47,33 @@ void PhysicsScene::Update()
     else
         contacts = static_cast<BodyContact*>(alloca(sizeof(BodyContact) * maxContacts));
 
-    for (s32 i = 0; i < m_Bodies.size(); i++)
+    // for (s32 i = 0; i < m_Bodies.size(); i++)
+    // {
+    //     for (s32 j = i + 1; j < m_Bodies.size(); j++)
+    //     {
+    //         Body& bodyA = *m_Bodies[i];
+    //         Body& bodyB = *m_Bodies[j];
+    //
+    //         // Ignore collisions between static bodies.
+    //         if (bodyA.InverseMass == 0.0f && bodyB.InverseMass == 0.0f)
+    //             continue;
+    //
+    //         if (Body::Intersects(bodyA, bodyB, contacts[numContacts], delta))
+    //             numContacts++;
+    //     }
+    // }
+
+    for (CollisionPair& pair : pairs)
     {
-        for (s32 j = i + 1; j < m_Bodies.size(); j++)
-        {
-            Body& bodyA = *m_Bodies[i];
-            Body& bodyB = *m_Bodies[j];
+        Body* bodyA = m_Bodies[pair.BodyAID];
+        Body* bodyB = m_Bodies[pair.BodyBID];
 
-            // Ignore collisions between static bodies.
-            if (bodyA.InverseMass == 0.0f && bodyB.InverseMass == 0.0f)
-                continue;
+        // Ignore collisions between static bodies.
+        if (bodyA->InverseMass == 0.0f && bodyB->InverseMass == 0.0f)
+            continue;
 
-            if (Body::Intersects(bodyA, bodyB, contacts[numContacts], delta))
-                numContacts++;
-        }
+        if (Body::Intersects(*bodyA, *bodyB, contacts[numContacts], delta))
+            numContacts++;
     }
 
     // Ensure that contacts are in order of TOI, so we can resolve them properly.
@@ -61,17 +85,7 @@ void PhysicsScene::Update()
     {
         BodyContact& contact = contacts[i];
         const f32 requiredDelta = contact.TimeOfImpact - accumulatedDT;
-
-        Body& bodyA = *contact.BodyA;
-        Body& bodyB = *contact.BodyB;
-
-        // Skip static body pairs.
-        if (bodyA.InverseMass == 0.0f
-            && bodyB.InverseMass == 0.0f)
-        {
-            continue;
-        }
-
+        
         for (Body* body : m_Bodies)
             body->Update(requiredDelta);
 
@@ -230,4 +244,100 @@ void PhysicsScene::ResolveContact(const BodyContact &contact)
         bodyA->Position += penetration * aWeight;
         bodyB->Position -= penetration * bWeight;
     }
+}
+
+s32 PhysicsScene::CompareSAP(const void *a, const void *b)
+{
+    const PseudoBody* bodyA = static_cast<const PseudoBody*>(a);
+    const PseudoBody* bodyB = static_cast<const PseudoBody*>(b);
+
+    if (bodyA->Value < bodyB->Value)
+        return -1;
+    return 1;
+}
+
+void PhysicsScene::SortBodiesBounds(const Body **bodies, const s32 bodyCount, PseudoBody *sortedArray, const f32 delta)
+{
+    Vector3F axis = {1.0f};
+    axis.Normalize();
+
+    for (s32 i = 0; i < bodyCount; i++)
+    {
+        // Get the body and it's initial bounds.
+        const Body *body = bodies[i];
+        BoundsF bounds = body->GetShape().GetBounds(body->Position, body->Rotation);
+
+        // Add the velocity to the bounds to account for the movement of the body.
+        bounds.Expand(bounds.Min + body->LinearVelocity * delta);
+        bounds.Expand(bounds.Max + body->LinearVelocity * delta);
+
+        // Add a small epsilon to the bounds to make sure we catch possible collisions.
+        constexpr float epsilon = 0.01f;
+        bounds.Expand(bounds.Min + Vector3F(-1.0f) * epsilon);
+        bounds.Expand(bounds.Min + Vector3F( 1.0f) * epsilon);
+
+        // Fill in our pseudo body array.
+        sortedArray[i * 2 + 0].ID = i;
+        sortedArray[i * 2 + 0].Value = axis.Dot(bounds.Min);
+        sortedArray[i * 2 + 0].IsMin = true;
+        
+        sortedArray[i * 2 + 1].ID = i;
+        sortedArray[i * 2 + 1].Value = axis.Dot(bounds.Max);
+        sortedArray[i * 2 + 1].IsMin = false;
+    }
+
+    // Sort the bodies.
+    qsort(sortedArray, bodyCount * 2, sizeof(PseudoBody), CompareSAP);
+}
+
+void PhysicsScene::BuildPairs(std::vector<CollisionPair> &pairs, const PseudoBody *sortedBodies, const s32 bodyCount)
+{
+    pairs.clear();
+
+    for (s32 i = 0; i < bodyCount * 2; i++)
+    {
+        const PseudoBody& pseudoBodyA = sortedBodies[i];
+        if (!pseudoBodyA.IsMin)
+            continue;
+
+        CollisionPair pair;
+        pair.BodyAID = pseudoBodyA.ID;
+
+        for (s32 j = i + 1; j < bodyCount * 2; j++)
+        {
+            const PseudoBody& pseudoBodyB = sortedBodies[j];
+            if (pseudoBodyB.ID == pseudoBodyA.ID)
+            {
+                // We've found the other side of the bounds of body A, so we're done looking for pairs for body A.
+                break;
+            }
+
+            if (!pseudoBodyB.IsMin)
+                continue;
+
+            pair.BodyBID = pseudoBodyB.ID;
+            pairs.push_back(pair);
+        }
+    }
+}
+
+void PhysicsScene::SweepAndPrune1D(const Body **bodies, const s32 bodyCount, std::vector<CollisionPair> &outputPairs,
+    const f32 delta)
+{
+    if (m_SortedBodyArraySize < bodyCount * 2)
+    {
+        delete[] m_SortedBodyArray;
+        m_SortedBodyArray = new PseudoBody[bodyCount * 2];
+        m_SortedBodyArraySize = bodyCount * 2;
+    }
+
+    SortBodiesBounds(bodies, bodyCount, m_SortedBodyArray, delta);
+    BuildPairs(outputPairs, m_SortedBodyArray, bodyCount);
+}
+
+void PhysicsScene::BroadPhase(const Body **bodies, const s32 bodyCount, std::vector<CollisionPair> &outputPairs,
+    const f32 delta)
+{
+    outputPairs.clear();
+    SweepAndPrune1D(bodies, bodyCount, outputPairs, delta);
 }

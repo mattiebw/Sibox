@@ -5,6 +5,14 @@
 
 struct Body;
 
+// Pseudo-bodies are the bodies used by the broadphase algorithm. 
+struct PseudoBody
+{
+	s32  ID = 0;
+	f32  Value = 0;
+	bool IsMin = false;
+};
+
 struct BodyContact
 {
 	Vector3F WorldSpacePointOnA = {};
