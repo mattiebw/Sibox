@@ -3,3 +3,5 @@ followed common guidelines and did not count captions, headings, title pages, et
 word count, and it fits! In retrospect I probably should have done a video, as it was
 hard to demonstrate the artefact even with images, which is why a small 30-second
 video with no voiceover is included.
+The source code is also submitted; the code you want to see is under Sibox, then
+Source and Include.
